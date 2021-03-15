@@ -23,7 +23,7 @@ describe('LineAuthService', () => {
   });
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['post']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['post', 'get']);
     localStorageGetSpy = spyOn(localStorage, 'getItem').and.callFake(
       (): string => 'value'
     );
@@ -77,5 +77,15 @@ describe('LineAuthService', () => {
     expect(res).toBeFalse();
     expect(localStorageSetSpy).toHaveBeenCalledTimes(0);
     expect(localStorageGetSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it('isFriend() should work', async () => {
+    httpClientSpy.get.and.returnValue(of({ friendFlag: true }));
+    expect(await service.isFriend()).toBeTrue();
+  });
+
+  it('isFriend() should fail when api request fails', async () => {
+    httpClientSpy.get.and.returnValue(throwError({}));
+    expect(await service.isFriend()).toBeFalse();
   });
 });

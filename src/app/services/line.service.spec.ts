@@ -33,4 +33,9 @@ describe('LineService', () => {
     httpClientSpy.get.and.returnValue(of(dummyLineUser));
     expect(await service.getUserProfile()).toBe(dummyLineUser);
   });
+
+  it('getUserProfile() should work', async () => {
+    httpClientSpy.get.and.returnValue(of(dummyLineUser));
+    expect(await service.getUser('testId')).toBe(dummyLineUser);
+  });
 });

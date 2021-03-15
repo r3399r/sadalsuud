@@ -8,7 +8,11 @@ describe('UserProfileComponent', () => {
   let lineServiceSpy: jasmine.SpyObj<LineService>;
 
   beforeEach(async () => {
-    lineServiceSpy = jasmine.createSpyObj('LineService', ['getUserProfile']);
+    lineServiceSpy = jasmine.createSpyObj('LineService', [
+      'getUserProfile',
+      'getUser',
+    ]);
+    lineServiceSpy.getUserProfile.and.resolveTo({ userId: 'test' } as any);
 
     await TestBed.configureTestingModule({
       declarations: [UserProfileComponent],

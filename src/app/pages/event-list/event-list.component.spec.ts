@@ -11,8 +11,15 @@ describe('EventListComponent', () => {
   let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
-    tripServiceSpy = jasmine.createSpyObj('TripService', ['getTrips']);
     routerSpy = spyOn(Router.prototype, 'navigate');
+
+    tripServiceSpy = jasmine.createSpyObj('TripService', ['getTrips']);
+    tripServiceSpy.getTrips.and.resolveTo([
+      {
+        startDate: '2020-02-28T20:00:00.000Z',
+        endDate: '2020-02-28T20:00:00.000Z',
+      },
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [EventListComponent],
@@ -27,6 +34,7 @@ describe('EventListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(tripServiceSpy.getTrips).toHaveBeenCalledTimes(1);
   });
 
   it('onClickCard() should work', async () => {

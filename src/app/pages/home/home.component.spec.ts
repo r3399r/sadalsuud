@@ -10,7 +10,7 @@ describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let lineAuthServiceSpy: jasmine.SpyObj<LineAuthService>;
-  let toastControllerSpy: jasmine.Spy;
+  let toastControllerSpy: jasmine.SpyObj<ToastController>;
 
   beforeEach(async () => {
     const routeStub: any = {
@@ -20,7 +20,11 @@ describe('HomeComponent', () => {
       'getState',
       'login',
     ]);
-    toastControllerSpy = spyOn(ToastController.prototype, 'create');
+    lineAuthServiceSpy.getState.and.returnValue('testState');
+    lineAuthServiceSpy.login.and.resolveTo(true);
+
+    toastControllerSpy = jasmine.createSpyObj('ToastController', ['create']);
+    toastControllerSpy.create.and.resolveTo({ present: async () => {} } as any);
 
     await TestBed.configureTestingModule({
       declarations: [HomeComponent],
@@ -28,6 +32,7 @@ describe('HomeComponent', () => {
       providers: [
         { provide: LineAuthService, useValue: lineAuthServiceSpy },
         { provide: ActivatedRoute, useValue: routeStub },
+        { provide: ToastController, useValue: toastControllerSpy },
       ],
     }).compileComponents();
 
@@ -40,26 +45,22 @@ describe('HomeComponent', () => {
   });
 
   it('ngOnInit with correct params and login succeeds', async () => {
-    lineAuthServiceSpy.getState.and.returnValue('testState');
-    lineAuthServiceSpy.login.and.resolveTo(true);
-
     await component.ngOnInit();
     expect(lineAuthServiceSpy.getState).toHaveBeenCalledTimes(1);
-    expect(toastControllerSpy).toHaveBeenCalledTimes(1);
-    expect(toastControllerSpy).toHaveBeenCalledWith({
+    expect(toastControllerSpy.create).toHaveBeenCalledTimes(1);
+    expect(toastControllerSpy.create).toHaveBeenCalledWith({
       message: '登入成功',
       duration: 3000,
     });
   });
 
   it('ngOnInit with correct params but login fails', async () => {
-    lineAuthServiceSpy.getState.and.returnValue('testState');
     lineAuthServiceSpy.login.and.resolveTo(false);
 
     await component.ngOnInit();
     expect(lineAuthServiceSpy.getState).toHaveBeenCalledTimes(1);
-    expect(toastControllerSpy).toHaveBeenCalledTimes(1);
-    expect(toastControllerSpy).toHaveBeenCalledWith({
+    expect(toastControllerSpy.create).toHaveBeenCalledTimes(1);
+    expect(toastControllerSpy.create).toHaveBeenCalledWith({
       message: '登入失敗',
       duration: 3000,
     });

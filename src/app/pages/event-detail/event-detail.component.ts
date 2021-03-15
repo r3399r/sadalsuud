@@ -94,11 +94,14 @@ export class EventDetailComponent implements OnInit {
       buttons: [
         {
           text: '是的',
-          handler: () => this.signConfirm(),
+          role: 'confirm',
         },
         '取消',
       ],
     });
     await alert.present();
+
+    const eventDetail = await alert.onDidDismiss();
+    if (eventDetail.role === 'confirm') await this.signConfirm();
   }
 }

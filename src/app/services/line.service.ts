@@ -26,6 +26,10 @@ export class LineService {
   }
 
   public async getUser(userId: string): Promise<any> {
-    return await this.http.get<any>(`${this.userApi}/${userId}`).toPromise();
+    return await this.http
+      .get<any>(`${this.userApi}/${userId}`, {
+        params: { entity: 'sadalsuud-user' },
+      })
+      .toPromise();
   }
 }

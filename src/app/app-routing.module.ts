@@ -7,10 +7,10 @@ import {
 } from '@angular/router';
 import { AuthGuard } from 'src/app/auth.guard';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
-import { EventDetailComponent } from 'src/app/pages/event-detail/event-detail.component';
-import { EventListComponent } from 'src/app/pages/event-list/event-list.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
+import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
+import { TripListComponent } from 'src/app/pages/trip-list/trip-list.component';
 import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
 
 const rootRoute: Route = {
@@ -33,13 +33,13 @@ const homeRoute: Route = {
   path: 'home',
   component: HomeComponent,
 };
-const eventListRoute: Route = {
-  path: 'event-list',
-  component: EventListComponent,
+const tripListRoute: Route = {
+  path: 'trip-list',
+  component: TripListComponent,
 };
-const eventDetailRoute: Route = {
-  path: 'event-detail/:id',
-  component: EventDetailComponent,
+const tripDetailRoute: Route = {
+  path: 'trip-detail/:id',
+  component: TripDetailComponent,
 };
 const userProfileRoute: Route = {
   path: 'user-profile',
@@ -56,7 +56,7 @@ const privateRoute: Route = {
 const publicRoute: Route = {
   path: '',
   component: LayoutComponent,
-  children: [homeRoute, loginRoute, eventListRoute, eventDetailRoute],
+  children: [homeRoute, loginRoute, tripListRoute, tripDetailRoute],
 };
 
 const routes: Routes = [rootRoute, publicRoute, privateRoute, wildcardRoute];

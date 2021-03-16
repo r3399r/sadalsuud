@@ -4,11 +4,11 @@ import * as moment from 'moment';
 import { TripService } from 'src/app/services/trip.service';
 
 @Component({
-  selector: 'app-event-list',
-  templateUrl: './event-list.component.html',
-  styleUrls: ['./event-list.component.scss'],
+  selector: 'app-trip-list',
+  templateUrl: './trip-list.component.html',
+  styleUrls: ['./trip-list.component.scss'],
 })
-export class EventListComponent implements OnInit {
+export class TripListComponent implements OnInit {
   private router: Router;
   private tripService: TripService;
   public trips: any;
@@ -31,6 +31,6 @@ export class EventListComponent implements OnInit {
   }
 
   public onClickCard(id: string): any {
-    this.router.navigate([`event-detail/${id}`]);
+    this.router.navigate([`trip-detail/${id}`]);
   }
 }

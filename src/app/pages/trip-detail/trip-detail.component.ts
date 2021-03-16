@@ -8,11 +8,11 @@ import { LineService } from 'src/app/services/line.service';
 import { TripService } from 'src/app/services/trip.service';
 
 @Component({
-  selector: 'app-event-detail',
-  templateUrl: './event-detail.component.html',
-  styleUrls: ['./event-detail.component.scss'],
+  selector: 'app-trip-detail',
+  templateUrl: './trip-detail.component.html',
+  styleUrls: ['./trip-detail.component.scss'],
 })
-export class EventDetailComponent implements OnInit {
+export class TripDetailComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private lineAuthService: LineAuthService;
   private lineService: LineService;

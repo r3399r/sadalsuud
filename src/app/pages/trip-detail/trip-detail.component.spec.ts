@@ -3,14 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { of } from 'rxjs';
-import { EventDetailComponent } from 'src/app/pages/event-detail/event-detail.component';
+import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 import { LineService } from 'src/app/services/line.service';
 import { TripService } from 'src/app/services/trip.service';
 
-describe('EventDetailComponent', () => {
-  let component: EventDetailComponent;
-  let fixture: ComponentFixture<EventDetailComponent>;
+describe('TripDetailComponent', () => {
+  let component: TripDetailComponent;
+  let fixture: ComponentFixture<TripDetailComponent>;
   let tripServiceSpy: jasmine.SpyObj<TripService>;
   let lineAuthServiceSpy: jasmine.SpyObj<LineAuthService>;
   let lineServiceSpy: jasmine.SpyObj<LineService>;
@@ -55,7 +55,7 @@ describe('EventDetailComponent', () => {
     } as any);
 
     await TestBed.configureTestingModule({
-      declarations: [EventDetailComponent],
+      declarations: [TripDetailComponent],
       imports: [RouterTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: routeStub },
@@ -69,7 +69,7 @@ describe('EventDetailComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EventDetailComponent);
+    fixture = TestBed.createComponent(TripDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

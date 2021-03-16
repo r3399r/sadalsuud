@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LineUserProfile } from 'src/app/model/LineUserProfile';
-import { LineService } from 'src/app/services/line.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -8,16 +8,16 @@ import { LineService } from 'src/app/services/line.service';
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit {
-  private lineService: LineService;
+  private userService: UserService;
   public lineUserProfile: LineUserProfile;
   public user: any;
 
-  constructor(lineService: LineService) {
-    this.lineService = lineService;
+  constructor(userService: UserService) {
+    this.userService = userService;
   }
 
   async ngOnInit(): Promise<void> {
-    this.lineUserProfile = await this.lineService.getUserProfile();
-    this.user = await this.lineService.getUser(this.lineUserProfile.userId);
+    this.lineUserProfile = await this.userService.getLineUser();
+    this.user = await this.userService.getUser(this.lineUserProfile.userId);
   }
 }

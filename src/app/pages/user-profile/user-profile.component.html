@@ -1,5 +1,5 @@
-<app-spinner *ngIf="!lineUserProfile"></app-spinner>
-<div class="user-page" *ngIf="lineUserProfile">
+<app-spinner *ngIf="!lineUserProfile || !user"></app-spinner>
+<div class="user-page" *ngIf="lineUserProfile && user">
   <h1>個人資料</h1>
   <div uk-grid>
     <div class="uk-width-auto">

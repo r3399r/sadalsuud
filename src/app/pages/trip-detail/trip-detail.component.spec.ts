@@ -5,15 +5,15 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
 import { LineAuthService } from 'src/app/services/line-auth.service';
-import { LineService } from 'src/app/services/line.service';
 import { TripService } from 'src/app/services/trip.service';
+import { UserService } from 'src/app/services/user.service';
 
 describe('TripDetailComponent', () => {
   let component: TripDetailComponent;
   let fixture: ComponentFixture<TripDetailComponent>;
   let tripServiceSpy: jasmine.SpyObj<TripService>;
   let lineAuthServiceSpy: jasmine.SpyObj<LineAuthService>;
-  let lineServiceSpy: jasmine.SpyObj<LineService>;
+  let userServiceSpy: jasmine.SpyObj<UserService>;
   let alertControllerSpy: jasmine.SpyObj<AlertController>;
   let loadingControllerSpy: jasmine.SpyObj<LoadingController>;
 
@@ -37,8 +37,8 @@ describe('TripDetailComponent', () => {
     lineAuthServiceSpy.isAuth.and.resolveTo(true);
     lineAuthServiceSpy.isFriend.and.resolveTo(true);
 
-    lineServiceSpy = jasmine.createSpyObj('LineService', ['getUserProfile']);
-    lineServiceSpy.getUserProfile.and.resolveTo({ userId: 'testId' } as any);
+    userServiceSpy = jasmine.createSpyObj('LineService', ['getLineUser']);
+    userServiceSpy.getLineUser.and.resolveTo({ userId: 'testId' } as any);
 
     alertControllerSpy = jasmine.createSpyObj('AlertController', ['create']);
     alertControllerSpy.create.and.resolveTo({
@@ -61,7 +61,7 @@ describe('TripDetailComponent', () => {
         { provide: ActivatedRoute, useValue: routeStub },
         { provide: TripService, useValue: tripServiceSpy },
         { provide: LineAuthService, useValue: lineAuthServiceSpy },
-        { provide: LineService, useValue: lineServiceSpy },
+        { provide: UserService, useValue: userServiceSpy },
         { provide: AlertController, useValue: alertControllerSpy },
         { provide: LoadingController, useValue: loadingControllerSpy },
       ],

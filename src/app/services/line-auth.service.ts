@@ -1,15 +1,18 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LineToken } from 'src/app/model/LineToken';
-import { environment } from 'src/environments/environment';
+import { ParameterService } from 'src/app/services/parameter.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LineAuthService {
   private readonly http: HttpClient;
-  private readonly link: string;
+  private parameterService: ParameterService;
 
+  private loginClientId: string;
+  private loginSecret: string;
+  private redirectUri: string;
   private readonly state: string = '12345abcde';
   private readonly authorizationUrl: string =
     'https://access.line.me/oauth2/v2.1/authorize';
@@ -18,13 +21,29 @@ export class LineAuthService {
   private readonly friendshipStatusUrl: string =
     'https://api.line.me/friendship/v1/status';
 
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, parameterService: ParameterService) {
     this.http = http;
-    this.link = `${this.authorizationUrl}?response_type=code&client_id=${environment.clientId}&redirect_uri=${environment.redirectUri}&state=${this.state}&scope=profile&bot_prompt=aggressive`;
+    this.parameterService = parameterService;
   }
 
-  public getLink(): string {
-    return this.link;
+  private async setParameters(): Promise<void> {
+    this.loginClientId = await this.parameterService.getParameter(
+      'SADALSUUD_LOGIN_ID'
+    );
+    this.loginSecret = await this.parameterService.getParameter(
+      'SADALSUUD_LOGIN_SECRET'
+    );
+    const envr: string = await this.parameterService.getParameter('ENVR');
+    this.redirectUri =
+      envr === 'prod'
+        ? 'https://www.lucky-star-trip.net/home'
+        : `https://${envr}.lucky-star-trip.net/home`;
+  }
+
+  public async getLink(): Promise<string> {
+    if (this.loginClientId === undefined) await this.setParameters();
+
+    return `${this.authorizationUrl}?response_type=code&client_id=${this.loginClientId}&redirect_uri=${this.redirectUri}&state=${this.state}&scope=profile&bot_prompt=aggressive`;
   }
 
   public getState(): string {
@@ -36,11 +55,12 @@ export class LineAuthService {
     const refreshToken: string | null = localStorage.getItem('refresh_token');
 
     if (accessToken === null) return false;
+    if (this.loginClientId === undefined) await this.setParameters();
 
     try {
       const body: HttpParams = new HttpParams()
-        .set('client_id', environment.clientId)
-        .set('client_secret', environment.channelSecret)
+        .set('client_id', this.loginClientId)
+        .set('client_secret', this.loginSecret)
         .set('grant_type', 'refresh_token')
         .set('refresh_token', refreshToken);
 
@@ -60,12 +80,13 @@ export class LineAuthService {
   }
 
   public async login(code: string): Promise<boolean> {
+    if (this.loginClientId === undefined) await this.setParameters();
     try {
       const body: HttpParams = new HttpParams()
         .set('code', code)
-        .set('redirect_uri', environment.redirectUri)
-        .set('client_id', environment.clientId)
-        .set('client_secret', environment.channelSecret)
+        .set('redirect_uri', this.redirectUri)
+        .set('client_id', this.loginClientId)
+        .set('client_secret', this.loginSecret)
         .set('grant_type', 'authorization_code');
 
       const lineToken: LineToken = await this.http

@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 export class UserService {
   private readonly http: HttpClient;
   private readonly lineProfileUrl: string = 'https://api.line.me/v2/profile';
-  private readonly userApi: string = `${environment.apiUrl}/users`;
+  private readonly userApi: string = `${environment.api}/users`;
 
   constructor(http: HttpClient) {
     this.http = http;

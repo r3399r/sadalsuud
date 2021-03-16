@@ -7,8 +7,8 @@ import { environment } from 'src/environments/environment';
 })
 export class TripService {
   private readonly http: HttpClient;
-  private readonly tripApi: string = `${environment.apiUrl}/trips`;
-  private readonly signApi: string = `${environment.apiUrl}/sign`;
+  private readonly tripApi: string = `${environment.api}/trips`;
+  private readonly signApi: string = `${environment.api}/sign`;
 
   constructor(http: HttpClient) {
     this.http = http;

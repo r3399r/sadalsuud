@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://pxt9qcn9z6.execute-api.ap-northeast-1.amazonaws.com/dev',
+  apiUrl: 'https://dev.lucky-star-trip.net/api',
 
   // line-auth
   clientId: '1655679061',

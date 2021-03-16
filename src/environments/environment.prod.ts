@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  apiUrl: '/api',
 
   // line-auth
   clientId: '1655679061',

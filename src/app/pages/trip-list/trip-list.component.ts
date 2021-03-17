@@ -30,7 +30,7 @@ export class TripListComponent implements OnInit {
     });
   }
 
-  public onClickCard(id: string): any {
+  public onClickCard(id: string): void {
     this.router.navigate([`trip-detail/${id}`]);
   }
 }

@@ -23,7 +23,9 @@ export class ParameterService {
       'SADALSUUD_LOGIN_SECRET',
     ];
     this.parameters = await this.http
-      .get<any>(this.ssmApi, { params: { name: name.join() } })
+      .get<{ [key: string]: string }>(this.ssmApi, {
+        params: { name: name.join() },
+      })
       .toPromise();
   }
 

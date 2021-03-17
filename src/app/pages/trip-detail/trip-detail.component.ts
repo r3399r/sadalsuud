@@ -48,10 +48,10 @@ export class TripDetailComponent implements OnInit {
       const res = await this.tripService.getTrip(params.id);
       this.trip = {
         ...res,
-        date: moment.utc(res.startDate).format('YYYY-MM-DD'),
-        startDate: moment.utc(res.startDate).format('HH:mm'),
-        endDate: moment.utc(res.endDate).format('HH:mm'),
-        expiredDate: moment.utc(res.expiredDate).format('YYYY-MM-DD HH:mm'),
+        date: moment(res.startDate).format('YYYY-MM-DD'),
+        startDate: moment(res.startDate).format('HH:mm'),
+        endDate: moment(res.endDate).format('HH:mm'),
+        expiredDate: moment(res.expiredDate).format('YYYY-MM-DD HH:mm'),
       };
     });
   }

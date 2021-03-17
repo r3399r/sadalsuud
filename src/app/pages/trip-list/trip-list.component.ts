@@ -23,9 +23,9 @@ export class TripListComponent implements OnInit {
     this.trips = res.map((trip: any) => {
       return {
         ...trip,
-        date: moment.utc(trip.startDate).format('YYYY-MM-DD'),
-        startDate: moment.utc(trip.startDate).format('HH:mm'),
-        endDate: moment.utc(trip.endDate).format('HH:mm'),
+        date: moment(trip.startDate).format('YYYY-MM-DD'),
+        startDate: moment(trip.startDate).format('HH:mm'),
+        endDate: moment(trip.endDate).format('HH:mm'),
       };
     });
   }

@@ -4,12 +4,13 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://dev.lucky-star-trip.net/api',
+  host: 'https://dev.lucky-star-trip.net/',
+  api: 'https://dev.lucky-star-trip.net/api',
 
   // line-auth
-  clientId: '1655679061',
-  redirectUri: 'https://d1tr4ax897kn7u.cloudfront.net/home',
+  redirectUri: 'https://dev.lucky-star-trip.net/home',
   // redirectUri: 'http://localhost:4200/home',
+  clientId: '1655679061',
   channelSecret: 'c415146bb6ebdd99de1ff383ec560721',
 };
 

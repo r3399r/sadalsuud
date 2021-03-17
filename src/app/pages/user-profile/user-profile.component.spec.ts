@@ -1,22 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
-import { LineService } from 'src/app/services/line.service';
+import { ParameterService } from 'src/app/services/parameter.service';
+import { UserService } from 'src/app/services/user.service';
 
 describe('UserProfileComponent', () => {
   let component: UserProfileComponent;
   let fixture: ComponentFixture<UserProfileComponent>;
-  let lineServiceSpy: jasmine.SpyObj<LineService>;
+  let userServiceSpy: jasmine.SpyObj<UserService>;
+  let parameterServiceSpy: jasmine.SpyObj<ParameterService>;
 
   beforeEach(async () => {
-    lineServiceSpy = jasmine.createSpyObj('LineService', [
-      'getUserProfile',
+    userServiceSpy = jasmine.createSpyObj('UserService', [
+      'getLineUser',
       'getUser',
     ]);
-    lineServiceSpy.getUserProfile.and.resolveTo({ userId: 'test' } as any);
+    userServiceSpy.getLineUser.and.resolveTo({ userId: 'test' } as any);
+
+    parameterServiceSpy = jasmine.createSpyObj('ParameterService', [
+      'getParameter',
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [UserProfileComponent],
-      providers: [{ provide: LineService, useValue: lineServiceSpy }],
+      providers: [
+        { provide: UserService, useValue: userServiceSpy },
+        { provide: ParameterService, useValue: parameterServiceSpy },
+      ],
     }).compileComponents();
   });
 

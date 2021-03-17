@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
     this.lineAuthService = lineAuthService;
   }
 
-  ngOnInit(): void {
-    this.lineLoginUrl = this.lineAuthService.getLink();
+  async ngOnInit(): Promise<void> {
+    this.lineLoginUrl = await this.lineAuthService.getLink();
   }
 }

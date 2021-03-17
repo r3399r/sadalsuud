@@ -8,10 +8,10 @@ import { AppComponent } from 'src/app/app.component';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { TabComponent } from 'src/app/components/tab/tab.component';
-import { EventDetailComponent } from 'src/app/pages/event-detail/event-detail.component';
-import { EventListComponent } from 'src/app/pages/event-list/event-list.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
+import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
+import { TripListComponent } from 'src/app/pages/trip-list/trip-list.component';
 import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
 import { environment } from 'src/environments/environment';
 
@@ -20,12 +20,12 @@ import { environment } from 'src/environments/environment';
     AppComponent,
     LayoutComponent,
     HomeComponent,
-    EventListComponent,
+    TripListComponent,
     TabComponent,
     UserProfileComponent,
     LoginComponent,
     SpinnerComponent,
-    EventDetailComponent,
+    TripDetailComponent,
   ],
   imports: [
     BrowserModule,

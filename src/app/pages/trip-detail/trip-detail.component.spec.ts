@@ -3,17 +3,17 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { of } from 'rxjs';
-import { EventDetailComponent } from 'src/app/pages/event-detail/event-detail.component';
+import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
 import { LineAuthService } from 'src/app/services/line-auth.service';
-import { LineService } from 'src/app/services/line.service';
 import { TripService } from 'src/app/services/trip.service';
+import { UserService } from 'src/app/services/user.service';
 
-describe('EventDetailComponent', () => {
-  let component: EventDetailComponent;
-  let fixture: ComponentFixture<EventDetailComponent>;
+describe('TripDetailComponent', () => {
+  let component: TripDetailComponent;
+  let fixture: ComponentFixture<TripDetailComponent>;
   let tripServiceSpy: jasmine.SpyObj<TripService>;
   let lineAuthServiceSpy: jasmine.SpyObj<LineAuthService>;
-  let lineServiceSpy: jasmine.SpyObj<LineService>;
+  let userServiceSpy: jasmine.SpyObj<UserService>;
   let alertControllerSpy: jasmine.SpyObj<AlertController>;
   let loadingControllerSpy: jasmine.SpyObj<LoadingController>;
 
@@ -37,8 +37,8 @@ describe('EventDetailComponent', () => {
     lineAuthServiceSpy.isAuth.and.resolveTo(true);
     lineAuthServiceSpy.isFriend.and.resolveTo(true);
 
-    lineServiceSpy = jasmine.createSpyObj('LineService', ['getUserProfile']);
-    lineServiceSpy.getUserProfile.and.resolveTo({ userId: 'testId' } as any);
+    userServiceSpy = jasmine.createSpyObj('LineService', ['getLineUser']);
+    userServiceSpy.getLineUser.and.resolveTo({ userId: 'testId' } as any);
 
     alertControllerSpy = jasmine.createSpyObj('AlertController', ['create']);
     alertControllerSpy.create.and.resolveTo({
@@ -55,13 +55,13 @@ describe('EventDetailComponent', () => {
     } as any);
 
     await TestBed.configureTestingModule({
-      declarations: [EventDetailComponent],
+      declarations: [TripDetailComponent],
       imports: [RouterTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: routeStub },
         { provide: TripService, useValue: tripServiceSpy },
         { provide: LineAuthService, useValue: lineAuthServiceSpy },
-        { provide: LineService, useValue: lineServiceSpy },
+        { provide: UserService, useValue: userServiceSpy },
         { provide: AlertController, useValue: alertControllerSpy },
         { provide: LoadingController, useValue: loadingControllerSpy },
       ],
@@ -69,7 +69,7 @@ describe('EventDetailComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EventDetailComponent);
+    fixture = TestBed.createComponent(TripDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

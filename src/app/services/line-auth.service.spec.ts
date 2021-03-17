@@ -3,11 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { LineToken } from 'src/app/model/LineToken';
 import { LineAuthService } from 'src/app/services/line-auth.service';
-import { environment } from 'src/environments/environment';
+import { ParameterService } from 'src/app/services/parameter.service';
 
 describe('LineAuthService', () => {
   let service: LineAuthService;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
+  let parameterServiceSpy: jasmine.SpyObj<ParameterService>;
   let localStorageGetSpy: jasmine.Spy;
   let localStorageSetSpy: jasmine.Spy;
   let dummyAccessToken: LineToken;
@@ -24,13 +25,21 @@ describe('LineAuthService', () => {
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['post', 'get']);
+    parameterServiceSpy = jasmine.createSpyObj('ParameterService', [
+      'getParameter',
+    ]);
+    parameterServiceSpy.getParameter.and.resolveTo('testParameter');
+
     localStorageGetSpy = spyOn(localStorage, 'getItem').and.callFake(
       (): string => 'value'
     );
     localStorageSetSpy = spyOn(localStorage, 'setItem').and.callFake(() => {});
 
     TestBed.configureTestingModule({
-      providers: [{ provide: HttpClient, useValue: httpClientSpy }],
+      providers: [
+        { provide: HttpClient, useValue: httpClientSpy },
+        { provide: ParameterService, useValue: parameterServiceSpy },
+      ],
     });
     service = TestBed.inject(LineAuthService);
   });
@@ -39,9 +48,20 @@ describe('LineAuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('getLink() should work', () => {
-    expect(service.getLink()).toEqual(
-      `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${environment.clientId}&redirect_uri=${environment.redirectUri}&state=12345abcde&scope=profile&bot_prompt=aggressive`
+  it('getLink() should work', async () => {
+    await service.getLink();
+    // second time would use saved value
+    expect(await service.getLink()).toBe(
+      'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=testParameter&redirect_uri=https://testParameter.lucky-star-trip.net/home&state=12345abcde&scope=profile&bot_prompt=aggressive'
+    );
+  });
+
+  it('redirectUri would be different when parameter is prod', async () => {
+    parameterServiceSpy.getParameter.and.resolveTo('prod');
+    await service.getLink();
+    // second time would use saved value
+    expect(await service.getLink()).toBe(
+      'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=prod&redirect_uri=https://www.lucky-star-trip.net/home&state=12345abcde&scope=profile&bot_prompt=aggressive'
     );
   });
 
@@ -51,6 +71,8 @@ describe('LineAuthService', () => {
 
   it('isAuth() should work', async () => {
     httpClientSpy.post.and.returnValue(of(dummyAccessToken));
+    await service.isAuth();
+    // second time would use saved value
     expect(await service.isAuth()).toBeTrue();
   });
 
@@ -66,9 +88,11 @@ describe('LineAuthService', () => {
 
   it('login() should work', async () => {
     httpClientSpy.post.and.returnValue(of(dummyAccessToken));
-    expect(await service.login('aaa')).toBeTrue();
+    await service.login('aaa');
     expect(localStorageSetSpy).toHaveBeenCalledTimes(2);
     expect(localStorageGetSpy).toHaveBeenCalledTimes(0);
+    // second time would use saved value
+    expect(await service.login('aaa')).toBeTrue();
   });
 
   it('login() should work', async () => {

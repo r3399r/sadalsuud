@@ -4,18 +4,18 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import * as moment from 'moment';
 import { LineUserProfile } from 'src/app/model/LineUserProfile';
 import { LineAuthService } from 'src/app/services/line-auth.service';
-import { LineService } from 'src/app/services/line.service';
 import { TripService } from 'src/app/services/trip.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'app-event-detail',
-  templateUrl: './event-detail.component.html',
-  styleUrls: ['./event-detail.component.scss'],
+  selector: 'app-trip-detail',
+  templateUrl: './trip-detail.component.html',
+  styleUrls: ['./trip-detail.component.scss'],
 })
-export class EventDetailComponent implements OnInit {
+export class TripDetailComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private lineAuthService: LineAuthService;
-  private lineService: LineService;
+  private userService: UserService;
   private tripService: TripService;
   private alertController: AlertController;
   private loadingController: LoadingController;
@@ -27,14 +27,14 @@ export class EventDetailComponent implements OnInit {
   constructor(
     activatedRoute: ActivatedRoute,
     lineAuthService: LineAuthService,
-    lineService: LineService,
+    userService: UserService,
     tripService: TripService,
     alertController: AlertController,
     loadingController: LoadingController
   ) {
     this.activatedRoute = activatedRoute;
     this.lineAuthService = lineAuthService;
-    this.lineService = lineService;
+    this.userService = userService;
     this.tripService = tripService;
     this.alertController = alertController;
     this.loadingController = loadingController;
@@ -73,7 +73,7 @@ export class EventDetailComponent implements OnInit {
     });
     await loading.present();
 
-    const lineUserProfile: LineUserProfile = await this.lineService.getUserProfile();
+    const lineUserProfile: LineUserProfile = await this.userService.getLineUser();
     const signResponse: string = await this.tripService.signTrip(
       this.trip.creationId,
       lineUserProfile.userId

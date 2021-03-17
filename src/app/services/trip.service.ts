@@ -7,8 +7,8 @@ import { environment } from 'src/environments/environment';
 })
 export class TripService {
   private readonly http: HttpClient;
-  private readonly tripApi: string = `${environment.apiUrl}/trips`;
-  private readonly signApi: string = `${environment.apiUrl}/sign`;
+  private readonly tripApi: string = `${environment.api}/trips`;
+  private readonly signApi: string = `${environment.api}/sign`;
 
   constructor(http: HttpClient) {
     this.http = http;
@@ -22,9 +22,9 @@ export class TripService {
     return await this.http.get<any>(`${this.tripApi}/${id}`).toPromise();
   }
 
-  public async signTrip(tripId: string, lineUserId: string): Promise<any> {
+  public async signTrip(tripId: string, lineUserId: string): Promise<string> {
     return await this.http
-      .post<any>(`${this.signApi}`, {
+      .post<string>(`${this.signApi}`, {
         tripCreationId: tripId,
         lineUserId,
       })

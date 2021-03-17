@@ -6,16 +6,16 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class LineService {
+export class UserService {
   private readonly http: HttpClient;
   private readonly lineProfileUrl: string = 'https://api.line.me/v2/profile';
-  private readonly userApi: string = `${environment.apiUrl}/users`;
+  private readonly userApi: string = `${environment.api}/users`;
 
   constructor(http: HttpClient) {
     this.http = http;
   }
 
-  public async getUserProfile(): Promise<LineUserProfile> {
+  public async getLineUser(): Promise<LineUserProfile> {
     const accessToken: string | null = localStorage.getItem('access_token');
 
     return await this.http

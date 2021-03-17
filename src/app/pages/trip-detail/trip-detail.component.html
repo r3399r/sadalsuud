@@ -24,7 +24,7 @@
   <div class="uk-divider-small"></div>
   <div uk-grid>
     <div class="uk-width-auto bold">費用</div>
-    <div class="uk-width-expand right">${{ trip.fee }}</div>
+    <div class="uk-width-expand right">{{ trip.fee }}</div>
   </div>
   <div uk-grid *ngIf="trip.thingsToBring">
     <div class="uk-width-auto bold">應帶物品</div>
@@ -45,6 +45,10 @@
   <div class="uk-divider-small"></div>
   <div class="description">{{ trip.detailedDesc }}</div>
   <div class="uk-divider-small"></div>
+  <div uk-grid>
+    <div class="uk-width-auto bold">報名期限</div>
+    <div class="uk-width-expand right">{{ trip.expiredDate }}</div>
+  </div>
   <div *ngIf="!canSign()">
     <ion-button color="primary" expand="block" disabled
       >我要報名參加</ion-button

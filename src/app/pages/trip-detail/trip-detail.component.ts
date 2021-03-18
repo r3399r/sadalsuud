@@ -90,8 +90,7 @@ export class TripDetailComponent implements OnInit {
 
   public async onSign(): Promise<void> {
     const alert: HTMLIonAlertElement = await this.alertController.create({
-      message:
-        '請確認是否報名此次出遊，報名成功後將會收到 LINE 官方帳號傳來的訊息',
+      message: '請確認是否報名此次出遊',
       buttons: [
         {
           text: '是的',

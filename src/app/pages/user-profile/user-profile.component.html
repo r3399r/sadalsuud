@@ -1,6 +1,11 @@
 <app-spinner *ngIf="!lineUserProfile || !lineChannelUrl"></app-spinner>
 <div class="user-page" *ngIf="lineUserProfile && lineChannelUrl">
-  <h1>個人資料</h1>
+  <div uk-grid class="head">
+    <h1 class="uk-width-expand">個人資料</h1>
+    <div class="uk-wdith-auto">
+      <button class="uk-button" (click)="onLogout()">登出</button>
+    </div>
+  </div>
   <div uk-grid>
     <div class="uk-width-auto">
       <img
@@ -31,7 +36,7 @@
   </div>
   <div uk-grid>
     <div class="uk-width-auto bold">身份</div>
-    <div class="uk-width-expand right">{{ user.role }}</div>
+    <div class="uk-width-expand right">{{ getRole(user.role) }}</div>
   </div>
   <div uk-grid>
     <div class="uk-width-auto bold">生日</div>

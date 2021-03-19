@@ -104,4 +104,9 @@ describe('TripDetailComponent', () => {
     expect(alertControllerSpy.create).toHaveBeenCalledTimes(1);
     expect(loadingControllerSpy.create).toHaveBeenCalledTimes(0);
   });
+
+  it('getAccompanyText() should work', () => {
+    expect(component.getAccompanyText('yes')).toBe('是');
+    expect(component.getAccompanyText('optional')).toBe('視情況而定');
+  });
 });

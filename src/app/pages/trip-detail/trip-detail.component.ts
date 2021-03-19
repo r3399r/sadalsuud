@@ -104,4 +104,10 @@ export class TripDetailComponent implements OnInit {
     const eventDetail = await alert.onDidDismiss();
     if (eventDetail.role === 'confirm') await this.signConfirm();
   }
+
+  public getAccompanyText(needFamilyAccompany: string): string {
+    if (needFamilyAccompany === 'yes') return '是';
+
+    return '視情況而定';
+  }
 }

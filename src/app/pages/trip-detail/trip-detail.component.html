@@ -36,7 +36,9 @@
   </div>
   <div uk-grid>
     <div class="uk-width-auto bold">是否需家人陪同</div>
-    <div class="uk-width-expand right">{{ trip.needFamilyAccompany }}</div>
+    <div class="uk-width-expand right">
+      {{ getAccompanyText(trip.needFamilyAccompany) }}
+    </div>
   </div>
   <div uk-grid>
     <div class="uk-width-auto bold">可報名名額</div>

@@ -11,6 +11,7 @@ describe('LineAuthService', () => {
   let parameterServiceSpy: jasmine.SpyObj<ParameterService>;
   let localStorageGetSpy: jasmine.Spy;
   let localStorageSetSpy: jasmine.Spy;
+  let localStorageRemoveSpy: jasmine.Spy;
   let dummyAccessToken: LineToken;
 
   beforeAll(() => {
@@ -34,6 +35,10 @@ describe('LineAuthService', () => {
       (): string => 'value'
     );
     localStorageSetSpy = spyOn(localStorage, 'setItem').and.callFake(() => {});
+    localStorageRemoveSpy = spyOn(
+      localStorage,
+      'removeItem'
+    ).and.callFake(() => {});
 
     TestBed.configureTestingModule({
       providers: [
@@ -111,5 +116,10 @@ describe('LineAuthService', () => {
   it('isFriend() should fail when api request fails', async () => {
     httpClientSpy.get.and.returnValue(throwError({}));
     expect(await service.isFriend()).toBeFalse();
+  });
+
+  it('logout() should work', () => {
+    service.logout();
+    expect(localStorageRemoveSpy).toHaveBeenCalledTimes(2);
   });
 });

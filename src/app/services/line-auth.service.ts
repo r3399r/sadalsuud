@@ -104,6 +104,11 @@ export class LineAuthService {
     }
   }
 
+  public logout(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+  }
+
   public async isFriend(): Promise<boolean> {
     try {
       const accessToken: string | null = localStorage.getItem('access_token');

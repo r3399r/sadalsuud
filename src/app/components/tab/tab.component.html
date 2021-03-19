@@ -3,8 +3,8 @@
     <div>
       <div
         class="tabs uk-box-shadow-medium"
-        (click)="onClickTab('home')"
-        [ngClass]="getRouterUrl() === 'home' ? 'activate' : 'deactivate'"
+        (click)="onClickTab(0)"
+        [ngClass]="isActivate(0) ? 'activate' : 'deactivate'"
       >
         <img class="icon" src="assets/home.svg" />
         <div class="field">主頁</div>
@@ -13,8 +13,8 @@
     <div>
       <div
         class="tabs uk-box-shadow-medium"
-        (click)="onClickTab('trip-list')"
-        [ngClass]="getRouterUrl() === 'trip-list' ? 'activate' : 'deactivate'"
+        (click)="onClickTab(1)"
+        [ngClass]="isActivate(1) ? 'activate' : 'deactivate'"
       >
         <img class="icon" src="assets/partly-sunny.svg" />
         <div class="field">出遊清單</div>
@@ -24,10 +24,8 @@
       <div>
         <div
           class="tabs uk-box-shadow-medium"
-          (click)="onClickTab('user-profile')"
-          [ngClass]="
-            getRouterUrl() === 'user-profile' ? 'activate' : 'deactivate'
-          "
+          (click)="onClickTab(2)"
+          [ngClass]="isActivate(2) ? 'activate' : 'deactivate'"
         >
           <img class="icon" src="assets/grid.svg" />
           <div class="field">個人資料</div>

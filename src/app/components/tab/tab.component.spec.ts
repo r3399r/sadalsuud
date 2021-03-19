@@ -6,14 +6,15 @@ import { TabComponent } from 'src/app/components/tab/tab.component';
 describe('TabComponent', () => {
   let component: TabComponent;
   let fixture: ComponentFixture<TabComponent>;
-  let routerSpy: jasmine.Spy;
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    routerSpy = spyOn(Router.prototype, 'navigate');
+    routerSpy = jasmine.createSpyObj('Router', ['navigate'], { url: '/home' });
 
     await TestBed.configureTestingModule({
       declarations: [TabComponent],
       imports: [RouterTestingModule],
+      providers: [{ provide: Router, useValue: routerSpy }],
     }).compileComponents();
   });
 
@@ -28,8 +29,13 @@ describe('TabComponent', () => {
   });
 
   it('onClickTab() should work', async () => {
-    await component.onClickTab('test');
-    expect(routerSpy).toHaveBeenCalledTimes(1);
-    expect(routerSpy).toHaveBeenCalledWith(['test']);
+    await component.onClickTab(0);
+    expect(routerSpy.navigate).toHaveBeenCalledTimes(1);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['home']);
+  });
+
+  it('isActivate() should work', () => {
+    expect(component.isActivate(0)).toBeTrue();
+    expect(component.isActivate(3)).toBeFalse();
   });
 });

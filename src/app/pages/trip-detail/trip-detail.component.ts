@@ -70,7 +70,7 @@ export class TripDetailComponent implements OnInit {
 
   private async signConfirm(): Promise<void> {
     const loading: HTMLIonLoadingElement = await this.loadingController.create({
-      message: '上傳資料中...',
+      message: '請稍等...',
     });
     await loading.present();
 

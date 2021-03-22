@@ -18,8 +18,6 @@ export class LineAuthService {
     'https://access.line.me/oauth2/v2.1/authorize';
   private readonly lineOauthApiUrl: string =
     'https://api.line.me/oauth2/v2.1/token';
-  private readonly friendshipStatusUrl: string =
-    'https://api.line.me/friendship/v1/status';
 
   constructor(http: HttpClient, parameterService: ParameterService) {
     this.http = http;

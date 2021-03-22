@@ -108,20 +108,4 @@ export class LineAuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
   }
-
-  public async isFriend(): Promise<boolean> {
-    try {
-      const accessToken: string | null = localStorage.getItem('access_token');
-
-      const res: { friendFlag: boolean } = await this.http
-        .get<{ friendFlag: boolean }>(this.friendshipStatusUrl, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        })
-        .toPromise();
-
-      return res.friendFlag;
-    } catch {
-      return false;
-    }
-  }
 }

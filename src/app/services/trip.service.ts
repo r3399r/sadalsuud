@@ -15,7 +15,14 @@ export class TripService {
   }
 
   public async getTrips(): Promise<any> {
-    return await this.http.get<any>(this.tripApi).toPromise();
+    const trips = await this.http.get<any>(this.tripApi).toPromise();
+
+    const res = [];
+    trips.forEach((trip: any) => {
+      if (new Date(trip.expiredDate).getTime() > Date.now()) res.push(trip);
+    });
+
+    return res;
   }
 
   public async getTrip(id: string): Promise<any> {

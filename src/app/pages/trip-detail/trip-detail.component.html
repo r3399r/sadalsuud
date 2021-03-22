@@ -2,15 +2,11 @@
 <div class="detail-page" *ngIf="!isPageLoading()">
   <h1>出遊詳情</h1>
   <div uk-grid>
-    <div class="uk-width-auto bold">日期</div>
-    <div class="uk-width-expand right">{{ trip.date }}</div>
-  </div>
-  <div uk-grid>
     <div class="uk-width-auto bold">集合時間</div>
     <div class="uk-width-expand right">{{ trip.startDate }}</div>
   </div>
   <div uk-grid>
-    <div class="uk-width-auto bold">結束時間</div>
+    <div class="uk-width-auto bold">解散時間</div>
     <div class="uk-width-expand right">{{ trip.endDate }}</div>
   </div>
   <div uk-grid>
@@ -20,6 +16,10 @@
   <div uk-grid>
     <div class="uk-width-auto bold">集合地點</div>
     <div class="uk-width-expand right">{{ trip.meetPlace }}</div>
+  </div>
+  <div uk-grid>
+    <div class="uk-width-auto bold">解散地點</div>
+    <div class="uk-width-expand right">{{ trip.dismissPlace }}</div>
   </div>
   <div class="uk-divider-small"></div>
   <div uk-grid>
@@ -35,7 +35,7 @@
     <div class="uk-width-expand right">{{ trip.participants.join() }}</div>
   </div>
   <div uk-grid>
-    <div class="uk-width-auto bold">是否需家人陪同</div>
+    <div class="uk-width-auto bold">家人是否陪同</div>
     <div class="uk-width-expand right">
       {{ getAccompanyText(trip.needFamilyAccompany) }}
     </div>
@@ -51,15 +51,13 @@
     <div class="uk-width-auto bold">報名期限</div>
     <div class="uk-width-expand right">{{ trip.expiredDate }}</div>
   </div>
-  <div *ngIf="!canSign()">
+  <div *ngIf="!isLogin">
     <ion-button color="primary" expand="block" disabled
       >我要報名參加</ion-button
     >
-    <div class="warning">
-      您尚未登入或尚未加入官方帳號為好友，可點擊右下角的「個人資料」以登入與加入好友
-    </div>
+    <div class="warning">您尚未登入，可點擊右下角的「個人資料」以登入</div>
   </div>
-  <div *ngIf="canSign()">
+  <div *ngIf="isLogin">
     <ion-button color="primary" expand="block" (click)="onSign()"
       >我要報名參加</ion-button
     >

@@ -47,6 +47,9 @@ describe('UserProfileComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+
+    userServiceSpy.getUser.and.resolveTo(null);
+    expect(component).toBeTruthy();
   });
 
   it('onLogout() should work', () => {

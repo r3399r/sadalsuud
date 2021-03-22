@@ -6,10 +6,21 @@ import { TripService } from 'src/app/services/trip.service';
 describe('TripService', () => {
   let service: TripService;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
-  let dummyResult: any;
+  let dummyTrips: any;
 
   beforeAll(() => {
-    dummyResult = { a: 1, b: 2 };
+    dummyTrips = [
+      {
+        expiredDate: new Date(
+          new Date().valueOf() - 1000 * 3600 * 24
+        ).toISOString(),
+      },
+      {
+        expiredDate: new Date(
+          new Date().valueOf() + 1000 * 3600 * 24
+        ).toISOString(),
+      },
+    ];
   });
 
   beforeEach(() => {
@@ -26,17 +37,17 @@ describe('TripService', () => {
   });
 
   it('getTrips() should work', async () => {
-    httpClientSpy.get.and.returnValue(of(dummyResult));
-    expect(await service.getTrips()).toBe(dummyResult);
+    httpClientSpy.get.and.returnValue(of(dummyTrips));
+    expect(await service.getTrips()).toEqual([dummyTrips[1]]);
   });
 
   it('getTrip() should work', async () => {
-    httpClientSpy.get.and.returnValue(of(dummyResult));
-    expect(await service.getTrip('testId')).toBe(dummyResult);
+    httpClientSpy.get.and.returnValue(of(dummyTrips[0]));
+    expect(await service.getTrip('testId')).toEqual(dummyTrips[0]);
   });
 
   it('signTrip() should work', async () => {
-    httpClientSpy.post.and.returnValue(of(dummyResult));
-    expect(await service.signTrip('testId', 'testId2')).toBe(dummyResult);
+    httpClientSpy.post.and.returnValue(of('result'));
+    expect(await service.signTrip('testId', 'testId2')).toBe('result');
   });
 });

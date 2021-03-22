@@ -21,7 +21,6 @@ export class TripDetailComponent implements OnInit {
   private loadingController: LoadingController;
 
   public isLogin: boolean;
-  public isFriend: boolean;
   public trip: any;
 
   constructor(
@@ -42,30 +41,20 @@ export class TripDetailComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.isLogin = await this.lineAuthService.isAuth();
-    this.isFriend = await this.lineAuthService.isFriend();
 
     this.activatedRoute.params.subscribe(async (params: Params) => {
       const res = await this.tripService.getTrip(params.id);
       this.trip = {
         ...res,
-        date: moment(res.startDate).format('YYYY-MM-DD'),
-        startDate: moment(res.startDate).format('HH:mm'),
-        endDate: moment(res.endDate).format('HH:mm'),
+        startDate: moment(res.startDate).format('YYYY-MM-DD HH:mm'),
+        endDate: moment(res.endDate).format('YYYY-MM-DD HH:mm'),
         expiredDate: moment(res.expiredDate).format('YYYY-MM-DD HH:mm'),
       };
     });
   }
 
   public isPageLoading(): boolean {
-    return (
-      this.trip === undefined ||
-      this.isLogin === undefined ||
-      this.isFriend === undefined
-    );
-  }
-
-  public canSign(): boolean {
-    return this.isLogin === true && this.isFriend === true;
+    return this.trip === undefined || this.isLogin === undefined;
   }
 
   private async signConfirm(): Promise<void> {

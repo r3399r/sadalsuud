@@ -33,7 +33,9 @@ export class UserProfileComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.lineUserProfile = await this.userService.getLineUser();
-    this.user = await this.userService.getUser(this.lineUserProfile.userId);
+
+    const dbUser = await this.userService.getUser(this.lineUserProfile.userId);
+    if (dbUser !== null) this.user = dbUser;
 
     this.lineChannelUrl = await this.parameterService.getParameter(
       'SADALSUUD_CHANNEL_URL'

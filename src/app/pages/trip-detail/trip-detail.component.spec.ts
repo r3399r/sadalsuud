@@ -30,12 +30,8 @@ describe('TripDetailComponent', () => {
       endDate: '2020-02-28T20:00:00.000Z',
     });
 
-    lineAuthServiceSpy = jasmine.createSpyObj('LineAuthService', [
-      'isAuth',
-      'isFriend',
-    ]);
+    lineAuthServiceSpy = jasmine.createSpyObj('LineAuthService', ['isAuth']);
     lineAuthServiceSpy.isAuth.and.resolveTo(true);
-    lineAuthServiceSpy.isFriend.and.resolveTo(true);
 
     userServiceSpy = jasmine.createSpyObj('LineService', ['getLineUser']);
     userServiceSpy.getLineUser.and.resolveTo({ userId: 'testId' } as any);
@@ -79,14 +75,9 @@ describe('TripDetailComponent', () => {
   });
 
   it('isPageLoading() should work', async () => {
-    lineAuthServiceSpy.isFriend.and.resolveTo(undefined);
+    lineAuthServiceSpy.isAuth.and.resolveTo(undefined);
     await component.ngOnInit();
     expect(component.isPageLoading()).toBeTrue();
-  });
-
-  it('canSign() should work', async () => {
-    await component.ngOnInit();
-    expect(component.canSign()).toBeTrue();
   });
 
   it('onSign() should work when click yes', async () => {

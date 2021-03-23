@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
-import * as moment from 'moment';
 import { LineUserProfile } from 'src/app/model/LineUserProfile';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 import { TripService } from 'src/app/services/trip.service';
 import { UserService } from 'src/app/services/user.service';
+import { DateHelper } from 'src/app/util/date-helper';
 
 @Component({
   selector: 'app-trip-detail',
@@ -19,6 +19,7 @@ export class TripDetailComponent implements OnInit {
   private tripService: TripService;
   private alertController: AlertController;
   private loadingController: LoadingController;
+  private dateHelper: DateHelper;
 
   public isLogin: boolean;
   public trip: any;
@@ -37,6 +38,7 @@ export class TripDetailComponent implements OnInit {
     this.tripService = tripService;
     this.alertController = alertController;
     this.loadingController = loadingController;
+    this.dateHelper = new DateHelper();
   }
 
   async ngOnInit(): Promise<void> {
@@ -46,9 +48,9 @@ export class TripDetailComponent implements OnInit {
       const res = await this.tripService.getTrip(params.id);
       this.trip = {
         ...res,
-        startDate: moment(res.startDate).format('YYYY-MM-DD HH:mm'),
-        endDate: moment(res.endDate).format('YYYY-MM-DD HH:mm'),
-        expiredDate: moment(res.expiredDate).format('YYYY-MM-DD HH:mm'),
+        startDate: this.dateHelper.dateAll(res.startDate),
+        endDate: this.dateHelper.dateAll(res.endDate),
+        expiredDate: this.dateHelper.dateAll(res.expiredDate),
       };
     });
   }

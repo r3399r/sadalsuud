@@ -32,7 +32,7 @@ export class TripService {
   public async signTrip(tripId: string, lineUserId: string): Promise<string> {
     return await this.http
       .post<string>(`${this.signApi}`, {
-        tripCreationId: tripId,
+        tripId,
         lineUserId,
       })
       .toPromise();

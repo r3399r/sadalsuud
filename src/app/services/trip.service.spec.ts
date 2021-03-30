@@ -11,11 +11,19 @@ describe('TripService', () => {
   beforeAll(() => {
     dummyTrips = [
       {
+        creationId: 'testId1',
+        startDate: new Date(
+          new Date().valueOf() - 3000 * 3600 * 24
+        ).toISOString(),
         expiredDate: new Date(
           new Date().valueOf() - 1000 * 3600 * 24
         ).toISOString(),
       },
       {
+        creationId: 'testId2',
+        startDate: new Date(
+          new Date().valueOf() - 2000 * 3600 * 24
+        ).toISOString(),
         expiredDate: new Date(
           new Date().valueOf() + 1000 * 3600 * 24
         ).toISOString(),
@@ -25,6 +33,7 @@ describe('TripService', () => {
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'post']);
+    httpClientSpy.get.and.returnValue(of(dummyTrips));
 
     TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: httpClientSpy }],
@@ -37,13 +46,13 @@ describe('TripService', () => {
   });
 
   it('getTrips() should work', async () => {
-    httpClientSpy.get.and.returnValue(of(dummyTrips));
+    await service.getTrips();
     expect(await service.getTrips()).toEqual([dummyTrips[1]]);
   });
 
   it('getTrip() should work', async () => {
-    httpClientSpy.get.and.returnValue(of(dummyTrips[0]));
-    expect(await service.getTrip('testId')).toEqual(dummyTrips[0]);
+    await service.getTrip('testId1');
+    expect(await service.getTrip('testId1')).toEqual(dummyTrips[0]);
   });
 
   it('signTrip() should work', async () => {

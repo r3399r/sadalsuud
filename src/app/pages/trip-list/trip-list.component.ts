@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
 import { TripService } from 'src/app/services/trip.service';
+import { DateHelper } from 'src/app/util/date-helper';
 
 @Component({
   selector: 'app-trip-list',
@@ -12,10 +12,12 @@ export class TripListComponent implements OnInit {
   private router: Router;
   private tripService: TripService;
   public trips: any;
+  private dateHelper: DateHelper;
 
   constructor(router: Router, tripService: TripService) {
     this.router = router;
     this.tripService = tripService;
+    this.dateHelper = new DateHelper();
   }
 
   async ngOnInit(): Promise<void> {
@@ -23,9 +25,9 @@ export class TripListComponent implements OnInit {
     this.trips = res.map((trip: any) => {
       return {
         ...trip,
-        date: moment(trip.startDate).format('YYYY-MM-DD'),
-        startDate: moment(trip.startDate).format('HH:mm'),
-        endDate: moment(trip.endDate).format('HH:mm'),
+        date: this.dateHelper.getDate(trip.startDate),
+        startDate: this.dateHelper.hhmm(trip.startDate),
+        endDate: this.dateHelper.hhmm(trip.endDate),
       };
     });
   }

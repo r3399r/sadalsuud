@@ -18,6 +18,7 @@ describe('UserService', () => {
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    httpClientSpy.get.and.returnValue(of(dummyLineUser));
 
     TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: httpClientSpy }],
@@ -30,12 +31,11 @@ describe('UserService', () => {
   });
 
   it('getLineUser() should work', async () => {
-    httpClientSpy.get.and.returnValue(of(dummyLineUser));
     expect(await service.getLineUser()).toBe(dummyLineUser);
   });
 
   it('getUser() should work', async () => {
-    httpClientSpy.get.and.returnValue(of(dummyLineUser));
+    await service.getUser('testId');
     expect(await service.getUser('testId')).toBe(dummyLineUser);
   });
 });

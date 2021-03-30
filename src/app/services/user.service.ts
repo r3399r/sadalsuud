@@ -11,6 +11,8 @@ export class UserService {
   private readonly lineProfileUrl: string = 'https://api.line.me/v2/profile';
   private readonly userApi: string = `${environment.api}/users`;
 
+  private user: any;
+
   constructor(http: HttpClient) {
     this.http = http;
   }
@@ -26,10 +28,13 @@ export class UserService {
   }
 
   public async getUser(userId: string): Promise<any> {
-    return await this.http
-      .get<any>(`${this.userApi}/${userId}`, {
-        params: { entity: 'sadalsuud-user' },
-      })
-      .toPromise();
+    if (this.user === undefined)
+      this.user = await this.http
+        .get<any>(`${this.userApi}/${userId}`, {
+          params: { entity: 'sadalsuud-user' },
+        })
+        .toPromise();
+
+    return this.user;
   }
 }

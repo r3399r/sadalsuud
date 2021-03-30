@@ -11,4 +11,15 @@ export class DateHelper {
 
     return `${yyyymmdd} (${week[weekDay]}) ${hhmm}`;
   }
+
+  public getDate(iso: string): string {
+    const date: Date = new Date(iso);
+    const weekDay: number = date.getDay();
+
+    return moment(iso).format(`YYYY-MM-DD (${week[weekDay]})`);
+  }
+
+  public hhmm(iso: string): string {
+    return moment(iso).format('HH:mm');
+  }
 }

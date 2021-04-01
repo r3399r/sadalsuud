@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ToastController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { HomeComponent } from 'src/app/pages/home/home.component';
+import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 
 describe('HomeComponent', () => {
@@ -21,21 +22,29 @@ describe('HomeComponent', () => {
       'login',
     ]);
     lineAuthServiceSpy.getState.and.returnValue('testState');
-    lineAuthServiceSpy.login.and.resolveTo(true);
 
     toastControllerSpy = jasmine.createSpyObj('ToastController', ['create']);
     toastControllerSpy.create.and.resolveTo({ present: async () => {} } as any);
 
     await TestBed.configureTestingModule({
       declarations: [HomeComponent],
-      imports: [RouterTestingModule],
+      imports: [
+        RouterTestingModule.withRoutes([
+          {
+            path: 'user-profile',
+            component: UserProfileComponent,
+          },
+        ]),
+      ],
       providers: [
         { provide: LineAuthService, useValue: lineAuthServiceSpy },
         { provide: ActivatedRoute, useValue: routeStub },
         { provide: ToastController, useValue: toastControllerSpy },
       ],
     }).compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
   });
@@ -45,6 +54,7 @@ describe('HomeComponent', () => {
   });
 
   it('ngOnInit with correct params and login succeeds', async () => {
+    lineAuthServiceSpy.login.and.resolveTo(true);
     await component.ngOnInit();
     expect(lineAuthServiceSpy.getState).toHaveBeenCalledTimes(1);
     expect(toastControllerSpy.create).toHaveBeenCalledTimes(1);
@@ -70,6 +80,6 @@ describe('HomeComponent', () => {
     lineAuthServiceSpy.getState.and.returnValue('');
 
     await component.ngOnInit();
-    expect(lineAuthServiceSpy.getState).toHaveBeenCalled();
+    expect(lineAuthServiceSpy.getState).toHaveBeenCalledTimes(1);
   });
 });

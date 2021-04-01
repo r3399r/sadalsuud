@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 
@@ -12,15 +12,18 @@ export class HomeComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private lineAuthService: LineAuthService;
   public toastController: ToastController;
+  private router: Router;
 
   constructor(
     activatedRoute: ActivatedRoute,
     lineAuthService: LineAuthService,
-    toastController: ToastController
+    toastController: ToastController,
+    router: Router
   ) {
     this.activatedRoute = activatedRoute;
     this.lineAuthService = lineAuthService;
     this.toastController = toastController;
+    this.router = router;
   }
 
   public async ngOnInit(): Promise<void> {
@@ -36,6 +39,9 @@ export class HomeComponent implements OnInit {
             duration: 3000,
           });
           await toast.present();
+
+          if (message === '登入成功')
+            await this.router.navigate(['user-profile']);
         }
       }
     );

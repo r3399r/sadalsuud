@@ -38,7 +38,7 @@ describe('TripListComponent', () => {
   });
 
   it('onClickCard() should work', async () => {
-    await component.onClickCard('177BFEFF52BA1');
+    component.onClickCard('177BFEFF52BA1');
     expect(routerSpy).toHaveBeenCalledTimes(1);
     expect(routerSpy).toHaveBeenCalledWith(['trip-detail/177BFEFF52BA1']);
   });

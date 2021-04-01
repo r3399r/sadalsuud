@@ -37,4 +37,17 @@ export class UserService {
 
     return this.user;
   }
+
+  public async getMe(): Promise<any> {
+    if (this.user === undefined) {
+      const lineUserProfile = await this.getLineUser();
+      this.user = await this.http
+        .get<any>(`${this.userApi}/${lineUserProfile.userId}`, {
+          params: { entity: 'sadalsuud-user' },
+        })
+        .toPromise();
+    }
+
+    return this.user;
+  }
 }

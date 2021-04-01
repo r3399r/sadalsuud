@@ -1,0 +1,132 @@
+<div class="add-trip-page">
+  <h1>新增星遊</h1>
+  <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+    <div uk-grid>
+      <div class="key uk-width-auto">日期<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-datetime
+          placeholder="請選擇日期"
+          displayFormat="YYYY/MM/DD"
+          formControlName="date"
+        ></ion-datetime>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">開始時間<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-datetime
+          placeholder="請選擇時間"
+          displayFormat="HH:mm"
+          formControlName="startTime"
+        ></ion-datetime>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">結束時間<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-datetime
+          placeholder="請選擇時間"
+          displayFormat="HH:mm"
+          formControlName="endTime"
+        ></ion-datetime>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">地點<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-input placeholder="請輸入地點" formControlName="place"></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">集合地點<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-input
+          placeholder="請輸入集合地點"
+          formControlName="meetPlace"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">解散地點<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-input
+          placeholder="請輸入解散地點"
+          formControlName="dismissPlace"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">花費<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-input
+          placeholder="請描述可能的花費"
+          formControlName="fee"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">應帶物品</div>
+      <div class="uk-width-expand right">
+        <ion-input
+          placeholder="請輸入要帶的東西"
+          formControlName="thingsToBring"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">
+        家人是否同行<span class="red">*</span>
+      </div>
+      <div class="uk-width-expand right">
+        <ion-select
+          interface="action-sheet"
+          placeholder="請選擇"
+          formControlName="needFamilyAccompany"
+        >
+          <ion-select-option value="yes">是</ion-select-option>
+          <ion-select-option value="optional">視情況而定</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">可報名名額<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-input
+          type="number"
+          placeholder="請輸入數字"
+          formControlName="quota"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">星遊簡介<span class="red">*</span></div>
+      <div class="uk-width-expand right">
+        <ion-input
+          placeholder="這將顯示於出遊清單"
+          formControlName="shortDesc"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">
+        星遊詳細介紹<span class="red">*</span>
+      </div>
+      <div class="uk-width-expand right">
+        <ion-input
+          placeholder="這將顯示於出遊詳情"
+          formControlName="detailedDesc"
+        ></ion-input>
+      </div>
+    </div>
+    <div uk-grid>
+      <div class="key uk-width-auto">截止日期</div>
+      <div class="uk-width-expand right">
+        <ion-datetime
+          value="{checkoutForm.value.date}"
+          displayFormat="YYYY/MM/DD"
+        ></ion-datetime>
+      </div>
+    </div>
+    <ion-button color="primary" expand="block" type="submit">送出</ion-button>
+  </form>
+</div>

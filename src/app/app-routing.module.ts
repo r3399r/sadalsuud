@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { AuthGuard } from 'src/app/auth.guard';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
+import { AddTripComponent } from 'src/app/pages/add-trip/add-trip.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
 import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
@@ -37,6 +38,10 @@ const tripListRoute: Route = {
   path: 'trip-list',
   component: TripListComponent,
 };
+const addTripRoute: Route = {
+  path: 'add-trip',
+  component: AddTripComponent,
+};
 const tripDetailRoute: Route = {
   path: 'trip-detail/:id',
   component: TripDetailComponent,
@@ -51,7 +56,7 @@ const privateRoute: Route = {
   path: '',
   canActivate: [AuthGuard],
   component: LayoutComponent,
-  children: [userProfileRoute],
+  children: [userProfileRoute, addTripRoute],
 };
 const publicRoute: Route = {
   path: '',

@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { IonicModule } from '@ionic/angular';
@@ -8,6 +9,7 @@ import { AppComponent } from 'src/app/app.component';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { TabComponent } from 'src/app/components/tab/tab.component';
+import { AddTripComponent } from 'src/app/pages/add-trip/add-trip.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
 import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
@@ -26,6 +28,7 @@ import { environment } from 'src/environments/environment';
     LoginComponent,
     SpinnerComponent,
     TripDetailComponent,
+    AddTripComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,6 +38,8 @@ import { environment } from 'src/environments/environment';
     }),
     IonicModule.forRoot(),
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,6 +1,16 @@
 .trip-page {
   padding: 10px 15px 15px 15px;
 }
+.add {
+  width: fit-content;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #1f1f1f;
+  border-radius: 6px;
+}
+.add:active {
+  background-color: #fff8e9;
+}
 .card {
   border: 1px solid #743800;
   border-radius: 6px;
@@ -10,4 +20,7 @@
   .bold {
     font-weight: bold;
   }
+}
+.card:active {
+  background-color: #fff6c6;
 }

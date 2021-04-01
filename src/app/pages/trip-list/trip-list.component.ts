@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LineAuthService } from 'src/app/services/line-auth.service';
 import { TripService } from 'src/app/services/trip.service';
+import { UserService } from 'src/app/services/user.service';
 import { DateHelper } from 'src/app/util/date-helper';
 
 @Component({
@@ -11,12 +13,23 @@ import { DateHelper } from 'src/app/util/date-helper';
 export class TripListComponent implements OnInit {
   private router: Router;
   private tripService: TripService;
-  public trips: any;
+  private lineAuthService: LineAuthService;
+  private userService: UserService;
   private dateHelper: DateHelper;
 
-  constructor(router: Router, tripService: TripService) {
+  public trips: any;
+  public user: any;
+
+  constructor(
+    router: Router,
+    tripService: TripService,
+    lineAuthService: LineAuthService,
+    userService: UserService
+  ) {
     this.router = router;
     this.tripService = tripService;
+    this.userService = userService;
+    this.lineAuthService = lineAuthService;
     this.dateHelper = new DateHelper();
   }
 
@@ -30,9 +43,17 @@ export class TripListComponent implements OnInit {
         endDate: this.dateHelper.hhmm(trip.endDate),
       };
     });
+
+    const isLogin: boolean = await this.lineAuthService.isAuth();
+    if (isLogin === true) this.user = await this.userService.getMe();
+    else this.user = {};
   }
 
   public onClickCard(id: string): void {
     this.router.navigate([`trip-detail/${id}`]);
+  }
+
+  public onClickAddTrip(): void {
+    this.router.navigate(['add-trip']);
   }
 }

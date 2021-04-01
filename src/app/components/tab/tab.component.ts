@@ -27,7 +27,11 @@ export class TabComponent implements OnInit {
         return router === 'home';
       }
       case 1: {
-        return router === 'trip-list' || router === 'trip-detail';
+        return (
+          router === 'trip-list' ||
+          router === 'trip-detail' ||
+          router === 'add-trip'
+        );
       }
       case 2: {
         return router === 'user-profile' || router === 'login';

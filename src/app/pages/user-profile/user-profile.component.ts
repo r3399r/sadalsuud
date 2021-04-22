@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 import { LineUserProfile } from 'src/app/model/LineUserProfile';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 import { ParameterService } from 'src/app/services/parameter.service';
@@ -18,20 +19,28 @@ export class UserProfileComponent implements OnInit {
   public user: any = {};
   public lineChannelUrl: string;
   public router: Router;
+  private loadingController: LoadingController;
 
   constructor(
     userService: UserService,
     parameterService: ParameterService,
     lineAuthService: LineAuthService,
-    router: Router
+    router: Router,
+    loadingController: LoadingController
   ) {
     this.userService = userService;
     this.parameterService = parameterService;
     this.lineAuthService = lineAuthService;
     this.router = router;
+    this.loadingController = loadingController;
   }
 
   async ngOnInit(): Promise<void> {
+    const loading: HTMLIonLoadingElement = await this.loadingController.create({
+      message: '讀取中...',
+    });
+    await loading.present();
+
     this.lineUserProfile = await this.userService.getLineUser();
 
     const dbUser = await this.userService.getUser(this.lineUserProfile.userId);
@@ -40,6 +49,7 @@ export class UserProfileComponent implements OnInit {
     this.lineChannelUrl = await this.parameterService.getParameter(
       'SADALSUUD_CHANNEL_URL'
     );
+    await loading.dismiss();
   }
 
   onLogout(): void {

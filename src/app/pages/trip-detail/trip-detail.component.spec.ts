@@ -83,7 +83,7 @@ describe('TripDetailComponent', () => {
   it('onSign() should work when click yes', async () => {
     await component.onSign();
     expect(alertControllerSpy.create).toHaveBeenCalledTimes(2);
-    expect(loadingControllerSpy.create).toHaveBeenCalledTimes(1);
+    expect(loadingControllerSpy.create).toHaveBeenCalledTimes(2);
   });
 
   it('onSign() should work when click no', async () => {
@@ -93,7 +93,7 @@ describe('TripDetailComponent', () => {
     } as any);
     await component.onSign();
     expect(alertControllerSpy.create).toHaveBeenCalledTimes(1);
-    expect(loadingControllerSpy.create).toHaveBeenCalledTimes(0);
+    expect(loadingControllerSpy.create).toHaveBeenCalledTimes(1);
   });
 
   it('getAccompanyText() should work', () => {

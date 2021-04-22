@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { LoadingController } from '@ionic/angular';
 import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 import { ParameterService } from 'src/app/services/parameter.service';
@@ -12,6 +13,7 @@ describe('UserProfileComponent', () => {
   let userServiceSpy: jasmine.SpyObj<UserService>;
   let parameterServiceSpy: jasmine.SpyObj<ParameterService>;
   let lineAuthServiceSpy: jasmine.SpyObj<LineAuthService>;
+  let loadingControllerSpy: jasmine.SpyObj<LoadingController>;
   let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
@@ -26,6 +28,15 @@ describe('UserProfileComponent', () => {
     ]);
 
     lineAuthServiceSpy = jasmine.createSpyObj('LineAuthService', ['logout']);
+
+    loadingControllerSpy = jasmine.createSpyObj('LoadingController', [
+      'create',
+    ]);
+    loadingControllerSpy.create.and.resolveTo({
+      present: async () => {},
+      dismiss: async () => {},
+    } as any);
+
     routerSpy = spyOn(Router.prototype, 'navigate');
 
     await TestBed.configureTestingModule({
@@ -35,6 +46,7 @@ describe('UserProfileComponent', () => {
         { provide: UserService, useValue: userServiceSpy },
         { provide: ParameterService, useValue: parameterServiceSpy },
         { provide: LineAuthService, useValue: lineAuthServiceSpy },
+        { provide: LoadingController, useValue: loadingControllerSpy },
       ],
     }).compileComponents();
   });

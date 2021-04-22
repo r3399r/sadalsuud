@@ -42,6 +42,11 @@ export class TripDetailComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    const loading: HTMLIonLoadingElement = await this.loadingController.create({
+      message: '讀取中...',
+    });
+    await loading.present();
+
     this.isLogin = await this.lineAuthService.isAuth();
 
     this.activatedRoute.params.subscribe(async (params: Params) => {
@@ -52,6 +57,7 @@ export class TripDetailComponent implements OnInit {
         endDate: this.dateHelper.dateAll(res.endDate),
         expiredDate: this.dateHelper.dateAll(res.expiredDate),
       };
+      await loading.dismiss();
     });
   }
 

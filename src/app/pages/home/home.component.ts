@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { version } from 'package.json';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 
 @Component({
@@ -13,6 +14,7 @@ export class HomeComponent implements OnInit {
   private lineAuthService: LineAuthService;
   public toastController: ToastController;
   private router: Router;
+  public version: string = version;
 
   constructor(
     activatedRoute: ActivatedRoute,

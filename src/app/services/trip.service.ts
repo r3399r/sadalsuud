@@ -35,7 +35,7 @@ export class TripService {
     const res = [];
     for (const key of Object.keys(this.trips)) {
       const trip = this.trips[key];
-      if (new Date(trip.expiredDate).getTime() > Date.now()) res.push(trip);
+      if (new Date(trip.endDate).getTime() > Date.now()) res.push(trip);
     }
 
     return res;

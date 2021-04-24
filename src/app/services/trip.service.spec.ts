@@ -15,6 +15,9 @@ describe('TripService', () => {
         startDate: new Date(
           new Date().valueOf() - 3000 * 3600 * 24
         ).toISOString(),
+        endDate: new Date(
+          new Date().valueOf() - 3000 * 3600 * 24
+        ).toISOString(),
         expiredDate: new Date(
           new Date().valueOf() - 1000 * 3600 * 24
         ).toISOString(),
@@ -22,10 +25,13 @@ describe('TripService', () => {
       {
         creationId: 'testId2',
         startDate: new Date(
-          new Date().valueOf() - 2000 * 3600 * 24
+          new Date().valueOf() + 1000 * 3600 * 24
+        ).toISOString(),
+        endDate: new Date(
+          new Date().valueOf() + 1000 * 3600 * 24
         ).toISOString(),
         expiredDate: new Date(
-          new Date().valueOf() + 1000 * 3600 * 24
+          new Date().valueOf() + 2000 * 3600 * 24
         ).toISOString(),
       },
     ];

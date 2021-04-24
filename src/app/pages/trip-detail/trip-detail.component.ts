@@ -22,6 +22,7 @@ export class TripDetailComponent implements OnInit {
   private dateHelper: DateHelper;
 
   public isLogin: boolean;
+  public isExpired: boolean;
   public trip: any;
 
   constructor(
@@ -57,6 +58,9 @@ export class TripDetailComponent implements OnInit {
         endDate: this.dateHelper.dateAll(res.endDate),
         expiredDate: this.dateHelper.dateAll(res.expiredDate),
       };
+
+      this.isExpired =
+        new Date(this.trip.expiredDate).getTime() > Date.now() ? true : false;
       await loading.dismiss();
     });
   }
@@ -106,5 +110,12 @@ export class TripDetailComponent implements OnInit {
     if (needFamilyAccompany === 'yes') return '是';
 
     return '視情況而定';
+  }
+
+  public warningMessage(): string {
+    if (!this.isLogin) return '您尚未登入，可點擊右下角的「個人資料」以登入';
+    if (!this.isExpired) return '報名期限已過，此活動僅開放查詢';
+
+    return;
   }
 }

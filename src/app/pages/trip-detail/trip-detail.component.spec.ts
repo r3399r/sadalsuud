@@ -28,6 +28,7 @@ describe('TripDetailComponent', () => {
     tripServiceSpy.getTrip.and.resolveTo({
       startDate: '2020-02-28T20:00:00.000Z',
       endDate: '2020-02-28T20:00:00.000Z',
+      expiredDate: '2020-04-28T20:00:00.000Z',
     });
 
     lineAuthServiceSpy = jasmine.createSpyObj('LineAuthService', ['isAuth']);
@@ -99,5 +100,24 @@ describe('TripDetailComponent', () => {
   it('getAccompanyText() should work', () => {
     expect(component.getAccompanyText('yes')).toBe('是');
     expect(component.getAccompanyText('optional')).toBe('視情況而定');
+  });
+
+  it('warningMessage() should work', async () => {
+    expect(component.warningMessage()).toBe(
+      '您尚未登入，可點擊右下角的「個人資料」以登入'
+    );
+
+    await component.ngOnInit();
+    expect(component.warningMessage()).toBe('報名期限已過，此活動僅開放查詢');
+
+    tripServiceSpy.getTrip.and.resolveTo({
+      startDate: '2020-02-28T20:00:00.000Z',
+      endDate: '2020-02-28T20:00:00.000Z',
+      expiredDate: new Date(
+        new Date().valueOf() + 2000 * 3600 * 24
+      ).toISOString(),
+    });
+    await component.ngOnInit();
+    expect(component.warningMessage()).toBeUndefined();
   });
 });

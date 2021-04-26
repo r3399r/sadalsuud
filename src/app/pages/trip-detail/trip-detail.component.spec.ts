@@ -26,8 +26,8 @@ describe('TripDetailComponent', () => {
       'signTrip',
     ]);
     tripServiceSpy.getTrip.and.resolveTo({
-      startDate: '2020-02-28T20:00:00.000Z',
-      endDate: '2020-02-28T20:00:00.000Z',
+      startDate: '2020-02-29T20:00:00.000Z',
+      endDate: '2020-02-29T20:00:00.000Z',
       expiredDate: '2020-04-28T20:00:00.000Z',
     });
 

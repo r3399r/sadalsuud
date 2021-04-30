@@ -28,13 +28,15 @@ export class UserService {
   }
 
   public async getUser(userId: string): Promise<any> {
-    if (this.user === undefined)
-      this.user = await this.http
-        .get<any>(`${this.userApi}/${userId}`, {
-          params: { entity: 'sadalsuud-user' },
-        })
-        .toPromise();
+    try {
+      if (this.user === undefined)
+        this.user = await this.http
+          .get<any>(`${this.userApi}/${userId}`)
+          .toPromise();
 
-    return this.user;
+      return this.user;
+    } catch (e) {
+      return undefined;
+    }
   }
 }

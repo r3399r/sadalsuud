@@ -35,13 +35,13 @@ describe('UserService', () => {
   });
 
   it('getUser() should work', async () => {
-    await service.getUser('testId');
-    expect(await service.getUser('testId')).toBe(dummyLineUser);
+    await service.getUser();
+    expect(await service.getUser()).toBe(dummyLineUser);
   });
 
   it('getUser() should return undefined when API failed', async () => {
     httpClientSpy.get.and.returnValue(throwError('user not exist'));
-    await service.getUser('testId');
-    expect(await service.getUser('testId')).toBeUndefined();
+    await service.getUser();
+    expect(await service.getUser()).toBeUndefined();
   });
 });

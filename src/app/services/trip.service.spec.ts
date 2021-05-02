@@ -63,6 +63,6 @@ describe('TripService', () => {
 
   it('signTrip() should work', async () => {
     httpClientSpy.post.and.returnValue(of('result'));
-    expect(await service.signTrip('testId', 'testId2')).toBe('result');
+    expect(await service.signTrip('testId')).toBe('result');
   });
 });

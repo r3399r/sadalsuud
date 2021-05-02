@@ -42,9 +42,7 @@ export class UserProfileComponent implements OnInit {
     await loading.present();
 
     this.lineUserProfile = await this.userService.getLineUser();
-
-    const dbUser = await this.userService.getUser(this.lineUserProfile.userId);
-    if (dbUser !== undefined) this.user = dbUser;
+    this.user = await this.userService.getUser();
 
     this.lineChannelUrl = await this.parameterService.getParameter(
       'SADALSUUD_CHANNEL_URL'

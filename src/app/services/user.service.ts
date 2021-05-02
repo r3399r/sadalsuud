@@ -27,11 +27,13 @@ export class UserService {
       .toPromise();
   }
 
-  public async getUser(userId: string): Promise<any> {
+  public async getUser(): Promise<any> {
+    const lineUser = await this.getLineUser();
+
     try {
       if (this.user === undefined)
         this.user = await this.http
-          .get<any>(`${this.userApi}/${userId}`)
+          .get<any>(`${this.userApi}/${lineUser.userId}`)
           .toPromise();
 
       return this.user;

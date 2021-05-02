@@ -69,25 +69,25 @@ export class TripDetailComponent implements OnInit {
     return this.trip === undefined || this.isLogin === undefined;
   }
 
-  private async signConfirm(): Promise<void> {
-    const loading: HTMLIonLoadingElement = await this.loadingController.create({
-      message: '請稍等...',
-    });
-    await loading.present();
+  // private async signConfirm(): Promise<void> {
+  //   const loading: HTMLIonLoadingElement = await this.loadingController.create({
+  //     message: '請稍等...',
+  //   });
+  //   await loading.present();
 
-    const lineUserProfile: LineUserProfile = await this.userService.getLineUser();
-    const signResponse: string = await this.tripService.signTrip(
-      this.trip.creationId,
-      lineUserProfile.userId
-    );
+  //   const lineUserProfile: LineUserProfile = await this.userService.getLineUser();
+  //   const signResponse: string = await this.tripService.signTrip(
+  //     this.trip.creationId,
+  //     lineUserProfile.userId
+  //   );
 
-    await loading.dismiss();
-    const alert: HTMLIonAlertElement = await this.alertController.create({
-      message: signResponse,
-      buttons: ['知道了'],
-    });
-    await alert.present();
-  }
+  //   await loading.dismiss();
+  //   const alert: HTMLIonAlertElement = await this.alertController.create({
+  //     message: signResponse,
+  //     buttons: ['知道了'],
+  //   });
+  //   await alert.present();
+  // }
 
   public async onSign(): Promise<void> {
     const alert: HTMLIonAlertElement = await this.alertController.create({
@@ -103,7 +103,27 @@ export class TripDetailComponent implements OnInit {
     await alert.present();
 
     const eventDetail = await alert.onDidDismiss();
-    if (eventDetail.role === 'confirm') await this.signConfirm();
+    if (eventDetail.role === 'confirm') {
+      const loading: HTMLIonLoadingElement = await this.loadingController.create(
+        {
+          message: '請稍等...',
+        }
+      );
+      await loading.present();
+
+      const signResponse: string = await this.tripService.signTrip(
+        this.trip.creationId
+      );
+      await loading.dismiss();
+
+      const notification: HTMLIonAlertElement = await this.alertController.create(
+        {
+          message: signResponse,
+          buttons: ['知道了'],
+        }
+      );
+      await notification.present();
+    }
   }
 
   public getAccompanyText(needFamilyAccompany: string): string {

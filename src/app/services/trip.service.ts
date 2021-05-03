@@ -57,40 +57,21 @@ export class TripService {
     return this.trips[id];
   }
 
-  public async signTrip(tripId: string): Promise<string> {
+  public async signTrip(tripId: string, star: any): Promise<string> {
     try {
-      const user = await this.userService.getUser();
-
-      if (user === undefined) {
-        const lineUserProfile = await this.userService.getLineUser();
-        await this.lineService.pushMessage(lineUserProfile.userId, [
-          '您好，我們收到您的報名申請，但由於我們的資料庫中並未有您的資料，故報名尚未成功。',
-          '請您回覆以下基本資訊，謝謝您\n1. 姓名\n2. 身份(星兒家人或星雨團員或其他)\n3. 聯絡方式(手機)',
-        ]);
-
-        return '報名尚未成功。資料庫並未有您的資料，請開啟LINE回覆星遊的官方帳號';
-      }
-
-      if (user.role !== 'family' && user.role !== 'star')
-        return '報名失敗。此活動僅開放給星兒或家人報名，資料庫顯示您的身份為「星雨哥姐」。若您想參加活動或資料設定有誤，請洽星遊的LINE官方帳號，謝謝';
-
-      // if(user.starInfo.lengh>0){
-
-      // }
-
       await this.http
         .post<string>(`${this.signApi}`, {
           tripId,
-          starId: user.starInfo[0].creationId,
+          starId: star.creationId,
         })
         .toPromise();
 
-      return '報名成功，將於截止後進行抽籤';
+      return `${star.name} 報名成功！將於截止後進行抽籤`;
     } catch (e) {
       if (e.error.message === 'already signed')
-        return '已經報名成功過囉，將於截止後進行抽籤';
+        return `${star.name} 已經報名成功囉！將於截止後進行抽籤`;
 
-      return '發生未知錯誤，請聯繫星遊官方帳號';
+      return '報名失敗，發生未知錯誤，請聯繫星遊官方帳號';
     }
   }
 }

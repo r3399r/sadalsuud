@@ -7,6 +7,7 @@ describe('TripService', () => {
   let service: TripService;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
   let dummyTrips: any;
+  let dummyStar: any;
 
   beforeAll(() => {
     dummyTrips = [
@@ -35,6 +36,10 @@ describe('TripService', () => {
         ).toISOString(),
       },
     ];
+    dummyStar = {
+      creationId: 'starId',
+      name: 'testName',
+    };
   });
 
   beforeEach(() => {
@@ -63,6 +68,6 @@ describe('TripService', () => {
 
   it('signTrip() should work', async () => {
     httpClientSpy.post.and.returnValue(of('result'));
-    expect(await service.signTrip('testId')).toBe('result');
+    expect(await service.signTrip('testId', dummyStar)).toBe('result');
   });
 });

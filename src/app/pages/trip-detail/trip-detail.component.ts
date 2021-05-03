@@ -84,7 +84,8 @@ export class TripDetailComponent implements OnInit {
     const user = await this.userService.getUser();
 
     if (user === undefined) {
-      await this.lineService.pushMessage(user.lineUserId, [
+      const lineUserProfile = await this.userService.getLineUser();
+      await this.lineService.pushMessage(lineUserProfile.userId, [
         '您好，我們收到您的報名申請，但由於我們的資料庫中並未有您的資料，故報名尚未成功。',
         '請您回覆以下基本資訊，謝謝您\n1. 姓名\n2. 身份(星兒家人或星雨團員或其他)\n3. 聯絡方式(手機)',
       ]);
@@ -98,7 +99,7 @@ export class TripDetailComponent implements OnInit {
       response = '報名失敗。資料庫資料設定有誤，請洽星遊的LINE官方帳號，謝謝';
     else {
       if (user.starInfo.length === 1) star = user.starInfo[0];
-      else if (user.starInfo.length > 1) {
+      else {
         const selectStar: HTMLIonAlertElement = await this.alertController.create(
           {
             header: '請選擇欲報名參加者',

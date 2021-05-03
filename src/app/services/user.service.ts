@@ -28,9 +28,9 @@ export class UserService {
   }
 
   public async getUser(): Promise<any> {
-    const lineUser = await this.getLineUser();
-
     try {
+      const lineUser = await this.getLineUser();
+
       if (this.user === undefined)
         this.user = await this.http
           .get<any>(`${this.userApi}/${lineUser.userId}`)

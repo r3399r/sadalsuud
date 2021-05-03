@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LineService } from 'src/app/services/line.service';
-import { UserService } from 'src/app/services/user.service';
 import { compareNumber } from 'src/app/util/compare';
 import { environment } from 'src/environments/environment';
 
@@ -10,21 +8,13 @@ import { environment } from 'src/environments/environment';
 })
 export class TripService {
   private readonly http: HttpClient;
-  private readonly userService: UserService;
-  private readonly lineService: LineService;
   private readonly tripApi: string = `${environment.api}/trips`;
   private readonly signApi: string = `${environment.api}/sign`;
 
   private trips: any = {};
 
-  constructor(
-    http: HttpClient,
-    userService: UserService,
-    lineService: LineService
-  ) {
+  constructor(http: HttpClient) {
     this.http = http;
-    this.userService = userService;
-    this.lineService = lineService;
   }
 
   private async loadTrips(): Promise<void> {

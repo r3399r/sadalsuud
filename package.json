@@ -16,7 +16,7 @@
     "clean": "del-cli dist -f",
     "build": "ng build --prod",
     "pre:dev": "run-s clean fix build test:headless",
-    "pre:commit": "run-s clean lint",
+    "pre:commit": "run-s clean lint test:headless",
     "pre:deploy": "run-s clean build"
   },
   "dependencies": {

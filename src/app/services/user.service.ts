@@ -27,14 +27,18 @@ export class UserService {
       .toPromise();
   }
 
-  public async getUser(userId: string): Promise<any> {
-    if (this.user === undefined)
-      this.user = await this.http
-        .get<any>(`${this.userApi}/${userId}`, {
-          params: { entity: 'sadalsuud-user' },
-        })
-        .toPromise();
+  public async getUser(): Promise<any> {
+    try {
+      const lineUser = await this.getLineUser();
 
-    return this.user;
+      if (this.user === undefined)
+        this.user = await this.http
+          .get<any>(`${this.userApi}/${lineUser.userId}`)
+          .toPromise();
+
+      return this.user;
+    } catch (e) {
+      return undefined;
+    }
   }
 }

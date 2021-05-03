@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { LineUserProfile } from 'src/app/model/LineUserProfile';
 import { UserService } from 'src/app/services/user.service';
 
@@ -35,7 +35,13 @@ describe('UserService', () => {
   });
 
   it('getUser() should work', async () => {
-    await service.getUser('testId');
-    expect(await service.getUser('testId')).toBe(dummyLineUser);
+    await service.getUser();
+    expect(await service.getUser()).toBe(dummyLineUser);
+  });
+
+  it('getUser() should return undefined when API failed', async () => {
+    httpClientSpy.get.and.returnValue(throwError('user not exist'));
+    await service.getUser();
+    expect(await service.getUser()).toBeUndefined();
   });
 });

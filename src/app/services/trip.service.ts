@@ -47,12 +47,21 @@ export class TripService {
     return this.trips[id];
   }
 
-  public async signTrip(tripId: string, lineUserId: string): Promise<string> {
-    return await this.http
-      .post<string>(`${this.signApi}`, {
-        tripId,
-        lineUserId,
-      })
-      .toPromise();
+  public async signTrip(tripId: string, star: any): Promise<string> {
+    try {
+      await this.http
+        .post<string>(`${this.signApi}`, {
+          tripId,
+          starId: star.creationId,
+        })
+        .toPromise();
+
+      return `${star.name} 報名成功！將於截止後進行抽籤`;
+    } catch (e) {
+      if (e.error.message === 'already signed')
+        return `${star.name} 已經報名成功囉！將於截止後進行抽籤`;
+
+      return '報名失敗，發生未知錯誤，請聯繫星遊官方帳號';
+    }
   }
 }

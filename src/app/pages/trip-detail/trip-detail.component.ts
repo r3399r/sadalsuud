@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { LineUserProfile } from 'src/app/model/LineUserProfile';
 import { LineAuthService } from 'src/app/services/line-auth.service';
+import { LineService } from 'src/app/services/line.service';
 import { TripService } from 'src/app/services/trip.service';
 import { UserService } from 'src/app/services/user.service';
 import { DateHelper } from 'src/app/util/date-helper';
@@ -15,6 +15,7 @@ import { DateHelper } from 'src/app/util/date-helper';
 export class TripDetailComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private lineAuthService: LineAuthService;
+  private lineService: LineService;
   private userService: UserService;
   private tripService: TripService;
   private alertController: AlertController;
@@ -28,6 +29,7 @@ export class TripDetailComponent implements OnInit {
   constructor(
     activatedRoute: ActivatedRoute,
     lineAuthService: LineAuthService,
+    lineService: LineService,
     userService: UserService,
     tripService: TripService,
     alertController: AlertController,
@@ -35,6 +37,7 @@ export class TripDetailComponent implements OnInit {
   ) {
     this.activatedRoute = activatedRoute;
     this.lineAuthService = lineAuthService;
+    this.lineService = lineService;
     this.userService = userService;
     this.tripService = tripService;
     this.alertController = alertController;
@@ -70,20 +73,65 @@ export class TripDetailComponent implements OnInit {
   }
 
   private async signConfirm(): Promise<void> {
+    let response: string;
+    let star: any;
+
     const loading: HTMLIonLoadingElement = await this.loadingController.create({
       message: '請稍等...',
     });
     await loading.present();
 
-    const lineUserProfile: LineUserProfile = await this.userService.getLineUser();
-    const signResponse: string = await this.tripService.signTrip(
-      this.trip.creationId,
-      lineUserProfile.userId
-    );
+    const user = await this.userService.getUser();
+
+    if (user === undefined) {
+      const lineUserProfile = await this.userService.getLineUser();
+      await this.lineService.pushMessage(lineUserProfile.userId, [
+        '您好，我們收到您的報名申請，但由於我們的資料庫中並未有您的資料，故報名尚未成功。',
+        '請您回覆以下基本資訊，謝謝您\n1. 姓名\n2. 身份(星兒家人或星雨團員或其他)\n3. 聯絡方式(手機)',
+      ]);
+
+      response =
+        '報名尚未成功。資料庫並未有您的資料，請開啟LINE回覆星遊的官方帳號';
+    } else if (user.role !== 'family' && user.role !== 'star')
+      response =
+        '報名失敗。此活動僅開放給星兒或家人報名，資料庫顯示您的身份為「星雨哥姐」。若您想參加活動或資料設定有誤，請洽星遊的LINE官方帳號，謝謝';
+    else if (user.starInfo.length === 0)
+      response = '報名失敗。資料庫資料設定有誤，請洽星遊的LINE官方帳號，謝謝';
+    else {
+      if (user.starInfo.length === 1) star = user.starInfo[0];
+      else {
+        const selectStar: HTMLIonAlertElement = await this.alertController.create(
+          {
+            header: '請選擇欲報名參加者',
+            inputs: user.starInfo.map((val: any) => ({
+              type: 'radio',
+              label: val.name,
+              value: val,
+            })),
+            buttons: [
+              {
+                text: '確認',
+                role: 'confirm',
+              },
+              '取消',
+            ],
+          }
+        );
+        await loading.dismiss();
+        await selectStar.present();
+
+        const eventSelectStar = await selectStar.onDidDismiss();
+
+        if (eventSelectStar.role !== 'confirm') return;
+        star = eventSelectStar.data.values;
+      }
+
+      response = await this.tripService.signTrip(this.trip.creationId, star);
+    }
 
     await loading.dismiss();
     const alert: HTMLIonAlertElement = await this.alertController.create({
-      message: signResponse,
+      message: response,
       buttons: ['知道了'],
     });
     await alert.present();

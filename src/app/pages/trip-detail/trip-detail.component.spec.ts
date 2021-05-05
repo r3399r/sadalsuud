@@ -130,7 +130,7 @@ describe('TripDetailComponent', () => {
     });
     await component.onSign();
     expect(alertControllerSpy.create).toHaveBeenCalledTimes(3);
-    expect(loadingControllerSpy.create).toHaveBeenCalledTimes(2);
+    expect(loadingControllerSpy.create).toHaveBeenCalledTimes(3);
   });
 
   it('onSign() should dismiss when user with multiple stars clicked cancel', async () => {

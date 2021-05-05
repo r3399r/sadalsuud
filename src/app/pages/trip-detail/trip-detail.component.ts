@@ -76,7 +76,7 @@ export class TripDetailComponent implements OnInit {
     let response: string;
     let star: any;
 
-    const loading: HTMLIonLoadingElement = await this.loadingController.create({
+    let loading: HTMLIonLoadingElement = await this.loadingController.create({
       message: '請稍等...',
     });
     await loading.present();
@@ -124,6 +124,11 @@ export class TripDetailComponent implements OnInit {
 
         if (eventSelectStar.role !== 'confirm') return;
         star = eventSelectStar.data.values;
+
+        loading = await this.loadingController.create({
+          message: '請稍等...',
+        });
+        await loading.present();
       }
 
       response = await this.tripService.signTrip(this.trip.creationId, star);

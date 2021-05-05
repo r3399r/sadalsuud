@@ -5,6 +5,7 @@ import { LineUserProfile } from 'src/app/model/LineUserProfile';
 import { LineAuthService } from 'src/app/services/line-auth.service';
 import { ParameterService } from 'src/app/services/parameter.service';
 import { UserService } from 'src/app/services/user.service';
+import { DateHelper } from 'src/app/util/date-helper';
 
 @Component({
   selector: 'app-user-profile',
@@ -20,6 +21,7 @@ export class UserProfileComponent implements OnInit {
   public lineChannelUrl: string;
   public router: Router;
   private loadingController: LoadingController;
+  private dateHelper: DateHelper;
 
   constructor(
     userService: UserService,
@@ -33,6 +35,7 @@ export class UserProfileComponent implements OnInit {
     this.lineAuthService = lineAuthService;
     this.router = router;
     this.loadingController = loadingController;
+    this.dateHelper = new DateHelper();
   }
 
   async ngOnInit(): Promise<void> {
@@ -61,5 +64,13 @@ export class UserProfileComponent implements OnInit {
     if (role === 'star') return '星雨夥伴';
 
     return '待定';
+  }
+
+  getDate(birthday: string): string {
+    return this.dateHelper.getDate(birthday);
+  }
+
+  getAge(birthday: string): number {
+    return this.dateHelper.getAge(birthday);
   }
 }

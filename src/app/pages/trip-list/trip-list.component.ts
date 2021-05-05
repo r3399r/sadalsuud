@@ -38,7 +38,7 @@ export class TripListComponent implements OnInit {
     this.trips = res.map((trip: any) => {
       return {
         ...trip,
-        date: this.dateHelper.getDate(trip.startDate),
+        date: this.dateHelper.getDateWithWeek(trip.startDate),
         startDate: this.dateHelper.hhmm(trip.startDate),
         endDate: this.dateHelper.hhmm(trip.endDate),
       };

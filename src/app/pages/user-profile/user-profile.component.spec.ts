@@ -77,4 +77,14 @@ describe('UserProfileComponent', () => {
     expect(component.getRole('star')).toBe('星雨夥伴');
     expect(component.getRole('other')).toBe('待定');
   });
+
+  it('getDate() should work', () => {
+    expect(component.getDate('2000-01-01T00:00:00.000Z')).toBe('2000-01-01');
+  });
+
+  it('getAge() should work', () => {
+    expect(component.getAge('2000-01-01T00:00:00.000Z')).toBe(
+      new Date().getFullYear() - 2000
+    );
+  });
 });

@@ -63,7 +63,13 @@ export class TripDetailComponent implements OnInit {
       };
 
       this.isExpired =
-        new Date(this.trip.expiredDate).getTime() > Date.now() ? true : false;
+        new Date(this.trip.expiredDate).getTime() < Date.now() ? true : false;
+      if (this.isLogin === true && this.isExpired === true) {
+        const user = await this.userService.getUser();
+        if (user !== undefined && user.role === 'starRain')
+          this.isExpired = false;
+      }
+
       await loading.dismiss();
     });
   }
@@ -171,7 +177,7 @@ export class TripDetailComponent implements OnInit {
 
   public warningMessage(): string {
     if (!this.isLogin) return '您尚未登入，可點擊右下角的「個人資料」以登入';
-    if (!this.isExpired) return '報名期限已過，此活動僅開放查詢';
+    if (this.isExpired) return '報名期限已過，此活動僅開放查詢';
 
     return;
   }

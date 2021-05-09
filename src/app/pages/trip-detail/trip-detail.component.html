@@ -53,7 +53,7 @@
   <ion-button
     color="primary"
     expand="block"
-    [disabled]="!isLogin || !isExpired"
+    [disabled]="!isLogin || isExpired"
     (click)="onSign()"
     >我要報名參加</ion-button
   >

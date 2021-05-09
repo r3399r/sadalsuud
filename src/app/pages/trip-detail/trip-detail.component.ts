@@ -92,10 +92,14 @@ export class TripDetailComponent implements OnInit {
 
       response =
         '報名尚未成功。資料庫並未有您的資料，請開啟LINE回覆星遊的官方帳號';
-    } else if (user.role !== 'family' && user.role !== 'star')
-      response =
-        '報名失敗。此活動僅開放給星兒或家人報名，資料庫顯示您的身份為「星雨哥姐」。若您想參加活動或資料設定有誤，請洽星遊的LINE官方帳號，謝謝';
-    else if (user.starInfo.length === 0)
+    } else if (user.role === 'starRain') {
+      await this.lineService.pushMessage('U4e1fe99fd5a5e6d4dff9ec8610e38271', [
+        `來自 ${JSON.stringify(user)} 團員的活動申請，出遊ID: ${
+          this.trip.creationId
+        }`,
+      ]);
+      response = '已向活動負責人提出申請';
+    } else if (user.starInfo.length === 0)
       response = '報名失敗。資料庫資料設定有誤，請洽星遊的LINE官方帳號，謝謝';
     else {
       if (user.starInfo.length === 1) star = user.starInfo[0];

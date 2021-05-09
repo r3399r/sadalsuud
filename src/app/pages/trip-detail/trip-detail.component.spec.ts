@@ -93,14 +93,17 @@ describe('TripDetailComponent', () => {
     expect(component.isPageLoading()).toBeTrue();
   });
 
-  it('onSign() should work when click yes', async () => {
+  it('onSign() should work when user is undefined', async () => {
+    userServiceSpy.getUser.and.resolveTo(undefined);
     await component.onSign();
     expect(alertControllerSpy.create).toHaveBeenCalledTimes(2);
     expect(loadingControllerSpy.create).toHaveBeenCalledTimes(2);
   });
 
-  it('onSign() should work when user is undefined', async () => {
-    userServiceSpy.getUser.and.resolveTo(undefined);
+  it('onSign() should work when user role is starRain', async () => {
+    userServiceSpy.getUser.and.resolveTo({
+      role: 'starRain',
+    });
     await component.onSign();
     expect(alertControllerSpy.create).toHaveBeenCalledTimes(2);
     expect(loadingControllerSpy.create).toHaveBeenCalledTimes(2);

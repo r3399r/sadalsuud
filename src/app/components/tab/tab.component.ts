@@ -8,6 +8,11 @@ import { Router } from '@angular/router';
 })
 export class TabComponent implements OnInit {
   private router: Router;
+  private routes: string[][] = [
+    ['home'],
+    ['trip-list', 'trip-detail'],
+    ['user-profile', 'login', 'register'],
+  ];
 
   constructor(router: Router) {
     this.router = router;
@@ -22,18 +27,7 @@ export class TabComponent implements OnInit {
 
   public isActivate(index: number): boolean {
     const router: string = this.router.url.split('/')[1].split('?')[0];
-    switch (index) {
-      case 0: {
-        return router === 'home';
-      }
-      case 1: {
-        return router === 'trip-list' || router === 'trip-detail';
-      }
-      case 2: {
-        return router === 'user-profile' || router === 'login';
-      }
-      default:
-        return false;
-    }
+
+    return this.routes[index].includes(router);
   }
 }

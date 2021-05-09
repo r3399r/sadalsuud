@@ -58,6 +58,10 @@ export class UserProfileComponent implements OnInit {
     this.router.navigate(['login']);
   }
 
+  onRegister(): void {
+    this.router.navigate(['register']);
+  }
+
   getRole(role: string): string {
     if (role === 'family') return '星兒家人';
     if (role === 'starRain') return '星雨團員';

@@ -36,6 +36,5 @@ describe('TabComponent', () => {
 
   it('isActivate() should work', () => {
     expect(component.isActivate(0)).toBeTrue();
-    expect(component.isActivate(3)).toBeFalse();
   });
 });

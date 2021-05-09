@@ -9,6 +9,7 @@ import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { TabComponent } from 'src/app/components/tab/tab.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
+import { RegisterComponent } from 'src/app/pages/register/register.component';
 import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
 import { TripListComponent } from 'src/app/pages/trip-list/trip-list.component';
 import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
@@ -24,6 +25,7 @@ import { environment } from 'src/environments/environment';
     UserProfileComponent,
     LoginComponent,
     TripDetailComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

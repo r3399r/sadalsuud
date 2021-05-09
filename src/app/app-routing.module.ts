@@ -9,6 +9,7 @@ import { AuthGuard } from 'src/app/auth.guard';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
+import { RegisterComponent } from 'src/app/pages/register/register.component';
 import { TripDetailComponent } from 'src/app/pages/trip-detail/trip-detail.component';
 import { TripListComponent } from 'src/app/pages/trip-list/trip-list.component';
 import { UserProfileComponent } from 'src/app/pages/user-profile/user-profile.component';
@@ -45,13 +46,17 @@ const userProfileRoute: Route = {
   path: 'user-profile',
   component: UserProfileComponent,
 };
+const registerRoute: Route = {
+  path: 'register',
+  component: RegisterComponent,
+};
 
 // private and public Route
 const privateRoute: Route = {
   path: '',
   canActivate: [AuthGuard],
   component: LayoutComponent,
-  children: [userProfileRoute],
+  children: [userProfileRoute, registerRoute],
 };
 const publicRoute: Route = {
   path: '',

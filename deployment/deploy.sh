@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-env=dev
+env=$1
 project=sadalsuud
 host=lucky-star-trip.net
 

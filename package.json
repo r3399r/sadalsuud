@@ -4,6 +4,7 @@
   "author": "Yue Chang",
   "license": "ISC",
   "scripts": {
+    "check:backend": "npm --prefix ./backend/ run pre:commit",
     "check:frontend": "npm --prefix ./frontend/ run pre:commit",
     "pre:commit": "run-p check:*",
     "prepare": "husky install"

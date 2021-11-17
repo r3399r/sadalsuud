@@ -1,0 +1,12 @@
+@import './variables';
+
+@mixin scrollbar {
+  overflow-y: overlay;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $grey-40;
+    border-radius: 3px;
+  }
+}

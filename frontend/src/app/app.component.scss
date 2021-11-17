@@ -1,0 +1,15 @@
+@import '/src/style/variables';
+@import '/src/style/scrollbar';
+
+.container {
+  background-color: $background;
+  height: 100%;
+}
+.navbar {
+  height: 44px;
+}
+.body {
+  height: calc(100vh - 44px);
+  overflow-y: auto;
+  @include scrollbar;
+}

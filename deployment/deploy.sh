@@ -27,11 +27,12 @@ aws s3 sync ./dist s3://$project-$env --delete --cache-control no-cache
 echo ====================================================================================
 
 if [ $1 = "prod" ]
-  echo "do tagging process..."
-  cd ..
-  version=$(node -pe "require('./package.json').version")
-  git config --global user.email "github-actions-bot@github.com"
-  git config --global user.name "github-actions-bot"
-  git tag -a $version -m "$version"
-  git push origin $version
+  then
+    echo "do tagging process..."
+    cd ..
+    version=$(node -pe "require('./package.json').version")
+    git config --global user.email "github-actions-bot@github.com"
+    git config --global user.name "github-actions-bot"
+    git tag -a $version -m "$version"
+    git push origin $version
 fi

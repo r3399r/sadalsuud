@@ -14,6 +14,9 @@ Parameters:
   NodeJsVer:
     Type: String
     Default: nodejs14.x
+  Project:
+    Type: String
+    Default: sadalsuud
   TargetEnvr:
     Type: String
     Description: The target environment for API Gateway deployment.
@@ -34,10 +37,10 @@ Resources:
           "swagger": "2.0",
           "info": {
             "version": "2020-01-06T07:45:41Z",
-            "title": !Sub "sadalsuud-${TargetEnvr}-api"
+            "title": !Sub "${Project}-${TargetEnvr}-api"
           },
           "paths": {
-            "/api/demo": {
+            "/api/variables": {
               "get": {
                 "produces": [
                   "application/json"
@@ -51,7 +54,7 @@ Resources:
                   }
                 },
                 "x-amazon-apigateway-integration": {
-                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:sadalsuud-${TargetEnvr}-demo/invocations",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-variables/invocations",
                   "responses": {
                     "default": {
                       "statusCode": "200"
@@ -60,7 +63,7 @@ Resources:
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "POST",
                   "contentHandling": "CONVERT_TO_TEXT",
-                  "type": "aws"
+                  "type": "aws_proxy"
                 }
               }
             },
@@ -72,20 +75,24 @@ Resources:
             }
           }
         }
-  LambdaDemo:
+  LambdaVariables:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.demo
+      Handler: index.variables
       Runtime: !Sub ${NodeJsVer}
-      FunctionName: !Sub sadalsuud-${TargetEnvr}-demo
+      FunctionName: !Sub ${Project}-${TargetEnvr}-variables
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
-  InvokePermissionDemo:
+      Environment:
+        Variables:
+          LINE_CHANNEL_URL: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-channel-url:1}}'
+          LINE_LOGIN_ID: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-login-id:1}}'
+  InvokePermissionVariables:
     Type: AWS::Lambda::Permission
-    DependsOn: [ServerlessApi, LambdaDemo]
+    DependsOn: [ServerlessApi, LambdaVariables]
     Properties:
-        FunctionName: !Sub sadalsuud-${TargetEnvr}-demo
+        FunctionName: !Sub ${Project}-${TargetEnvr}-variables
         Action: 'lambda:InvokeFunction'
         Principal: apigateway.amazonaws.com
         SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
@@ -96,7 +103,7 @@ Resources:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: !Sub sadalsuud-${TargetEnvr}-OAI
+        Comment: !Sub ${Project}-${TargetEnvr}-OAI
   Route53RecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
@@ -115,12 +122,12 @@ Resources:
       DistributionConfig:
         Aliases: [!If [IsProd, !Sub 'www.${HostName}', !Sub '${TargetEnvr}.${HostName}']]
         Origins:
-        - DomainName: !Sub sadalsuud-${TargetEnvr}.s3.ap-northeast-1.amazonaws.com
+        - DomainName: !Sub ${Project}-${TargetEnvr}.s3.ap-northeast-1.amazonaws.com
           Id: S3-hosted-website-ID
           S3OriginConfig:
             OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
         - DomainName: !Sub '${ServerlessApi}.execute-api.${AWS::Region}.amazonaws.com'
-          Id: !Sub sadalsuud-${TargetEnvr}-ApiEndpoint-ID
+          Id: !Sub ${Project}-${TargetEnvr}-ApiEndpoint-ID
           OriginPath: !Sub /${TargetEnvr}
           CustomOriginConfig:
             HTTPPort: 80
@@ -156,7 +163,7 @@ Resources:
           ForwardedValues:
             Headers: [ "Authorization", "Accept" ]
             QueryString: true
-          TargetOriginId: !Sub sadalsuud-${TargetEnvr}-ApiEndpoint-ID
+          TargetOriginId: !Sub ${Project}-${TargetEnvr}-ApiEndpoint-ID
           ViewerProtocolPolicy: redirect-to-https
           DefaultTTL: 0
           MinTTL: 0
@@ -172,7 +179,7 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub sadalsuud-${TargetEnvr}
+      BucketName: !Sub ${Project}-${TargetEnvr}
       WebsiteConfiguration:
         ErrorDocument: error.html
         IndexDocument: index.html
@@ -180,7 +187,7 @@ Resources:
     Type: AWS::S3::BucketPolicy
     DependsOn: [CloudFrontOriginAccessIdentity]
     Properties:
-      Bucket: !Sub sadalsuud-${TargetEnvr}
+      Bucket: !Sub ${Project}-${TargetEnvr}
       PolicyDocument: !Join
       - ''
       - - '{
@@ -196,7 +203,7 @@ Resources:
         - '" },
                     "Action": "s3:GetObject",
                     "Resource": "arn:aws:s3:::'
-        - !Sub sadalsuud-${TargetEnvr}
+        - !Sub ${Project}-${TargetEnvr}
         - '/*"
                 }
             ]

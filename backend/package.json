@@ -19,10 +19,12 @@
     "test:coverage": "npm run test -- --coverage --verbose",
     "build": "webpack --config webpack.config.js",
     "pre:commit": "run-s lint test",
+    "pre:dev": "run-s fix test:coverage",
     "pre:deploy": "run-s clean build"
   },
   "license": "ISC",
   "dependencies": {
+    "@y-celestial/service": "^1.5.5",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.3.1"

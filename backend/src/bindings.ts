@@ -1,9 +1,9 @@
 import { Container } from 'inversify';
 import 'reflect-metadata';
-import { DemoService } from 'src/logic/DemoService';
+import { VariablesService } from 'src/logic/VariablesService';
 
 const container: Container = new Container();
 
-container.bind<DemoService>(DemoService).toSelf();
+container.bind<VariablesService>(VariablesService).toSelf();
 
 export { container as bindings };

@@ -94,6 +94,7 @@
     "no-use-before-declare": false,
     "non-literal-fs-path": false,
     "ordered-imports": true,
+    "prefer-type-cast": false,
     "typedef": [
       true,
       "parameter",

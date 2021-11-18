@@ -1,2 +1,2 @@
 // tslint:disable: export-name
-export { demo } from 'src/lambda/demo';
+export { variables } from 'src/lambda/variables/variables';

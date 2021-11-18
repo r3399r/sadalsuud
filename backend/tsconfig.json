@@ -20,7 +20,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "build",
+    "outDir": "lib",
     "paths": {
       "src/*": [
         "src/*"
@@ -29,6 +29,11 @@
         "test/*"
       ]
     },
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths"
+      }
+    ],
     "rootDir": ".",
     "sourceMap": true,
     "strict": true,
@@ -36,6 +41,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "index.ts"
   ]
 }

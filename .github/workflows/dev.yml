@@ -30,4 +30,4 @@ jobs:
       - name: Deploy to dev environment
         run: |
           cd deployment
-          sh deploy.sh dev
+          sh deploy.sh test

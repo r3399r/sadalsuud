@@ -5,6 +5,7 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { VariablesService } from 'src/logic/VariablesService';
+import { VariablesParams } from 'src/model/variables';
 import { variables } from './variables';
 import { VariablesEvent } from './VariablesEvent';
 
@@ -60,7 +61,7 @@ describe('variables', () => {
   it('GET should fail without parameter name', async () => {
     event = {
       httpMethod: 'GET',
-      queryStringParameters: {},
+      queryStringParameters: {} as any as VariablesParams,
     };
     await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new Error('missing parameter name'))

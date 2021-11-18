@@ -1,6 +1,6 @@
-export interface VariablesEvent {
+import { VariablesParams } from 'src/model/variables';
+
+export type VariablesEvent = {
   httpMethod: string;
-  queryStringParameters: {
-    name?: string;
-  } | null;
-}
+  queryStringParameters: VariablesParams | null;
+};

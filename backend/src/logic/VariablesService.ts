@@ -1,18 +1,18 @@
 import { injectable } from 'inversify';
-import { Variables } from 'src/model/variables';
+import { VariablesResponse } from 'src/model/variables';
 
 /**
  * Service class to return required parameters
  */
 @injectable()
 export class VariablesService {
-  public getParameters(name: string): Variables {
-    const nameArray: (keyof Variables)[] = name.split(
+  public getParameters(name: string): VariablesResponse {
+    const nameArray: (keyof VariablesResponse)[] = name.split(
       ','
-    ) as (keyof Variables)[];
-    const res: Variables = {};
+    ) as (keyof VariablesResponse)[];
+    const res: VariablesResponse = {};
     for (const val of nameArray) {
-      const envVariable = process.env[val] as keyof Variables;
+      const envVariable = process.env[val] as keyof VariablesResponse;
       if (envVariable !== undefined) res[val] = envVariable;
     }
 

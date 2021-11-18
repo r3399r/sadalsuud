@@ -86,8 +86,8 @@ Resources:
       MemorySize: 128
       Environment:
         Variables:
-          LINE_CHANNEL_URL: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-channel-url:1}}'
-          LINE_LOGIN_ID: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-login-id:1}}'
+          lineChannelUrl: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-channel-url:1}}'
+          lineLoginId: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-login-id:1}}'
   InvokePermissionVariables:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaVariables]

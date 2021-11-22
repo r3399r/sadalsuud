@@ -1,2 +1,5 @@
-<p>login works!</p>
-<div (click)="onLoginClick()">click to login</div>
+<app-loader *ngIf="isLoading"></app-loader>
+<div *ngIf="!isLoading">
+  <p>login works!</p>
+  <div (click)="onLoginClick()">click to login</div>
+</div>

@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class VariablesService {
-  public variables: VariablesResponse;
+  private variables: VariablesResponse;
 
   constructor(private http: HttpClient) {
     this.variables = {};

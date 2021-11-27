@@ -88,6 +88,7 @@ Resources:
         Variables:
           lineChannelUrl: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-channel-url:1}}'
           lineLoginId: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-login-id:1}}'
+          lineChannelKey: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-login-secret:1}}'
   InvokePermissionVariables:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaVariables]

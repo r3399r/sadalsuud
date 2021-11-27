@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  apiEndponit: 'https://test.lucky-star-trip.net/api',
 };
 
 /*

@@ -24,7 +24,7 @@ export class VariablesService {
     if (unsavedNames.length === 0) return this.variables;
 
     const params: VariablesParams = { name: unsavedNames.join() };
-    const variables$ = this.http.get<VariablesResponse>(`${environment.apiEndponit}/variables`, {
+    const variables$ = this.http.get<VariablesResponse>(`${environment.apiEndpoint}/variables`, {
       params,
     });
     const newVariables = await lastValueFrom(variables$);

@@ -25,6 +25,7 @@
   "license": "ISC",
   "dependencies": {
     "@y-celestial/service": "^1.5.5",
+    "axios": "^0.24.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.3.1"

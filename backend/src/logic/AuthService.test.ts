@@ -1,24 +1,27 @@
-import axios from 'axios';
 import { bindings } from 'src/bindings';
 import { AuthService } from 'src/logic/AuthService';
-
-jest.mock('axios');
+import { LineService } from './LineService';
 
 /**
  * Tests of the AuthService class.
  */
 describe('AuthService', () => {
   let authService: AuthService;
-  let mockAxios: jest.Mocked<typeof axios>;
+  let mockLineService: any;
 
   beforeEach(() => {
+    // prepare mockLineService
+    mockLineService = {};
+    bindings.rebind<LineService>(LineService).toConstantValue(mockLineService);
+
+    mockLineService.verifyToken = jest.fn();
+
     authService = bindings.get<AuthService>(AuthService);
-    mockAxios = axios as jest.Mocked<typeof axios>;
   });
 
   it('validate should work', async () => {
     await authService.validate('test-token');
-    expect(mockAxios.get).toBeCalledTimes(1);
+    expect(mockLineService.verifyToken).toBeCalledTimes(1);
   });
 
   it('authResponse should work', async () => {

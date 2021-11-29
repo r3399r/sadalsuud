@@ -1,15 +1,16 @@
-import axios from 'axios';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+import { LineService } from './LineService';
 
 /**
  * Service class to validate line user
  */
 @injectable()
 export class AuthService {
+  @inject(LineService)
+  private readonly lineService!: LineService;
+
   public async validate(token: string) {
-    await axios.get(
-      `https://api.line.me/oauth2/v2.1/verify?access_token=${token}`
-    );
+    await this.lineService.verifyToken(token);
   }
 
   public authResponse(pass: boolean, resource: string) {

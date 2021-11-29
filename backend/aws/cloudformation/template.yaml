@@ -138,10 +138,10 @@ Resources:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaVariables]
     Properties:
-        FunctionName: !Sub ${Project}-${TargetEnvr}-variables
-        Action: 'lambda:InvokeFunction'
-        Principal: apigateway.amazonaws.com
-        SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+      FunctionName: !Sub ${Project}-${TargetEnvr}-variables
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
   LambdaUsers:
     Type: AWS::Serverless::Function
     Properties:
@@ -151,14 +151,17 @@ Resources:
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
+      Environment:
+        Variables:
+          ENVR: !Sub ${TargetEnvr}
   InvokePermissionUsers:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaUsers]
     Properties:
-        FunctionName: !Sub ${Project}-${TargetEnvr}-users
-        Action: 'lambda:InvokeFunction'
-        Principal: apigateway.amazonaws.com
-        SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+      FunctionName: !Sub ${Project}-${TargetEnvr}-users
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
   LambdaAuth:
     Type: AWS::Serverless::Function
     Properties:
@@ -175,10 +178,10 @@ Resources:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaAuth]
     Properties:
-        FunctionName: !Sub ${Project}-${TargetEnvr}-auth
-        Action: 'lambda:InvokeFunction'
-        Principal: apigateway.amazonaws.com
-        SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+      FunctionName: !Sub ${Project}-${TargetEnvr}-auth
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
   #########################################
   ##### Cloudfront and Route53 config #####
   #########################################

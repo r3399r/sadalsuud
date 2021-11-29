@@ -1,4 +1,4 @@
-import { VariablesParams } from 'src/model/variables';
+import { VariablesParams } from 'src/model/Variable';
 
 export type VariablesEvent = {
   httpMethod: string;

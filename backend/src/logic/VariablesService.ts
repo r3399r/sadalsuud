@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { VariablesResponse } from 'src/model/variables';
+import { VariablesResponse } from 'src/model/Variable';
 
 /**
  * Service class to return required parameters

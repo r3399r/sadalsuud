@@ -1,6 +1,9 @@
-import { VariablesParams } from 'src/model/variables';
+import { PostUserRequest } from 'src/model/User';
 
 export type UsersEvent = {
   httpMethod: string;
-  queryStringParameters: VariablesParams | null;
+  headers: {
+    'x-api-token': string;
+  };
+  body: PostUserRequest;
 };

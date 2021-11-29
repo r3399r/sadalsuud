@@ -37,6 +37,13 @@ export class UserService {
     const userRecord = generateData(user, ALIAS);
     await this.dbService.createItem(userRecord);
 
-    return user;
+    return {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      birthday: user.birthday,
+      verified: user.verified,
+      role: user.role,
+    };
   }
 }

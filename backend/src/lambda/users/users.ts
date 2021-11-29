@@ -22,7 +22,7 @@ export async function users(
       case 'POST':
         res = await userService.addUser(
           event.headers['x-api-token'],
-          event.body
+          JSON.parse(event.body) as PostUserResponse
         );
         break;
       default:

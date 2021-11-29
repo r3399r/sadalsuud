@@ -29,11 +29,11 @@ describe('users', () => {
     event = {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
-      body: {
+      body: JSON.stringify({
         name: 'name',
         phone: 'phone',
         birthday: 'birthday',
-      },
+      }),
     };
 
     // prepare mockUserService

@@ -5,7 +5,7 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { VariablesService } from 'src/logic/VariablesService';
-import { VariablesParams } from 'src/model/variables';
+import { VariablesParams } from 'src/model/Variable';
 import { variables } from './variables';
 import { VariablesEvent } from './VariablesEvent';
 
@@ -28,7 +28,7 @@ describe('variables', () => {
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
 
-    // prepare mock mockUserService
+    // prepare mockVariablesService
     mockVariablesService = {};
     bindings
       .rebind<VariablesService>(VariablesService)

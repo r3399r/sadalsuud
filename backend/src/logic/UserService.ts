@@ -1,8 +1,8 @@
-import { DbService, generateData } from '@y-celestial/service';
+import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
 import { ROLE } from 'src/constant/User';
-import { PostUserRequest, PostUserResponse } from 'src/model/User';
+import { PostUserRequest, PostUserResponse, User } from 'src/model/User';
 import { UserEntity } from 'src/model/UserEntity';
 import { LineService } from './LineService';
 
@@ -34,16 +34,16 @@ export class UserService {
       dateUpdated: Date.now(),
     });
 
-    const userRecord = generateData(user, ALIAS);
-    await this.dbService.createItem(userRecord);
+    await this.dbService.createItem(ALIAS, user);
 
-    return {
-      id: user.id,
-      name: user.name,
-      phone: user.phone,
-      birthday: user.birthday,
-      verified: user.verified,
-      role: user.role,
-    };
+    return user;
+  }
+
+  public async getUsers() {
+    return await this.dbService.getItems<User>(ALIAS, 'user');
+  }
+
+  public async getUserById(id: string) {
+    return await this.dbService.getItem<User>(ALIAS, 'user', id);
   }
 }

@@ -3,5 +3,6 @@ export type UsersEvent = {
   headers: {
     'x-api-token': string;
   };
-  body: string;
+  body: string | null;
+  pathParameters: { id: string } | null;
 };

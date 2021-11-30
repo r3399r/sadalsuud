@@ -19,35 +19,72 @@ describe('users', () => {
 
   beforeAll(() => {
     dummyResult = {
-      a: '123',
       b: 'abc',
     };
   });
 
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
-    event = {
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({
-        name: 'name',
-        phone: 'phone',
-        birthday: 'birthday',
-      }),
-    };
 
     // prepare mockUserService
     mockUserService = {};
     bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
 
     mockUserService.addUser = jest.fn(() => dummyResult);
+    mockUserService.getUserById = jest.fn(() => dummyResult);
+    mockUserService.getUsers = jest.fn(() => dummyResult);
   });
 
   it('POST should work', async () => {
+    event = {
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
       successOutput(dummyResult)
     );
     expect(mockUserService.addUser).toBeCalledTimes(1);
+  });
+
+  it('POST should fail if null body', async () => {
+    event = {
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: null,
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('null body error'))
+    );
+    expect(mockUserService.addUser).toBeCalledTimes(0);
+  });
+
+  it('GET should work with all users', async () => {
+    event = {
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: null,
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyResult)
+    );
+    expect(mockUserService.getUsers).toBeCalledTimes(1);
+  });
+
+  it('GET should work with id', async () => {
+    event = {
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'test-id' },
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyResult)
+    );
+    expect(mockUserService.getUserById).toBeCalledTimes(1);
   });
 
   it('should fail with unknown method', async () => {

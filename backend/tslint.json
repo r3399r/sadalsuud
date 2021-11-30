@@ -99,8 +99,7 @@
       true,
       "parameter",
       "arrow-parameter",
-      "member-variable-declaration",
-      "object-destructuring"
+      "member-variable-declaration"
     ],
     "variable-name": [
       true,

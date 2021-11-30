@@ -17,4 +17,8 @@ export type PostUserRequest = {
   birthday: string;
 };
 
-export type PostUserResponse = Omit<User, 'dateUpdated' | 'dateCreated'>;
+export type PostUserResponse = User;
+
+export type GetUserResponse = User;
+
+export type GetUsersResponse = User[];

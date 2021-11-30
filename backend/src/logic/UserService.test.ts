@@ -23,6 +23,8 @@ describe('UserService', () => {
     bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
 
     mockDbService.createItem = jest.fn();
+    mockDbService.getItem = jest.fn();
+    mockDbService.getItems = jest.fn();
 
     userService = bindings.get<UserService>(UserService);
   });
@@ -35,5 +37,15 @@ describe('UserService', () => {
     });
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.createItem).toBeCalledTimes(1);
+  });
+
+  it('getUsers should work', async () => {
+    await userService.getUsers();
+    expect(mockDbService.getItems).toBeCalledTimes(1);
+  });
+
+  it('getUsers should work', async () => {
+    await userService.getUserById('id');
+    expect(mockDbService.getItem).toBeCalledTimes(1);
   });
 });

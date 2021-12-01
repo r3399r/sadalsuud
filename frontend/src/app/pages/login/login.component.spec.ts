@@ -3,20 +3,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { LoginComponent } from './login.component';
-import { LoginService } from 'src/app/services/login.service';
 import { VariablesService } from 'src/app/services/variables.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
-  let loginServiceSpy: jasmine.SpyObj<LoginService>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
   let variablesServiceSpy: jasmine.SpyObj<VariablesService>;
   let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
-    loginServiceSpy = jasmine.createSpyObj('LoginService', ['login']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
     variablesServiceSpy = jasmine.createSpyObj('VariablesService', ['getVariables']);
     routerSpy = spyOn(Router.prototype, 'navigate');
 
@@ -25,7 +25,7 @@ describe('LoginComponent', () => {
       imports: [RouterTestingModule],
       providers: [
         { provide: MatSnackBar, useValue: matSnackBarSpy },
-        { provide: LoginService, useValue: loginServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy },
         { provide: VariablesService, useValue: variablesServiceSpy },
       ],
     }).compileComponents();
@@ -50,7 +50,7 @@ describe('LoginComponent', () => {
   });
 
   it('loginProcess should work', async () => {
-    loginServiceSpy.login.and.resolveTo();
+    authServiceSpy.login.and.resolveTo();
     component.loginProcess({});
 
     fixture.whenStable().then(() => {
@@ -58,8 +58,8 @@ describe('LoginComponent', () => {
     });
   });
 
-  it('loginProcess should work', async () => {
-    loginServiceSpy.login.and.rejectWith();
+  it('loginProcess should work if login failed', async () => {
+    authServiceSpy.login.and.rejectWith(new Error('message'));
     component.loginProcess({});
 
     fixture.whenStable().then(() => {

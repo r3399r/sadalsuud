@@ -1,1 +1,12 @@
-<p>user works!</p>
+<app-loader *ngIf="isLoading"></app-loader>
+<div *ngIf="!isLoading && user" class="self">
+  <div>
+    <div class="header">使用者</div>
+    <div>{{ user.id }}</div>
+    <div>{{ user.name }}</div>
+    <div>{{ user.phone }}</div>
+    <div>{{ user.birthday }}</div>
+    <div>{{ user.verified }}</div>
+    <div>{{ user.role }}</div>
+  </div>
+</div>

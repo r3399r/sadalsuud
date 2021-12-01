@@ -5,4 +5,5 @@ export {
   GetUserResponse,
   GetUsersResponse,
   GetMeResponse,
+  User,
 } from 'src/model/User';

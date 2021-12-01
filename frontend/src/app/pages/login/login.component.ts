@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ERROR } from 'src/app/locales/errors';
 import { LoginUrlParams } from 'src/app/model/Line';
-import { LoginService } from 'src/app/services/login.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { VariablesService } from 'src/app/services/variables.service';
 
 @Component({
@@ -19,7 +18,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
-    private loginService: LoginService,
+    private authService: AuthService,
     private variablesService: VariablesService,
   ) {}
 
@@ -36,18 +35,18 @@ export class LoginComponent implements OnInit {
   }
 
   onLoginClick() {
-    window.location.href = this.loginService.getLineLoginUrl(String(this.clientId));
+    window.location.href = this.authService.getLineLoginUrl(String(this.clientId));
   }
 
   loginProcess(params: LoginUrlParams) {
     this.isLoading = true;
-    this.loginService
+    this.authService
       .login(params)
       .then(() => {
         this.router.navigate(['user']);
       })
-      .catch(() => {
-        this.snackBar.open(ERROR.WRONG_LOGIN_STATE, undefined, { duration: 4000 });
+      .catch((e) => {
+        this.snackBar.open(e.message, undefined, { duration: 4000 });
         this.isLoading = false;
       });
   }

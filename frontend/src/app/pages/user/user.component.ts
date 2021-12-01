@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GetUserResponse, User } from '@y-celestial/sadalsuud-service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user',
@@ -6,7 +8,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user.component.scss'],
 })
 export class UserComponent implements OnInit {
-  constructor() {}
+  user: User | undefined;
+  isLoading = true;
 
-  ngOnInit(): void {}
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.userService.getUser().then((res: GetUserResponse) => {
+      this.user = res;
+      this.isLoading = false;
+    });
+  }
 }

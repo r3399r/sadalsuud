@@ -1,11 +1,12 @@
-import { TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { LoginService } from './login.service';
+import { AuthService } from './auth.service';
 import { VariablesService } from './variables.service';
+import { ERROR } from 'src/app/locales/errors';
 
-describe('LoginService', () => {
-  let service: LoginService;
+describe('AuthService', () => {
+  let service: AuthService;
   let variablesServiceSpy: jasmine.SpyObj<VariablesService>;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
 
@@ -13,27 +14,32 @@ describe('LoginService', () => {
     variablesServiceSpy = jasmine.createSpyObj('VariablesService', ['getVariables']);
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['post']);
 
+    variablesServiceSpy.getVariables.and.resolveTo({
+      lineLoginId: 'test',
+      lineChannelKey: 'testKey',
+    });
+
     TestBed.configureTestingModule({
       providers: [
         { provide: VariablesService, useValue: variablesServiceSpy },
         { provide: HttpClient, useValue: httpClientSpy },
       ],
     });
-    service = TestBed.inject(LoginService);
+    service = TestBed.inject(AuthService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('checkLoginStatus should return false if no localstorage is set', () => {
+  it('isLogin should return false if no localstorage is set', () => {
     localStorage.removeItem('access_token');
-    expect(service.checkLoginStatus()).toBeFalse();
+    expect(service.isLogin()).toBeFalse();
   });
 
-  it('checkLoginStatus should return true if localstorage is set', () => {
+  it('isLogin should return true if localstorage is set', () => {
     localStorage.setItem('access_token', 'test');
-    expect(service.checkLoginStatus()).toBeTrue();
+    expect(service.isLogin()).toBeTrue();
     localStorage.removeItem('access_token');
   });
 
@@ -43,10 +49,6 @@ describe('LoginService', () => {
   });
 
   it('login should work', async () => {
-    variablesServiceSpy.getVariables.and.resolveTo({
-      lineLoginId: 'test',
-      lineChannelKey: 'testKey',
-    });
     httpClientSpy.post.and.returnValue(
       of({ access_token: 'a', expires_in: 123, refresh_token: 'b' }),
     );
@@ -58,10 +60,6 @@ describe('LoginService', () => {
   });
 
   it('login should fail', async () => {
-    variablesServiceSpy.getVariables.and.resolveTo({
-      lineLoginId: 'test',
-      lineChannelKey: 'testKey',
-    });
     httpClientSpy.post.and.returnValue(
       of({ access_token: 'a', expires_in: 123, refresh_token: 'b' }),
     );
@@ -69,10 +67,21 @@ describe('LoginService', () => {
     sessionStorage.setItem('state', 'tempState');
 
     await expectAsync(service.login({ state: 'notSameState', code: 'abcd' })).toBeRejectedWithError(
-      'bad process',
+      ERROR.WRONG_LOGIN_STATE,
     );
     expect(httpClientSpy.post).toHaveBeenCalledTimes(0);
 
     sessionStorage.removeItem('state');
+  });
+
+  it('refreshToken should work', async () => {
+    httpClientSpy.post.and.returnValue(
+      of({ access_token: 'a', expires_in: 123, refresh_token: 'b' }),
+    );
+
+    localStorage.setItem('refresh_token', 'token');
+    await service.refreshToken();
+
+    expect(httpClientSpy.post).toHaveBeenCalledTimes(1);
   });
 });

@@ -2,20 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthGuard } from './auth.guard';
-import { LoginService } from 'src/app/services/login.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
-  let loginServiceSpy: jasmine.SpyObj<LoginService>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
   let routerSpy: jasmine.Spy;
 
   beforeEach(() => {
-    loginServiceSpy = jasmine.createSpyObj('LoginService', ['checkLoginStatus']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isLogin']);
     routerSpy = spyOn(Router.prototype, 'parseUrl');
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
-      providers: [{ provide: LoginService, useValue: loginServiceSpy }],
+      providers: [{ provide: AuthService, useValue: authServiceSpy }],
     });
     guard = TestBed.inject(AuthGuard);
   });
@@ -25,13 +25,13 @@ describe('AuthGuard', () => {
   });
 
   it('should redirect', () => {
-    loginServiceSpy.checkLoginStatus.and.returnValue(false);
+    authServiceSpy.isLogin.and.returnValue(false);
     guard.canActivate();
     expect(routerSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should return true', () => {
-    loginServiceSpy.checkLoginStatus.and.returnValue(true);
+    authServiceSpy.isLogin.and.returnValue(true);
     guard.canActivate();
     expect(routerSpy).toHaveBeenCalledTimes(0);
   });

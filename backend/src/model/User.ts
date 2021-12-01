@@ -22,3 +22,5 @@ export type PostUserResponse = User;
 export type GetUserResponse = User;
 
 export type GetUsersResponse = User[];
+
+export type GetMeResponse = User;

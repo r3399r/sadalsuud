@@ -47,14 +47,9 @@ export class UserService {
     return await this.dbService.getItem<User>(ALIAS, 'user', id);
   }
 
-  public async getUserRoleByToken(token: string) {
+  public async getUserByToken(token: string) {
     const lineUser = await this.lineService.getProfile(token);
-    const user = await this.dbService.getItem<User>(
-      ALIAS,
-      'user',
-      lineUser.userId
-    );
 
-    return user.role;
+    return await this.dbService.getItem<User>(ALIAS, 'user', lineUser.userId);
   }
 }

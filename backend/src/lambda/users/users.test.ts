@@ -16,12 +16,10 @@ describe('users', () => {
   let event: UsersEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockUserService: any;
-  let dummyResult: { [key: string]: string };
+  let dummyUser: any;
 
   beforeAll(() => {
-    dummyResult = {
-      b: 'abc',
-    };
+    dummyUser = { role: ROLE.ADMIN };
   });
 
   beforeEach(() => {
@@ -31,10 +29,10 @@ describe('users', () => {
     mockUserService = {};
     bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
 
-    mockUserService.addUser = jest.fn(() => dummyResult);
-    mockUserService.getUserById = jest.fn(() => dummyResult);
-    mockUserService.getUsers = jest.fn(() => dummyResult);
-    mockUserService.getUserRoleByToken = jest.fn(() => ROLE.ADMIN);
+    mockUserService.addUser = jest.fn(() => dummyUser);
+    mockUserService.getUserById = jest.fn(() => dummyUser);
+    mockUserService.getUsers = jest.fn(() => [dummyUser]);
+    mockUserService.getUserByToken = jest.fn(() => dummyUser);
   });
 
   it('POST should work', async () => {
@@ -45,7 +43,7 @@ describe('users', () => {
       pathParameters: null,
     };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyResult)
+      successOutput(dummyUser)
     );
     expect(mockUserService.addUser).toBeCalledTimes(1);
   });
@@ -71,7 +69,7 @@ describe('users', () => {
       pathParameters: null,
     };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyResult)
+      successOutput([dummyUser])
     );
     expect(mockUserService.getUsers).toBeCalledTimes(1);
   });
@@ -84,19 +82,19 @@ describe('users', () => {
       pathParameters: { id: 'test-id' },
     };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyResult)
+      successOutput(dummyUser)
     );
     expect(mockUserService.getUserById).toBeCalledTimes(1);
   });
 
-  it('GET should fail permissnio denied', async () => {
+  it('GET should fail permission denied', async () => {
     event = {
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
       pathParameters: { id: 'test-id' },
     };
-    mockUserService.getUserRoleByToken = jest.fn(() => ROLE.PASSERBY);
+    dummyUser = { role: ROLE.PASSERBY };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new Error('permission denied'))
     );

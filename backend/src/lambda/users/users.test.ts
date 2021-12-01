@@ -4,6 +4,7 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
+import { ROLE } from 'src/constant/User';
 import { UserService } from 'src/logic/UserService';
 import { users } from './users';
 import { UsersEvent } from './UsersEvent';
@@ -33,6 +34,7 @@ describe('users', () => {
     mockUserService.addUser = jest.fn(() => dummyResult);
     mockUserService.getUserById = jest.fn(() => dummyResult);
     mockUserService.getUsers = jest.fn(() => dummyResult);
+    mockUserService.getUserRoleByToken = jest.fn(() => ROLE.ADMIN);
   });
 
   it('POST should work', async () => {
@@ -85,6 +87,20 @@ describe('users', () => {
       successOutput(dummyResult)
     );
     expect(mockUserService.getUserById).toBeCalledTimes(1);
+  });
+
+  it('GET should fail permissnio denied', async () => {
+    event = {
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'test-id' },
+    };
+    mockUserService.getUserRoleByToken = jest.fn(() => ROLE.PASSERBY);
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('permission denied'))
+    );
+    expect(mockUserService.getUserById).toBeCalledTimes(0);
   });
 
   it('should fail with unknown method', async () => {

@@ -5,6 +5,7 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
+import { ROLE } from 'src/constant/User';
 import { UserService } from 'src/logic/UserService';
 import {
   GetUserResponse,
@@ -31,6 +32,12 @@ export async function users(
         );
         break;
       case 'GET':
+        // validate role
+        const role = await userService.getUserRoleByToken(
+          event.headers['x-api-token']
+        );
+        if (role !== ROLE.ADMIN) throw new Error('permission denied');
+
         if (event.pathParameters === null) res = await userService.getUsers();
         else res = await userService.getUserById(event.pathParameters.id);
         break;

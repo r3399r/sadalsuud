@@ -1,5 +1,6 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
+import { ROLE } from 'src/constant/User';
 import { LineService } from './LineService';
 import { UserService } from './UserService';
 
@@ -10,6 +11,11 @@ describe('UserService', () => {
   let userService: UserService;
   let mockLineService: any;
   let mockDbService: any;
+  let dummyUser: any;
+
+  beforeAll(() => {
+    dummyUser = { role: ROLE.PASSERBY };
+  });
 
   beforeEach(() => {
     // prepare mockLineService
@@ -23,8 +29,8 @@ describe('UserService', () => {
     bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
 
     mockDbService.createItem = jest.fn();
-    mockDbService.getItem = jest.fn();
-    mockDbService.getItems = jest.fn();
+    mockDbService.getItem = jest.fn(() => dummyUser);
+    mockDbService.getItems = jest.fn(() => [dummyUser]);
 
     userService = bindings.get<UserService>(UserService);
   });
@@ -46,6 +52,12 @@ describe('UserService', () => {
 
   it('getUsers should work', async () => {
     await userService.getUserById('id');
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+  });
+
+  it('getUserRoleByToken should work', async () => {
+    await userService.getUserRoleByToken('token');
+    expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });
 });

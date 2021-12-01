@@ -56,7 +56,7 @@ describe('UserService', () => {
   });
 
   it('getUserRoleByToken should work', async () => {
-    await userService.getUserRoleByToken('token');
+    await userService.getUserByToken('token');
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });

@@ -8,7 +8,7 @@
   "scripts": {
     "lint:ts": "tslint --project .",
     "fix:ts": "npm run lint:ts -- --fix",
-    "lint:format": "prettier --config ./prettierrc.json --list-different \"./{src,test}/**/*.ts\"",
+    "lint:format": "prettier --config ./prettierrc.json --list-different \"./**/*.ts\"",
     "fix:format": "npm run lint:format -- --write",
     "lint": "run-p lint:*",
     "fix": "run-s fix:*",

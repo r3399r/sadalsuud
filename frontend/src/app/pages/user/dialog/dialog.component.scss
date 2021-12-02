@@ -1,0 +1,14 @@
+.header {
+  font-weight: bold;
+}
+.data {
+  margin: 10px 0;
+  display: flex;
+  > div {
+    width: 50%;
+  }
+}
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}

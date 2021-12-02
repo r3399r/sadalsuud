@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { HttpClientService } from './http-client.service';
 
@@ -20,12 +20,12 @@ describe('HttpClientService', () => {
   });
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['request']);
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['isLogin', 'refreshToken']);
     routerSpy = spyOn(Router.prototype, 'navigate');
 
-    httpClientSpy.get.and.returnValue(of(dummyResult));
+    httpClientSpy.request.and.returnValue(of(dummyResult));
     authServiceSpy.isLogin.and.returnValue(true);
 
     TestBed.configureTestingModule({
@@ -51,5 +51,15 @@ describe('HttpClientService', () => {
     authServiceSpy.isLogin.and.returnValue(false);
 
     await expectAsync(service.get('url')).toBeRejectedWithError('login failed');
+  });
+
+  it('get should fail if localStorage is abnormal', async () => {
+    httpClientSpy.request.and.returnValue(throwError(() => ({ error: { message: 'xx' } })));
+
+    await expectAsync(service.get('url')).toBeRejectedWithError('xx');
+  });
+
+  it('post should work', async () => {
+    expect(await service.post('url', {})).toEqual(dummyResult);
   });
 });

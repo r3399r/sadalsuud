@@ -4,6 +4,7 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
+import { ERROR_CODE } from 'src/constant/error';
 import { UserService } from 'src/logic/UserService';
 import { me } from './me';
 import { MeEvent } from './MeEvent';
@@ -48,7 +49,7 @@ describe('me', () => {
   it('should fail with unknown method', async () => {
     event.httpMethod = 'unknown';
     await expect(me(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unknown http method'))
+      errorOutput(new Error(ERROR_CODE.UNKNOWN_HTTP_METHOD))
     );
   });
 });

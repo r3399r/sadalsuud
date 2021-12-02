@@ -47,6 +47,8 @@ export class LoginComponent implements OnInit {
       })
       .catch((e) => {
         this.snackBar.open(e.message, undefined, { duration: 4000 });
+      })
+      .finally(() => {
         this.isLoading = false;
       });
   }

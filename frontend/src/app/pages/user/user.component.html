@@ -10,3 +10,4 @@
     <div>{{ user.role }}</div>
   </div>
 </div>
+<app-user-form (formSubmit)="onFormSubmit($event)" *ngIf="!isLoading && !user"></app-user-form>

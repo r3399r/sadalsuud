@@ -1,0 +1,26 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="self">
+  <div class="hint">請登錄資料</div>
+  <div>
+    <mat-form-field appearance="fill">
+      <mat-label>名字</mat-label>
+      <input matInput type="text" formControlName="name" autocomplete="off" />
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="fill">
+      <mat-label>聯絡電話</mat-label>
+      <input matInput type="text" formControlName="phone" autocomplete="off" />
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="fill">
+      <mat-label>出生年月日</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="birthday" autocomplete="off" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker touchUi></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div class="button">
+    <button mat-raised-button color="primary" type="submit">送出</button>
+  </div>
+</form>

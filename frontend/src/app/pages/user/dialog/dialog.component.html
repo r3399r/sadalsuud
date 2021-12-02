@@ -1,0 +1,20 @@
+<div mat-dialog-title class="header">確認資料</div>
+<div mat-dialog-content>
+  <div>請確認資料是否正確，我們將盡速與您聯絡進行電話認證，認證過後即可報名活動。</div>
+  <div class="data">
+    <div>名字</div>
+    <div>{{ data.name }}</div>
+  </div>
+  <div class="data">
+    <div>聯絡電話</div>
+    <div>{{ data.phone }}</div>
+  </div>
+  <div class="data">
+    <div>出生年月日</div>
+    <div>{{ data.birthday }}</div>
+  </div>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button mat-button (click)="onCancel()">取消</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>確認</button>
+</div>

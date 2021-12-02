@@ -7,6 +7,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MomentDateModule } from '@angular/material-moment-adapter';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AppComponent } from './app.component';
@@ -17,6 +25,9 @@ import { UserComponent } from './pages/user/user.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { LoginComponent } from './pages/login/login.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { UserFormComponent } from './pages/user/user-form/user-form.component';
+import { MY_NATIVE_DATE_FORMATS } from './constants/dateFormats';
+import { DialogComponent } from './pages/user/dialog/dialog.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +40,8 @@ import { LoaderComponent } from './components/loader/loader.component';
     SidenavComponent,
     LoginComponent,
     LoaderComponent,
+    UserFormComponent,
+    DialogComponent,
   ],
   imports: [
     MatSidenavModule,
@@ -40,8 +53,19 @@ import { LoaderComponent } from './components/loader/loader.component';
     MatSnackBarModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MomentDateModule,
+    MatButtonModule,
+    MatDialogModule,
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_FORMATS, useValue: MY_NATIVE_DATE_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'zh-TW' },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

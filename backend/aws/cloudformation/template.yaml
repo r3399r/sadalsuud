@@ -449,6 +449,7 @@ Resources:
   LambdaVariables:
     Type: AWS::Serverless::Function
     Properties:
+      Architectures: [arm64]
       Handler: index.variables
       Runtime: !Sub ${NodeJsVer}
       FunctionName: !Sub ${Project}-${TargetEnvr}-variables
@@ -471,6 +472,7 @@ Resources:
   LambdaMe:
     Type: AWS::Serverless::Function
     Properties:
+      Architectures: [arm64]
       Handler: index.me
       Runtime: !Sub ${NodeJsVer}
       FunctionName: !Sub ${Project}-${TargetEnvr}-me
@@ -491,6 +493,7 @@ Resources:
   LambdaUsers:
     Type: AWS::Serverless::Function
     Properties:
+      Architectures: [arm64]
       Handler: index.users
       Runtime: !Sub ${NodeJsVer}
       FunctionName: !Sub ${Project}-${TargetEnvr}-users
@@ -511,6 +514,7 @@ Resources:
   LambdaAuth:
     Type: AWS::Serverless::Function
     Properties:
+      Architectures: [arm64]
       Handler: index.auth
       Runtime: !Sub ${NodeJsVer}
       FunctionName: !Sub ${Project}-${TargetEnvr}-auth

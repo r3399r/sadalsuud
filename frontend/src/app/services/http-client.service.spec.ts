@@ -1,17 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { HttpClientService } from './http-client.service';
+import { ERROR } from 'src/app/locales/errors';
 
 describe('HttpClientService', () => {
   let service: HttpClientService;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let routerSpy: jasmine.Spy;
   let dummyResult: any;
 
@@ -21,7 +20,6 @@ describe('HttpClientService', () => {
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['request']);
-    matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['isLogin', 'refreshToken']);
     routerSpy = spyOn(Router.prototype, 'navigate');
 
@@ -32,7 +30,6 @@ describe('HttpClientService', () => {
       imports: [RouterTestingModule],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },
-        { provide: MatSnackBar, useValue: matSnackBarSpy },
         { provide: AuthService, useValue: authServiceSpy },
       ],
     });
@@ -50,10 +47,10 @@ describe('HttpClientService', () => {
   it('get should fail if localStorage is abnormal', async () => {
     authServiceSpy.isLogin.and.returnValue(false);
 
-    await expectAsync(service.get('url')).toBeRejectedWithError('login failed');
+    await expectAsync(service.get('url')).toBeRejectedWithError(ERROR.TOKEN_EXPIRED);
   });
 
-  it('get should fail if localStorage is abnormal', async () => {
+  it('get should fail if api fail', async () => {
     httpClientSpy.request.and.returnValue(throwError(() => ({ error: { message: 'xx' } })));
 
     await expectAsync(service.get('url')).toBeRejectedWithError('xx');

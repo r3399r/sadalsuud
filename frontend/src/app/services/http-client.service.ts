@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -12,12 +11,7 @@ import { ERROR_CODE } from 'src/app/constants/error';
   providedIn: 'root',
 })
 export class HttpClientService {
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private authService: AuthService,
-  ) {}
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
   private async request<T, R = any>(
     method: string,
@@ -45,8 +39,7 @@ export class HttpClientService {
     } catch (e) {
       if (e.message === 'invalid_grant' || e.message === ERROR_CODE.TOKEN_INFO_INCOMPLETE) {
         this.router.navigate(['login']);
-        this.snackBar.open(ERROR.TOKEN_EXPIRED, undefined, { duration: 4000 });
-        throw new Error('login failed');
+        throw new Error(ERROR.TOKEN_EXPIRED);
       } else {
         throw new Error(e.error.message);
       }

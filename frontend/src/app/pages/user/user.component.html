@@ -1,13 +1,32 @@
 <app-loader *ngIf="isLoading"></app-loader>
-<div *ngIf="!isLoading && user" class="self">
-  <div>
-    <div class="header">使用者</div>
-    <div>{{ user.id }}</div>
-    <div>{{ user.name }}</div>
-    <div>{{ user.phone }}</div>
-    <div>{{ user.birthday }}</div>
-    <div>{{ user.verified }}</div>
-    <div>{{ user.role }}</div>
+<div *ngIf="!isLoading && user && !isEdit" class="self">
+  <div class="header">
+    <div>我的檔案</div>
+    <button mat-raised-button color="primary" type="button" (click)="onClick()">修改資料</button>
   </div>
+  <div class="table">
+    <div>
+      <div class="title">名字</div>
+      <div>{{ user.name }}</div>
+    </div>
+    <div>
+      <div class="title">聯絡方式</div>
+      <div><span *ngIf="!user.verified" class="unverified">(待認證)</span>{{ user.phone }}</div>
+    </div>
+    <div>
+      <div class="title">生日</div>
+      <div>{{ user.birthday }}</div>
+    </div>
+    <div>
+      <div class="title">身份</div>
+      <div class="role">{{ getRole(user.role) }}</div>
+    </div>
+  </div>
+  <hr />
 </div>
-<app-user-form (formSubmit)="onFormSubmit($event)" *ngIf="!isLoading && !user"></app-user-form>
+<app-user-form
+  (formSubmit)="onFormSubmit($event)"
+  [user]="user"
+  *ngIf="!isLoading && (!user || isEdit)"
+>
+</app-user-form>

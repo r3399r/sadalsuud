@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { GetUserResponse, PostUserRequest, User } from '@y-celestial/sadalsuud-service';
+import { GetUserResponse, PostUserRequest, ROLE, User } from '@y-celestial/sadalsuud-service';
 import { UserService } from 'src/app/services/user.service';
+import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
 
 @Component({
   selector: 'app-user',
@@ -11,6 +12,7 @@ import { UserService } from 'src/app/services/user.service';
 export class UserComponent implements OnInit {
   user: User | undefined;
   isLoading = true;
+  isEdit = false;
 
   constructor(private userService: UserService, private snackBar: MatSnackBar) {}
 
@@ -28,10 +30,10 @@ export class UserComponent implements OnInit {
       });
   }
 
-  onFormSubmit(data: PostUserRequest) {
+  onFormSubmit(event: { type: 'add' | 'edit'; data: PostUserRequest }) {
     this.isLoading = true;
     this.userService
-      .addUser(data)
+      .addUser(event.data)
       .then((res: User) => {
         this.user = res;
       })
@@ -41,5 +43,18 @@ export class UserComponent implements OnInit {
       .finally(() => {
         this.isLoading = false;
       });
+  }
+
+  getRole(role: ROLE) {
+    if (role === ROLE.UNVERIFIED) return ROLE_LOCALE.UNVERIFIED;
+    if (role === ROLE.ROOKIE) return ROLE_LOCALE.ROOKIE;
+    if (role === ROLE.GOOD_PARTNER || role === ROLE.SOFT_PARTNER) return ROLE_LOCALE.PARTNER;
+    if (role === ROLE.GOOD_PLANNER || role === ROLE.SOFT_PLANNER) return ROLE_LOCALE.PLANEER;
+    if (role === ROLE.ADMIN) return ROLE_LOCALE.ADMIN;
+    return ROLE_LOCALE.PASSERBY;
+  }
+
+  onClick() {
+    this.isEdit = true;
   }
 }

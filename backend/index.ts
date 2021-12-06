@@ -7,3 +7,4 @@ export {
   GetMeResponse,
   User,
 } from 'src/model/User';
+export { ROLE } from 'src/constant/User';

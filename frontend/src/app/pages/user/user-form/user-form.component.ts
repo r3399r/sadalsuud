@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { PostUserRequest } from '@y-celestial/sadalsuud-service';
+import { PostUserRequest, User } from '@y-celestial/sadalsuud-service';
 import * as moment from 'moment';
 import { momentValidator } from './validator';
 import { DialogComponent } from 'src/app/pages/user/dialog/dialog.component';
@@ -12,7 +12,8 @@ import { DialogComponent } from 'src/app/pages/user/dialog/dialog.component';
   styleUrls: ['./user-form.component.scss'],
 })
 export class UserFormComponent implements OnInit {
-  @Output() formSubmit = new EventEmitter<PostUserRequest>();
+  @Input() user: User | undefined;
+  @Output() formSubmit = new EventEmitter<{ type: 'add' | 'edit'; data: PostUserRequest }>();
   userForm = new FormGroup({
     name: new FormControl('', Validators.required),
     phone: new FormControl('', [Validators.pattern(/^[0-9]+$/), Validators.required]),
@@ -21,7 +22,13 @@ export class UserFormComponent implements OnInit {
 
   constructor(private dialog: MatDialog) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.user) {
+      this.userForm.controls['name'].setValue(this.user.name);
+      this.userForm.controls['phone'].setValue(this.user.phone);
+      this.userForm.controls['birthday'].setValue(moment(this.user.birthday));
+    }
+  }
 
   onSubmit() {
     if (this.userForm.valid) {
@@ -33,8 +40,8 @@ export class UserFormComponent implements OnInit {
         },
       });
 
-      dialogRef.afterClosed().subscribe((res: PostUserRequest) => {
-        if (res) this.formSubmit.emit(res);
+      dialogRef.afterClosed().subscribe((data: PostUserRequest) => {
+        if (data) this.formSubmit.emit({ type: this.user ? 'edit' : 'add', data });
       });
     }
   }

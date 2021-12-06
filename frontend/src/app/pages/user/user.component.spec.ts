@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ROLE } from '@y-celestial/sadalsuud-service';
 import { UserComponent } from './user.component';
 import { UserService } from 'src/app/services/user.service';
+import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
 
 describe('UserComponent', () => {
   let component: UserComponent;
@@ -31,5 +33,15 @@ describe('UserComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('getRole should work', () => {
+    expect(component.getRole(ROLE.PASSERBY)).toBe(ROLE_LOCALE.PASSERBY);
+    expect(component.getRole(ROLE.UNVERIFIED)).toBe(ROLE_LOCALE.UNVERIFIED);
+    expect(component.getRole(ROLE.ROOKIE)).toBe(ROLE_LOCALE.ROOKIE);
+    expect(component.getRole(ROLE.GOOD_PARTNER)).toBe(ROLE_LOCALE.PARTNER);
+    expect(component.getRole(ROLE.GOOD_PLANNER)).toBe(ROLE_LOCALE.PLANEER);
+    expect(component.getRole(ROLE.ADMIN)).toBe(ROLE_LOCALE.ADMIN);
+    expect(component.getRole('xxx' as ROLE)).toBe(ROLE_LOCALE.PASSERBY);
   });
 });

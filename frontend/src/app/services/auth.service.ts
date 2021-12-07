@@ -35,7 +35,7 @@ export class AuthService {
     const botPrompt = 'normal';
 
     // save state for validate purpose
-    sessionStorage.setItem('state', state);
+    localStorage.setItem('state', state);
 
     return `${authhorizationUrl}?${new URLSearchParams({
       response_type: responseType,
@@ -48,8 +48,8 @@ export class AuthService {
   }
 
   public async login(params: LoginUrlParams) {
-    const state = sessionStorage.getItem('state');
-    sessionStorage.removeItem('state');
+    const state = localStorage.getItem('state');
+    localStorage.removeItem('state');
 
     if (params.state !== state || params.code === undefined)
       throw new Error(ERROR.WRONG_LOGIN_STATE);

@@ -52,7 +52,7 @@ describe('AuthService', () => {
       of({ access_token: 'a', expires_in: 123, refresh_token: 'b' }),
     );
 
-    sessionStorage.setItem('state', 'tempState');
+    localStorage.setItem('state', 'tempState');
     await service.login({ state: 'tempState', code: 'abcd' });
 
     expect(httpClientSpy.post).toHaveBeenCalledTimes(1);
@@ -63,14 +63,14 @@ describe('AuthService', () => {
       of({ access_token: 'a', expires_in: 123, refresh_token: 'b' }),
     );
 
-    sessionStorage.setItem('state', 'tempState');
+    localStorage.setItem('state', 'tempState');
 
     await expectAsync(service.login({ state: 'notSameState', code: 'abcd' })).toBeRejectedWithError(
       ERROR.WRONG_LOGIN_STATE,
     );
     expect(httpClientSpy.post).toHaveBeenCalledTimes(0);
 
-    sessionStorage.removeItem('state');
+    localStorage.removeItem('state');
   });
 
   it('refreshToken should work', async () => {

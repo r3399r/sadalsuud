@@ -64,4 +64,14 @@ export class HttpClientService {
   ) {
     return await this.request<T, R>('post', url, body, params);
   }
+
+  public async put<T, R>(
+    url: string,
+    body: R,
+    params?: {
+      [param: string]: string | number | boolean;
+    },
+  ) {
+    return await this.request<T, R>('put', url, body, params);
+  }
 }

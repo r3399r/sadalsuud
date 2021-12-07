@@ -26,6 +26,7 @@
 </div>
 <app-user-form
   (formSubmit)="onFormSubmit($event)"
+  (updateCancel)="onCancel()"
   [user]="user"
   *ngIf="!isLoading && (!user || isEdit)"
 >

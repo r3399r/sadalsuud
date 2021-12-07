@@ -32,17 +32,35 @@ export class UserComponent implements OnInit {
 
   onFormSubmit(event: { type: 'add' | 'edit'; data: PostUserRequest }) {
     this.isLoading = true;
-    this.userService
-      .addUser(event.data)
-      .then((res: User) => {
-        this.user = res;
-      })
-      .catch((e) => {
-        this.snackBar.open(e.message, undefined, { duration: 4000 });
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
+    if (event.type === 'add')
+      this.userService
+        .addUser(event.data)
+        .then((res: User) => {
+          this.user = res;
+        })
+        .catch((e) => {
+          this.snackBar.open(e.message, undefined, { duration: 4000 });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    else
+      this.userService
+        .updateUser(event.data)
+        .then((res: User) => {
+          this.user = res;
+        })
+        .catch((e) => {
+          this.snackBar.open(e.message, undefined, { duration: 4000 });
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.isEdit = false;
+        });
+  }
+
+  onCancel() {
+    this.isEdit = false;
   }
 
   getRole(role: ROLE) {

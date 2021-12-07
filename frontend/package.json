@@ -1,6 +1,6 @@
 {
   "name": "sadalsuud-frontend",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,7 +31,7 @@
     "@angular/platform-browser": "~13.0.0",
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
-    "@y-celestial/service": "^2.0.1",
+    "@y-celestial/service": "^2.0.2",
     "moment": "^2.29.1",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
@@ -51,7 +51,7 @@
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
-    "@y-celestial/sadalsuud-service": "^1.0.5",
+    "@y-celestial/sadalsuud-service": "^1.0.6",
     "del-cli": "^4.0.1",
     "eslint": "^8.1.0",
     "eslint-plugin-import": "^2.25.3",

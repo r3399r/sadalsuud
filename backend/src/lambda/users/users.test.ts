@@ -30,6 +30,7 @@ describe('users', () => {
     bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
 
     mockUserService.addUser = jest.fn(() => dummyUser);
+    mockUserService.updateUser = jest.fn(() => dummyUser);
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockUserService.getUsers = jest.fn(() => [dummyUser]);
     mockUserService.getUserByToken = jest.fn(() => dummyUser);
@@ -59,6 +60,32 @@ describe('users', () => {
       errorOutput(new Error('null body error'))
     );
     expect(mockUserService.addUser).toBeCalledTimes(0);
+  });
+
+  it('PUT should work', async () => {
+    event = {
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyUser)
+    );
+    expect(mockUserService.updateUser).toBeCalledTimes(1);
+  });
+
+  it('PUT should fail if null body', async () => {
+    event = {
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: null,
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('null body error'))
+    );
+    expect(mockUserService.updateUser).toBeCalledTimes(0);
   });
 
   it('GET should work with all users', async () => {

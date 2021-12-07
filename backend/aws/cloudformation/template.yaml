@@ -64,6 +64,7 @@ Resources:
                   }
                 ],
                 "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
                   "httpMethod": "POST",
                   "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-me/invocations",
                   "responses": {
@@ -75,8 +76,7 @@ Resources:
                     }
                   },
                   "passthroughBehavior": "when_no_match",
-                  "contentHandling": "CONVERT_TO_TEXT",
-                  "type": "aws_proxy"
+                  "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
               "options": {
@@ -106,6 +106,7 @@ Resources:
                   }
                 },
                 "x-amazon-apigateway-integration": {
+                  "type": "mock",
                   "responses": {
                     "default": {
                       "statusCode": "200",
@@ -119,8 +120,7 @@ Resources:
                   "requestTemplates": {
                     "application/json": "{\"statusCode\": 200}"
                   },
-                  "passthroughBehavior": "when_no_match",
-                  "type": "mock"
+                  "passthroughBehavior": "when_no_match"
                 }
               }
             },
@@ -148,6 +148,7 @@ Resources:
                   }
                 ],
                 "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
                   "httpMethod": "POST",
                   "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-users/invocations",
                   "responses": {
@@ -159,8 +160,7 @@ Resources:
                     }
                   },
                   "passthroughBehavior": "when_no_match",
-                  "contentHandling": "CONVERT_TO_TEXT",
-                  "type": "aws_proxy"
+                  "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
               "post": {
@@ -186,6 +186,7 @@ Resources:
                   }
                 ],
                 "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
                   "httpMethod": "POST",
                   "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-users/invocations",
                   "responses": {
@@ -197,8 +198,40 @@ Resources:
                     }
                   },
                   "passthroughBehavior": "when_no_match",
-                  "contentHandling": "CONVERT_TO_TEXT",
-                  "type": "aws_proxy"
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              },
+              "put": {
+                "produces": [
+                  "application/json"
+                ],
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "schema": {
+                      "$ref": "#/definitions/Empty"
+                    },
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-users/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
               "options": {
@@ -228,11 +261,12 @@ Resources:
                   }
                 },
                 "x-amazon-apigateway-integration": {
+                  "type": "mock",
                   "responses": {
                     "default": {
                       "statusCode": "200",
                       "responseParameters": {
-                        "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS,POST'",
+                        "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS,POST,PUT'",
                         "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-api-token'",
                         "method.response.header.Access-Control-Allow-Origin": "'*'"
                       }
@@ -241,8 +275,7 @@ Resources:
                   "requestTemplates": {
                     "application/json": "{\"statusCode\": 200}"
                   },
-                  "passthroughBehavior": "when_no_match",
-                  "type": "mock"
+                  "passthroughBehavior": "when_no_match"
                 }
               }
             },
@@ -278,6 +311,7 @@ Resources:
                   }
                 ],
                 "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
                   "httpMethod": "POST",
                   "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-users/invocations",
                   "responses": {
@@ -289,8 +323,7 @@ Resources:
                     }
                   },
                   "passthroughBehavior": "when_no_match",
-                  "contentHandling": "CONVERT_TO_TEXT",
-                  "type": "aws_proxy"
+                  "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
               "options": {
@@ -328,6 +361,7 @@ Resources:
                   }
                 },
                 "x-amazon-apigateway-integration": {
+                  "type": "mock",
                   "responses": {
                     "default": {
                       "statusCode": "200",
@@ -341,8 +375,7 @@ Resources:
                   "requestTemplates": {
                     "application/json": "{\"statusCode\": 200}"
                   },
-                  "passthroughBehavior": "when_no_match",
-                  "type": "mock"
+                  "passthroughBehavior": "when_no_match"
                 }
               }
             },
@@ -365,6 +398,7 @@ Resources:
                   }
                 },
                 "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
                   "httpMethod": "POST",
                   "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-variables/invocations",
                   "responses": {
@@ -376,8 +410,7 @@ Resources:
                     }
                   },
                   "passthroughBehavior": "when_no_match",
-                  "contentHandling": "CONVERT_TO_TEXT",
-                  "type": "aws_proxy"
+                  "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
               "options": {
@@ -407,6 +440,7 @@ Resources:
                   }
                 },
                 "x-amazon-apigateway-integration": {
+                  "type": "mock",
                   "responses": {
                     "default": {
                       "statusCode": "200",
@@ -420,8 +454,7 @@ Resources:
                   "requestTemplates": {
                     "application/json": "{\"statusCode\": 200}"
                   },
-                  "passthroughBehavior": "when_no_match",
-                  "type": "mock"
+                  "passthroughBehavior": "when_no_match"
                 }
               }
             }
@@ -433,9 +466,9 @@ Resources:
               "in": "header",
               "x-amazon-apigateway-authtype": "custom",
               "x-amazon-apigateway-authorizer": {
+                "type": "token",
                 "authorizerUri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-auth/invocations",
-                "authorizerResultTtlInSeconds": 300,
-                "type": "token"
+                "authorizerResultTtlInSeconds": 300
               }
             }
           },

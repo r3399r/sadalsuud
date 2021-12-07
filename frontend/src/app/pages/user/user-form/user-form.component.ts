@@ -14,6 +14,7 @@ import { DialogComponent } from 'src/app/pages/user/dialog/dialog.component';
 export class UserFormComponent implements OnInit {
   @Input() user: User | undefined;
   @Output() formSubmit = new EventEmitter<{ type: 'add' | 'edit'; data: PostUserRequest }>();
+  @Output() updateCancel = new EventEmitter();
   userForm = new FormGroup({
     name: new FormControl('', Validators.required),
     phone: new FormControl('', [Validators.pattern(/^[0-9]+$/), Validators.required]),
@@ -44,5 +45,9 @@ export class UserFormComponent implements OnInit {
         if (data) this.formSubmit.emit({ type: this.user ? 'edit' : 'add', data });
       });
     }
+  }
+
+  onCancel() {
+    this.updateCancel.emit();
   }
 }

@@ -12,9 +12,11 @@ describe('UserComponent', () => {
   let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(async () => {
-    userServiceSpy = jasmine.createSpyObj('UserService', ['getUser']);
+    userServiceSpy = jasmine.createSpyObj('UserService', ['getUser', 'addUser', 'updateUser']);
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     userServiceSpy.getUser.and.resolveTo();
+    userServiceSpy.addUser.and.resolveTo();
+    userServiceSpy.updateUser.and.resolveTo();
 
     await TestBed.configureTestingModule({
       declarations: [UserComponent],
@@ -33,6 +35,48 @@ describe('UserComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should fail when create', () => {
+    userServiceSpy.getUser.and.rejectWith();
+    component.ngOnInit();
+    fixture.whenStable().then(() => {
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('onFormSubmit should work with add', () => {
+    component.onFormSubmit({ type: 'add', data: {} as any });
+    fixture.whenStable().then(() => {
+      expect(userServiceSpy.addUser).toHaveBeenCalledTimes(1);
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  it('onFormSubmit should fail with add', () => {
+    userServiceSpy.addUser.and.rejectWith();
+    component.onFormSubmit({ type: 'add', data: {} as any });
+    fixture.whenStable().then(() => {
+      expect(userServiceSpy.addUser).toHaveBeenCalledTimes(0);
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('onFormSubmit should work with edit', () => {
+    component.onFormSubmit({ type: 'edit', data: {} as any });
+    fixture.whenStable().then(() => {
+      expect(userServiceSpy.updateUser).toHaveBeenCalledTimes(1);
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  it('onFormSubmit should fail with edit', () => {
+    userServiceSpy.updateUser.and.rejectWith();
+    component.onFormSubmit({ type: 'edit', data: {} as any });
+    fixture.whenStable().then(() => {
+      expect(userServiceSpy.updateUser).toHaveBeenCalledTimes(0);
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('getRole should work', () => {

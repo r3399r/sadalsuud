@@ -28,19 +28,25 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
   });
 
+  afterAll(() => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('expire_at');
+    localStorage.removeItem('refresh_token');
+  });
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   it('isLogin should return false if no localstorage is set', () => {
-    localStorage.removeItem('access_token');
     expect(service.isLogin()).toBeFalse();
   });
 
   it('isLogin should return true if localstorage is set', () => {
     localStorage.setItem('access_token', 'test');
+    localStorage.setItem('expire_at', '1641087965096');
+    localStorage.setItem('refresh_token', 'test');
     expect(service.isLogin()).toBeTrue();
-    localStorage.removeItem('access_token');
   });
 
   it('getLineLoginUrl should work', () => {

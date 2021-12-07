@@ -2,6 +2,8 @@ export { VariablesResponse, VariablesParams } from 'src/model/Variable';
 export {
   PostUserRequest,
   PostUserResponse,
+  PutUserResponse,
+  PutUserRequest,
   GetUserResponse,
   GetUsersResponse,
   GetMeResponse,

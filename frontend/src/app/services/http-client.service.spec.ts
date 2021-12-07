@@ -59,4 +59,8 @@ describe('HttpClientService', () => {
   it('post should work', async () => {
     expect(await service.post('url', {})).toEqual(dummyResult);
   });
+
+  it('put should work', async () => {
+    expect(await service.put('url', {})).toEqual(dummyResult);
+  });
 });

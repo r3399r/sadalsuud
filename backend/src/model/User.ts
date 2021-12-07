@@ -19,6 +19,14 @@ export type PostUserRequest = {
 
 export type PostUserResponse = User;
 
+export type PutUserRequest = {
+  name: string;
+  phone: string;
+  birthday: string;
+};
+
+export type PutUserResponse = User;
+
 export type GetUserResponse = User;
 
 export type GetUsersResponse = User[];

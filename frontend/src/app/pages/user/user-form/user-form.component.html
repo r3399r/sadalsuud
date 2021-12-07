@@ -1,4 +1,4 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="self">
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="self" id="user-form">
   <div class="hint">請填入資料</div>
   <div>
     <mat-form-field appearance="fill">
@@ -21,6 +21,15 @@
     </mat-form-field>
   </div>
   <div class="button">
-    <button mat-raised-button color="primary" type="submit">送出</button>
+    <button
+      id="btn-cancel"
+      mat-raised-button
+      type="button"
+      *ngIf="user !== undefined"
+      (click)="onCancel()"
+    >
+      取消
+    </button>
+    <button id="btn-submit" mat-raised-button color="primary" type="submit">送出</button>
   </div>
 </form>

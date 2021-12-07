@@ -29,6 +29,7 @@ describe('UserService', () => {
     bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
 
     mockDbService.createItem = jest.fn();
+    mockDbService.putItem = jest.fn();
     mockDbService.getItem = jest.fn(() => dummyUser);
     mockDbService.getItems = jest.fn(() => [dummyUser]);
 
@@ -43,6 +44,27 @@ describe('UserService', () => {
     });
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.createItem).toBeCalledTimes(1);
+  });
+
+  it('updateUser should work with passerby', async () => {
+    await userService.updateUser('test-token', {
+      name: 'name',
+      phone: 'phone',
+      birthday: 'birthday',
+    });
+    expect(mockLineService.getProfile).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+  });
+
+  it('updateUser should work with verified role', async () => {
+    mockDbService.getItem = jest.fn(() => ({ role: ROLE.ADMIN }));
+    await userService.updateUser('test-token', {
+      name: 'name',
+      phone: 'phone',
+      birthday: 'birthday',
+    });
+    expect(mockLineService.getProfile).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
   });
 
   it('getUsers should work', async () => {

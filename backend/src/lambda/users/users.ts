@@ -11,6 +11,7 @@ import {
   GetUserResponse,
   GetUsersResponse,
   PostUserResponse,
+  PutUserRequest,
 } from 'src/model/User';
 import { UsersEvent } from './UsersEvent';
 
@@ -29,6 +30,13 @@ export async function users(
         res = await userService.addUser(
           event.headers['x-api-token'],
           JSON.parse(event.body) as PostUserResponse
+        );
+        break;
+      case 'PUT':
+        if (event.body === null) throw new Error('null body error');
+        res = await userService.updateUser(
+          event.headers['x-api-token'],
+          JSON.parse(event.body) as PutUserRequest
         );
         break;
       case 'GET':

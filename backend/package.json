@@ -1,6 +1,6 @@
 {
   "name": "@y-celestial/sadalsuud-service",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "check if one wins the price",
   "author": "Yue Chang",
   "main": "lib/index.js",
@@ -24,7 +24,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@y-celestial/service": "^1.5.10",
+    "@y-celestial/service": "^2.0.2",
     "axios": "^0.24.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",

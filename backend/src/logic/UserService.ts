@@ -2,7 +2,13 @@ import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
 import { ROLE } from 'src/constant/User';
-import { PostUserRequest, PostUserResponse, User } from 'src/model/User';
+import {
+  PostUserRequest,
+  PostUserResponse,
+  PutUserRequest,
+  PutUserResponse,
+  User,
+} from 'src/model/User';
 import { UserEntity } from 'src/model/UserEntity';
 import { LineService } from './LineService';
 
@@ -37,6 +43,28 @@ export class UserService {
     await this.dbService.createItem(ALIAS, user);
 
     return user;
+  }
+
+  public async updateUser(
+    token: string,
+    body: PutUserRequest
+  ): Promise<PutUserResponse> {
+    const oldUser = await this.getUserByToken(token);
+
+    const newUser = new UserEntity({
+      id: oldUser.id,
+      name: body.name,
+      phone: body.phone,
+      birthday: body.birthday,
+      verified: false,
+      role: oldUser.role !== ROLE.PASSERBY ? ROLE.UNVERIFIED : ROLE.PASSERBY,
+      dateCreated: oldUser.dateCreated,
+      dateUpdated: Date.now(),
+    });
+
+    await this.dbService.putItem(ALIAS, newUser);
+
+    return newUser;
   }
 
   public async getUsers() {

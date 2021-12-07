@@ -2,9 +2,9 @@ export enum ROLE {
   PASSERBY = 'passerby',
   UNVERIFIED = 'unverified',
   ROOKIE = 'rookie',
-  PARTNER = 'partner',
-  OFFICIAL_PARTNER = 'official-partner',
-  PLANNER = 'planner',
-  OFFICIAL_PLANNER = 'official-planner',
+  GOOD_PARTNER = 'good-partner',
+  SOFT_PARTNER = 'soft-partner',
+  GOOD_PLANNER = 'good-planner',
+  SOFT_PLANNER = 'soft-planner',
   ADMIN = 'admin',
 }

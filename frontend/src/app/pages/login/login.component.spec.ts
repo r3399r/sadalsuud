@@ -19,6 +19,7 @@ describe('LoginComponent', () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
     variablesServiceSpy = jasmine.createSpyObj('VariablesService', ['getVariables']);
     routerSpy = spyOn(Router.prototype, 'navigate');
+    variablesServiceSpy.getVariables.and.resolveTo({ lineLoginId: 'test' });
 
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
@@ -42,7 +43,6 @@ describe('LoginComponent', () => {
   });
 
   it('ngOnInit should work', async () => {
-    variablesServiceSpy.getVariables.and.resolveTo({ lineLoginId: 'test' });
     component.ngOnInit();
     fixture.whenStable().then(() => {
       expect(component.isLoading).toBeFalse();

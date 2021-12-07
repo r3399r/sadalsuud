@@ -23,14 +23,12 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.variablesService.getVariables('lineLoginId').then((variables) => {
+      this.clientId = variables.lineLoginId;
+      this.isLoading = false;
+    });
     this.route.queryParams.subscribe((params: LoginUrlParams) => {
       if (Object.entries(params).length > 0) this.loginProcess(params);
-      else {
-        this.variablesService.getVariables('lineLoginId').then((variables) => {
-          this.clientId = variables.lineLoginId;
-          this.isLoading = false;
-        });
-      }
     });
   }
 

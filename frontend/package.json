@@ -15,7 +15,7 @@
     "clean": "del-cli dist -f",
     "build": "ng build",
     "pre:dev": "run-s clean fix build test:headless",
-    "pre:commit": "run-s lint test:headless",
+    "pre:commit": "run-p lint test:headless build",
     "pre:deploy": "run-s clean build"
   },
   "private": true,

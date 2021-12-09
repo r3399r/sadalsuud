@@ -45,7 +45,7 @@ describe('LoginComponent', () => {
   it('ngOnInit should work', async () => {
     component.ngOnInit();
     fixture.whenStable().then(() => {
-      expect(component.isLoading).toBeFalse();
+      expect(component.isLoginProcessing || component.isGettingVariables).toBeFalse();
     });
   });
 

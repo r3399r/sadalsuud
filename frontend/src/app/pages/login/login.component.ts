@@ -12,7 +12,8 @@ import { VariablesService } from 'src/app/services/variables.service';
 })
 export class LoginComponent implements OnInit {
   private clientId: string | undefined;
-  isLoading = true;
+  isGettingVariables = false;
+  isLoginProcessing = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,9 +24,10 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.isGettingVariables = true;
     this.variablesService.getVariables('lineLoginId').then((variables) => {
       this.clientId = variables.lineLoginId;
-      this.isLoading = false;
+      this.isGettingVariables = false;
     });
     this.route.queryParams.subscribe((params: LoginUrlParams) => {
       if (Object.entries(params).length > 0) this.loginProcess(params);
@@ -37,7 +39,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginProcess(params: LoginUrlParams) {
-    this.isLoading = true;
+    this.isLoginProcessing = true;
     this.authService
       .login(params)
       .then(() => {
@@ -47,7 +49,7 @@ export class LoginComponent implements OnInit {
         this.snackBar.open(e.message, undefined, { duration: 4000 });
       })
       .finally(() => {
-        this.isLoading = false;
+        this.isLoginProcessing = false;
       });
   }
 }

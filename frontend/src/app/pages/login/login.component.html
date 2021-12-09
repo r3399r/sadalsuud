@@ -1,5 +1,5 @@
-<app-loader *ngIf="isLoading"></app-loader>
-<div *ngIf="!isLoading" class="self">
+<app-loader *ngIf="isGettingVariables || isLoginProcessing"></app-loader>
+<div *ngIf="!isGettingVariables && !isLoginProcessing" class="self">
   <div>
     <div class="header">登入</div>
     <p>本網站使用 LINE 的帳號系統進行使用者管理，不需另外註冊新帳號。</p>

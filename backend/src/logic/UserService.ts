@@ -57,7 +57,7 @@ export class UserService {
       phone: body.phone,
       birthday: body.birthday,
       verified: false,
-      role: oldUser.role !== ROLE.PASSERBY ? ROLE.UNVERIFIED : ROLE.PASSERBY,
+      role: oldUser.role,
       dateCreated: oldUser.dateCreated,
       dateUpdated: Date.now(),
     });

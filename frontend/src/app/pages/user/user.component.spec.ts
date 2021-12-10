@@ -81,7 +81,6 @@ describe('UserComponent', () => {
 
   it('getRole should work', () => {
     expect(component.getRole(ROLE.PASSERBY)).toBe(ROLE_LOCALE.PASSERBY);
-    expect(component.getRole(ROLE.UNVERIFIED)).toBe(ROLE_LOCALE.UNVERIFIED);
     expect(component.getRole(ROLE.ROOKIE)).toBe(ROLE_LOCALE.ROOKIE);
     expect(component.getRole(ROLE.GOOD_PARTNER)).toBe(ROLE_LOCALE.PARTNER);
     expect(component.getRole(ROLE.GOOD_PLANNER)).toBe(ROLE_LOCALE.PLANEER);

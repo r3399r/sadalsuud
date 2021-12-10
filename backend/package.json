@@ -1,6 +1,6 @@
 {
   "name": "@y-celestial/sadalsuud-service",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "check if one wins the price",
   "author": "Yue Chang",
   "main": "lib/index.js",

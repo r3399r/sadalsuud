@@ -64,7 +64,6 @@ export class UserComponent implements OnInit {
   }
 
   getRole(role: ROLE) {
-    if (role === ROLE.UNVERIFIED) return ROLE_LOCALE.UNVERIFIED;
     if (role === ROLE.ROOKIE) return ROLE_LOCALE.ROOKIE;
     if (role === ROLE.GOOD_PARTNER || role === ROLE.SOFT_PARTNER) return ROLE_LOCALE.PARTNER;
     if (role === ROLE.GOOD_PLANNER || role === ROLE.SOFT_PLANNER) return ROLE_LOCALE.PLANEER;

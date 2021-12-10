@@ -56,7 +56,7 @@ export class UserService {
       name: body.name,
       phone: body.phone,
       birthday: body.birthday,
-      verified: false,
+      verified: oldUser.phone === body.phone ? oldUser.verified : false,
       role: oldUser.role,
       dateCreated: oldUser.dateCreated,
       dateUpdated: Date.now(),

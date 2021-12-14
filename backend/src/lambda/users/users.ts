@@ -40,11 +40,10 @@ export async function users(
         );
         break;
       case 'GET':
-        // validate role
-        const user = await userService.getUserByToken(
-          event.headers['x-api-token']
+        await userService.validateRole(
+          event.headers['x-api-token'],
+          ROLE.ADMIN
         );
-        if (user.role !== ROLE.ADMIN) throw new Error('permission denied');
 
         if (event.pathParameters === null) res = await userService.getUsers();
         else res = await userService.getUserById(event.pathParameters.id);

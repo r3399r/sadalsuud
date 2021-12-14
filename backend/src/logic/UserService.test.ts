@@ -14,7 +14,7 @@ describe('UserService', () => {
   let dummyUser: any;
 
   beforeAll(() => {
-    dummyUser = { role: ROLE.PASSERBY };
+    dummyUser = { role: ROLE.PASSERBY, phone: 'phone' };
   });
 
   beforeEach(() => {
@@ -46,18 +46,17 @@ describe('UserService', () => {
     expect(mockDbService.createItem).toBeCalledTimes(1);
   });
 
-  it('updateUser should work with passerby', async () => {
+  it('updateUser should work if phone updated', async () => {
     await userService.updateUser('test-token', {
       name: 'name',
-      phone: 'phone',
+      phone: 'new-phone',
       birthday: 'birthday',
     });
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.putItem).toBeCalledTimes(1);
   });
 
-  it('updateUser should work with verified role', async () => {
-    mockDbService.getItem = jest.fn(() => ({ role: ROLE.ADMIN }));
+  it('updateUser should work if phone not updated', async () => {
     await userService.updateUser('test-token', {
       name: 'name',
       phone: 'phone',
@@ -79,6 +78,20 @@ describe('UserService', () => {
 
   it('getUserRoleByToken should work', async () => {
     await userService.getUserByToken('token');
+    expect(mockLineService.getProfile).toBeCalledTimes(1);
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+  });
+
+  it('validateRole should work', async () => {
+    await userService.validateRole('token', ROLE.PASSERBY);
+    expect(mockLineService.getProfile).toBeCalledTimes(1);
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+  });
+
+  it('validateRole should fail', async () => {
+    await expect(
+      userService.validateRole('token', ROLE.ROOKIE)
+    ).rejects.toThrowError('permission denied');
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });

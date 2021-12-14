@@ -34,6 +34,7 @@ describe('users', () => {
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockUserService.getUsers = jest.fn(() => [dummyUser]);
     mockUserService.getUserByToken = jest.fn(() => dummyUser);
+    mockUserService.validateRole = jest.fn();
   });
 
   it('POST should work', async () => {
@@ -112,20 +113,6 @@ describe('users', () => {
       successOutput(dummyUser)
     );
     expect(mockUserService.getUserById).toBeCalledTimes(1);
-  });
-
-  it('GET should fail permission denied', async () => {
-    event = {
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'test-id' },
-    };
-    dummyUser = { role: ROLE.PASSERBY };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('permission denied'))
-    );
-    expect(mockUserService.getUserById).toBeCalledTimes(0);
   });
 
   it('should fail with unknown method', async () => {

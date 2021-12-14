@@ -26,4 +26,8 @@ export class StarService {
 
     return star;
   }
+
+  public async removeStar(id: string) {
+    await this.dbService.deleteItem(ALIAS, 'star', id);
+  }
 }

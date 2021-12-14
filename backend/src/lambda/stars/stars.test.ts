@@ -31,8 +31,9 @@ describe('stars', () => {
     bindings.rebind<StarService>(StarService).toConstantValue(mockStarService);
     bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
 
-    mockStarService.addStar = jest.fn(() => dummyStar);
     mockUserService.validateRole = jest.fn();
+    mockStarService.addStar = jest.fn(() => dummyStar);
+    mockStarService.removeStar = jest.fn();
   });
 
   it('POST should work', async () => {
@@ -40,6 +41,7 @@ describe('stars', () => {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
     };
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
       successOutput(dummyStar)
@@ -52,11 +54,38 @@ describe('stars', () => {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: null,
+      pathParameters: null,
     };
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new Error('null body error'))
     );
     expect(mockStarService.addStar).toBeCalledTimes(0);
+  });
+
+  it('DELETE should work', async () => {
+    event = {
+      httpMethod: 'DELETE',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'test-id' },
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(undefined)
+    );
+    expect(mockStarService.removeStar).toBeCalledTimes(1);
+  });
+
+  it('POST should fail if null body', async () => {
+    event = {
+      httpMethod: 'DELETE',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('star id is required'))
+    );
+    expect(mockStarService.removeStar).toBeCalledTimes(0);
   });
 
   it('should fail with unknown method', async () => {

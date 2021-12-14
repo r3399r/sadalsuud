@@ -19,20 +19,23 @@ export async function stars(
     const userService: UserService = bindings.get<UserService>(UserService);
     const starService: StarService = bindings.get<StarService>(StarService);
 
-    let res: PostStarResponse;
+    let res: PostStarResponse | void;
+
+    await userService.validateRole(event.headers['x-api-token'], ROLE.ADMIN);
 
     switch (event.httpMethod) {
       case 'POST':
         if (event.body === null) throw new Error('null body error');
 
-        await userService.validateRole(
-          event.headers['x-api-token'],
-          ROLE.ADMIN
-        );
-
         res = await starService.addStar(
           JSON.parse(event.body) as PostStarRequest
         );
+        break;
+      case 'DELETE':
+        if (event.pathParameters === null)
+          throw new Error('star id is required');
+
+        res = await starService.removeStar(event.pathParameters.id);
         break;
       default:
         throw new Error('unknown http method');

@@ -15,6 +15,7 @@ describe('StarService', () => {
     bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
 
     mockDbService.createItem = jest.fn();
+    mockDbService.deleteItem = jest.fn();
 
     starService = bindings.get<StarService>(StarService);
   });
@@ -26,5 +27,10 @@ describe('StarService', () => {
       birthday: 'birthday',
     });
     expect(mockDbService.createItem).toBeCalledTimes(1);
+  });
+
+  it('removeStar should work', async () => {
+    await starService.removeStar('test-id');
+    expect(mockDbService.deleteItem).toBeCalledTimes(1);
   });
 });

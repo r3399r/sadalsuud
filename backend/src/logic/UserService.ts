@@ -8,8 +8,8 @@ import {
   PutUserRequest,
   PutUserResponse,
   User,
+  UserEntity,
 } from 'src/model/User';
-import { UserEntity } from 'src/model/UserEntity';
 import { LineService } from './LineService';
 
 /**
@@ -79,5 +79,10 @@ export class UserService {
     const lineUser = await this.lineService.getProfile(token);
 
     return await this.dbService.getItem<User>(ALIAS, 'user', lineUser.userId);
+  }
+
+  public async validateRole(token: string, specificRole: ROLE) {
+    const user = await this.getUserByToken(token);
+    if (user.role !== specificRole) throw new Error('permission denied');
   }
 }

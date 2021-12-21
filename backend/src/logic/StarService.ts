@@ -1,7 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
-import { PostStarRequest, StarEntity } from 'src/model/Star';
+import { PostStarRequest, Star, StarEntity } from 'src/model/Star';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -29,5 +29,9 @@ export class StarService {
 
   public async removeStar(id: string) {
     await this.dbService.deleteItem(ALIAS, 'star', id);
+  }
+
+  public async getStar(id: string) {
+    return await this.dbService.getItem<Star>(ALIAS, 'star', id);
   }
 }

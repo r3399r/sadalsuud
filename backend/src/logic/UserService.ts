@@ -1,6 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
+import { ERROR_CODE } from 'src/constant/error';
 import { ROLE } from 'src/constant/User';
 import {
   PostUserRequest,
@@ -83,6 +84,7 @@ export class UserService {
 
   public async validateRole(token: string, specificRole: ROLE) {
     const user = await this.getUserByToken(token);
-    if (user.role !== specificRole) throw new Error('permission denied');
+    if (user.role !== specificRole)
+      throw new Error(ERROR_CODE.PERMISSION_DENIED);
   }
 }

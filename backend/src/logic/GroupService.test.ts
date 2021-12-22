@@ -1,6 +1,8 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
+import { ERROR_CODE } from 'src/constant/error';
 import { ROLE } from 'src/constant/User';
+import { Group } from 'src/model/Group';
 import { Star } from 'src/model/Star';
 import { User } from 'src/model/User';
 import { GroupService } from './GroupService';
@@ -17,6 +19,7 @@ describe('GroupService', () => {
   let mockStarService: any;
   let dummyUser: User;
   let dummyStar: Star;
+  let dummyGroup: Group;
 
   beforeAll(() => {
     dummyUser = {
@@ -37,6 +40,13 @@ describe('GroupService', () => {
       dateCreated: 321,
       dateUpdated: 321,
     };
+    dummyGroup = {
+      id: 'group-id',
+      user: [dummyUser],
+      star: dummyStar,
+      dateCreated: 111,
+      dateUpdated: 222,
+    };
   });
 
   beforeEach(() => {
@@ -48,7 +58,7 @@ describe('GroupService', () => {
     bindings.rebind<StarService>(StarService).toConstantValue(mockStarService);
 
     mockDbService.createItem = jest.fn();
-    mockDbService.getItems = jest.fn();
+    mockDbService.getItems = jest.fn(() => [dummyGroup]);
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockStarService.getStar = jest.fn(() => dummyStar);
 
@@ -74,8 +84,35 @@ describe('GroupService', () => {
     expect(mockStarService.getStar).toBeCalledTimes(0);
   });
 
+  it('createGroup should throw error if user exists', async () => {
+    mockDbService.getItems = jest.fn(() => [
+      { ...dummyGroup, star: undefined },
+    ]);
+    await expect(() =>
+      groupService.createGroup({
+        userId: 'user-id',
+      })
+    ).rejects.toThrowError(ERROR_CODE.DUPLICATED_GROUP_OF_USER);
+  });
+
+  it('createGroup should throw error if star exists', async () => {
+    await expect(() =>
+      groupService.createGroup({
+        userId: 'test-id',
+        starId: 'star-id',
+      })
+    ).rejects.toThrowError(ERROR_CODE.DUPLICATED_GROUP_OF_STAR);
+  });
+
   it('getGroups should work', async () => {
     await groupService.getGroups();
     expect(mockDbService.getItems).toBeCalledTimes(1);
+  });
+
+  it('getGroups should return [] when error', async () => {
+    mockDbService.getItems = jest.fn(() => {
+      throw new Error();
+    });
+    expect(await groupService.getGroups()).toStrictEqual([]);
   });
 });

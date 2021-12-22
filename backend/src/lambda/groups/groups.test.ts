@@ -35,6 +35,7 @@ describe('groups', () => {
 
     mockUserService.validateRole = jest.fn();
     mockGroupService.createGroup = jest.fn(() => dummyGroup);
+    mockGroupService.getGroups = jest.fn(() => [dummyGroup]);
   });
 
   it('POST should work', async () => {
@@ -59,6 +60,18 @@ describe('groups', () => {
       errorOutput(new Error('null body error'))
     );
     expect(mockGroupService.createGroup).toBeCalledTimes(0);
+  });
+
+  it('GET should work', async () => {
+    event = {
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+    };
+    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput([dummyGroup])
+    );
+    expect(mockGroupService.getGroups).toBeCalledTimes(1);
   });
 
   it('should fail with unknown method', async () => {

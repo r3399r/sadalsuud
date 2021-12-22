@@ -43,3 +43,5 @@ export type PostGroupRequest = {
 };
 
 export type PostGroupResponse = Group;
+
+export type GetGroupResponse = Group[];

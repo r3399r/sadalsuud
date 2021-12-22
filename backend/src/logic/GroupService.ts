@@ -1,7 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
-import { GroupEntity, PostGroupRequest } from 'src/model/Group';
+import { Group, GroupEntity, PostGroupRequest } from 'src/model/Group';
 import { StarEntity } from 'src/model/Star';
 import { UserEntity } from 'src/model/User';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,5 +40,9 @@ export class GroupService {
     await this.dbService.createItem(ALIAS, group);
 
     return group;
+  }
+
+  public async getGroups() {
+    return await this.dbService.getItems<Group>(ALIAS, 'group');
   }
 }

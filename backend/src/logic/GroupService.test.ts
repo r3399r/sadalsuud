@@ -48,6 +48,7 @@ describe('GroupService', () => {
     bindings.rebind<StarService>(StarService).toConstantValue(mockStarService);
 
     mockDbService.createItem = jest.fn();
+    mockDbService.getItems = jest.fn();
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockStarService.getStar = jest.fn(() => dummyStar);
 
@@ -71,5 +72,10 @@ describe('GroupService', () => {
     expect(mockDbService.createItem).toBeCalledTimes(1);
     expect(mockUserService.getUserById).toBeCalledTimes(1);
     expect(mockStarService.getStar).toBeCalledTimes(0);
+  });
+
+  it('getGroups should work', async () => {
+    await groupService.getGroups();
+    expect(mockDbService.getItems).toBeCalledTimes(1);
   });
 });

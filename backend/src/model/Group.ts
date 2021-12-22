@@ -6,7 +6,7 @@ import {
 import { Star } from './Star';
 import { User } from './User';
 
-type Group = {
+export type Group = {
   id: string;
   user: User[];
   star?: Star;

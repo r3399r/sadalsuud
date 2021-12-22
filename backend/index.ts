@@ -1,5 +1,5 @@
 export { VariablesResponse, VariablesParams } from 'src/model/Variable';
-export { PostStarResponse, PostStarRequest } from 'src/model/Star';
+export { PostStarResponse, PostStarRequest, Star } from 'src/model/Star';
 export {
   PostUserRequest,
   PostUserResponse,
@@ -11,3 +11,4 @@ export {
   User,
 } from 'src/model/User';
 export { ROLE } from 'src/constant/User';
+export { Group, PostGroupRequest, PostGroupResponse } from 'src/model/Group';

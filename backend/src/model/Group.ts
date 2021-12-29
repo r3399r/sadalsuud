@@ -3,6 +3,7 @@ import {
   relatedAttributeMany,
   relatedAttributeOne,
 } from '@y-celestial/service/lib/src/util/DbHelper';
+import { ACTION } from 'src/constant/group';
 import { Star } from './Star';
 import { User } from './User';
 
@@ -45,3 +46,8 @@ export type PostGroupRequest = {
 export type PostGroupResponse = Group;
 
 export type GetGroupResponse = Group[];
+
+export type PatchGroupRequest = {
+  action: ACTION;
+  userId: string;
+};

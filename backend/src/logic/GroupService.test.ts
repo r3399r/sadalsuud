@@ -1,6 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ERROR_CODE } from 'src/constant/error';
+import { ACTION } from 'src/constant/group';
 import { ROLE } from 'src/constant/User';
 import { Group } from 'src/model/Group';
 import { Star } from 'src/model/Star';
@@ -18,6 +19,7 @@ describe('GroupService', () => {
   let mockUserService: any;
   let mockStarService: any;
   let dummyUser: User;
+  let dummyUser2: User;
   let dummyStar: Star;
   let dummyGroup: Group;
 
@@ -32,6 +34,7 @@ describe('GroupService', () => {
       dateCreated: 123,
       dateUpdated: 123,
     };
+    dummyUser2 = { ...dummyUser, id: 'user-id2' };
     dummyStar = {
       id: 'star-id',
       name: 'star',
@@ -58,7 +61,10 @@ describe('GroupService', () => {
     bindings.rebind<StarService>(StarService).toConstantValue(mockStarService);
 
     mockDbService.createItem = jest.fn();
+    mockDbService.getItem = jest.fn(() => dummyGroup);
     mockDbService.getItems = jest.fn(() => [dummyGroup]);
+    mockDbService.putItem = jest.fn();
+    mockDbService.deleteItem = jest.fn();
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockStarService.getStar = jest.fn(() => dummyStar);
 
@@ -114,5 +120,84 @@ describe('GroupService', () => {
       throw new Error();
     });
     expect(await groupService.getGroups()).toStrictEqual([]);
+  });
+
+  it('updateGroupMembers should work with ADD', async () => {
+    await groupService.updateGroupMembers('group-id', {
+      action: ACTION.ADD,
+      userId: 'user-id-2',
+    });
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+    expect(mockDbService.deleteItem).toBeCalledTimes(0);
+  });
+
+  it('updateGroupMembers should fail with ADD if user already exist', async () => {
+    await expect(() =>
+      groupService.updateGroupMembers('group-id', {
+        action: ACTION.ADD,
+        userId: 'user-id',
+      })
+    ).rejects.toThrowError(ERROR_CODE.USER_EXISTS);
+  });
+
+  it('updateGroupMembers should work with REMOVE and delete group', async () => {
+    await groupService.updateGroupMembers('group-id', {
+      action: ACTION.REMOVE,
+      userId: 'user-id',
+    });
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(0);
+    expect(mockDbService.deleteItem).toBeCalledTimes(1);
+  });
+
+  it('updateGroupMembers should work with REMOVE and update group', async () => {
+    mockDbService.getItem = jest.fn(() => ({
+      id: 'group-id',
+      user: [dummyUser, dummyUser2],
+      star: dummyStar,
+      dateCreated: 111,
+      dateUpdated: 222,
+    }));
+    await groupService.updateGroupMembers('group-id', {
+      action: ACTION.REMOVE,
+      userId: 'user-id',
+    });
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+    expect(mockDbService.deleteItem).toBeCalledTimes(0);
+  });
+
+  it('updateGroupMembers should fail with REMOVE if user not exist', async () => {
+    await expect(() =>
+      groupService.updateGroupMembers('group-id', {
+        action: ACTION.REMOVE,
+        userId: 'user-id-2',
+      })
+    ).rejects.toThrowError(ERROR_CODE.USER_NOT_EXIST);
+  });
+
+  it('updateGroupMembers should fail if no star', async () => {
+    mockDbService.getItem = jest.fn(() => ({
+      id: 'group-id',
+      user: [dummyUser, dummyUser2],
+      dateCreated: 111,
+      dateUpdated: 222,
+    }));
+    await expect(() =>
+      groupService.updateGroupMembers('group-id', {
+        action: ACTION.REMOVE,
+        userId: 'user-id-2',
+      })
+    ).rejects.toThrowError(ERROR_CODE.GROUP_SHOULD_HAVE_STAR);
+  });
+
+  it('updateGroupMembers should fail if action does not support', async () => {
+    await expect(() =>
+      groupService.updateGroupMembers('group-id', {
+        action: 'not-support' as ACTION,
+        userId: 'user-id-2',
+      })
+    ).rejects.toThrowError(ERROR_CODE.UNEXPECTED_ACTION);
   });
 });

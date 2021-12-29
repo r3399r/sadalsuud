@@ -10,6 +10,7 @@ import { GroupService } from 'src/logic/GroupService';
 import { UserService } from 'src/logic/UserService';
 import {
   GetGroupResponse,
+  PatchGroupRequest,
   PostGroupRequest,
   PostGroupResponse,
 } from 'src/model/Group';
@@ -23,7 +24,7 @@ export async function groups(
     const userService: UserService = bindings.get<UserService>(UserService);
     const groupService: GroupService = bindings.get<GroupService>(GroupService);
 
-    let res: PostGroupResponse | GetGroupResponse;
+    let res: PostGroupResponse | GetGroupResponse | void;
 
     await userService.validateRole(event.headers['x-api-token'], ROLE.ADMIN);
 
@@ -37,6 +38,15 @@ export async function groups(
         break;
       case 'GET':
         res = await groupService.getGroups();
+        break;
+      case 'PATCH':
+        if (event.body === null) throw new Error('null body error');
+        if (event.pathParameters === null)
+          throw new Error('group id is required');
+        res = await groupService.updateGroupMembers(
+          event.pathParameters.id,
+          JSON.parse(event.body) as PatchGroupRequest
+        );
         break;
       default:
         throw new Error('unknown http method');

@@ -36,6 +36,7 @@ describe('groups', () => {
     mockUserService.validateRole = jest.fn();
     mockGroupService.createGroup = jest.fn(() => dummyGroup);
     mockGroupService.getGroups = jest.fn(() => [dummyGroup]);
+    mockGroupService.updateGroupMembers = jest.fn();
   });
 
   it('POST should work', async () => {
@@ -43,6 +44,7 @@ describe('groups', () => {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
     };
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
       successOutput(dummyGroup)
@@ -55,6 +57,7 @@ describe('groups', () => {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: null,
+      pathParameters: null,
     };
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new Error('null body error'))
@@ -67,11 +70,51 @@ describe('groups', () => {
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
+      pathParameters: null,
     };
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
       successOutput([dummyGroup])
     );
     expect(mockGroupService.getGroups).toBeCalledTimes(1);
+  });
+
+  it('PATCH should work', async () => {
+    event = {
+      httpMethod: 'PATCH',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'test-id' },
+    };
+    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(undefined)
+    );
+    expect(mockGroupService.updateGroupMembers).toBeCalledTimes(1);
+  });
+
+  it('PATCH should fail if null body', async () => {
+    event = {
+      httpMethod: 'PATCH',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'test-id' },
+    };
+    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('null body error'))
+    );
+    expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
+  });
+
+  it('PATCH should fail if null pathparameter', async () => {
+    event = {
+      httpMethod: 'PATCH',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('group id is required'))
+    );
+    expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
   });
 
   it('should fail with unknown method', async () => {

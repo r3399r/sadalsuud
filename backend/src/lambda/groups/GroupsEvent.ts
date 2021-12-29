@@ -4,4 +4,5 @@ export type GroupsEvent = {
     'x-api-token': string;
   };
   body: string | null;
+  pathParameters: { id: string } | null;
 };

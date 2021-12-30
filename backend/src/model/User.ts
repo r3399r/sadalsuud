@@ -60,3 +60,7 @@ export type GetUserResponse = User;
 export type GetUsersResponse = User[];
 
 export type GetMeResponse = User;
+
+export type PutUserRoleRequest = { role: ROLE };
+
+export type PutUserRoleResponse = User;

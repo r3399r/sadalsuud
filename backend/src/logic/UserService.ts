@@ -8,6 +8,7 @@ import {
   PostUserResponse,
   PutUserRequest,
   PutUserResponse,
+  PutUserRoleRequest,
   User,
   UserEntity,
 } from 'src/model/User';
@@ -86,5 +87,24 @@ export class UserService {
     const user = await this.getUserByToken(token);
     if (user.role !== specificRole)
       throw new Error(ERROR_CODE.PERMISSION_DENIED);
+  }
+
+  public async updateRole(id: string, body: PutUserRoleRequest) {
+    const oldUser = await this.getUserById(id);
+
+    const newUser = new UserEntity({
+      id: oldUser.id,
+      name: oldUser.name,
+      phone: oldUser.phone,
+      birthday: oldUser.birthday,
+      verified: body.role === ROLE.PASSERBY ? false : true,
+      role: body.role,
+      dateCreated: oldUser.dateCreated,
+      dateUpdated: Date.now(),
+    });
+
+    await this.dbService.putItem(ALIAS, newUser);
+
+    return newUser;
   }
 }

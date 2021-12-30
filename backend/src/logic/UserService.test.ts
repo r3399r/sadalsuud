@@ -96,4 +96,14 @@ describe('UserService', () => {
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });
+
+  it('updateRole should work', async () => {
+    await userService.updateRole('test-id', { role: ROLE.ROOKIE });
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+  });
+
+  it('updateRole should work if role is PASSERBY', async () => {
+    await userService.updateRole('test-id', { role: ROLE.PASSERBY });
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+  });
 });

@@ -31,6 +31,7 @@ describe('users', () => {
 
     mockUserService.addUser = jest.fn(() => dummyUser);
     mockUserService.updateUser = jest.fn(() => dummyUser);
+    mockUserService.updateRole = jest.fn(() => dummyUser);
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockUserService.getUsers = jest.fn(() => [dummyUser]);
     mockUserService.getUserByToken = jest.fn(() => dummyUser);
@@ -39,6 +40,7 @@ describe('users', () => {
 
   it('POST should work', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -52,6 +54,7 @@ describe('users', () => {
 
   it('POST should fail if null body', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -65,6 +68,7 @@ describe('users', () => {
 
   it('PUT should work', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'PUT',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -78,6 +82,7 @@ describe('users', () => {
 
   it('PUT should fail if null body', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'PUT',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -89,8 +94,36 @@ describe('users', () => {
     expect(mockUserService.updateUser).toBeCalledTimes(0);
   });
 
+  it('PUT /users/{id}/role should work', async () => {
+    event = {
+      resource: '/api/users/{id}/role',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyUser)
+    );
+    expect(mockUserService.updateRole).toBeCalledTimes(1);
+  });
+
+  it('PUT /users/{id}/role should fail if resource is wrong', async () => {
+    event = {
+      resource: '/api/users/{id}/xxx',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('non-support resource'))
+    );
+  });
+
   it('GET should work with all users', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -104,6 +137,7 @@ describe('users', () => {
 
   it('GET should work with id', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,

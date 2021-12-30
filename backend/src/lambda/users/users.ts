@@ -12,6 +12,8 @@ import {
   GetUsersResponse,
   PostUserResponse,
   PutUserRequest,
+  PutUserRoleRequest,
+  PutUserRoleResponse,
 } from 'src/model/User';
 import { UsersEvent } from './UsersEvent';
 
@@ -22,7 +24,11 @@ export async function users(
   try {
     const userService: UserService = bindings.get<UserService>(UserService);
 
-    let res: PostUserResponse | GetUserResponse | GetUsersResponse;
+    let res:
+      | PostUserResponse
+      | GetUserResponse
+      | GetUsersResponse
+      | PutUserRoleResponse;
 
     switch (event.httpMethod) {
       case 'POST':
@@ -34,10 +40,24 @@ export async function users(
         break;
       case 'PUT':
         if (event.body === null) throw new Error('null body error');
-        res = await userService.updateUser(
-          event.headers['x-api-token'],
-          JSON.parse(event.body) as PutUserRequest
-        );
+        if (event.pathParameters === null)
+          res = await userService.updateUser(
+            event.headers['x-api-token'],
+            JSON.parse(event.body) as PutUserRequest
+          );
+        else {
+          if (event.resource !== '/api/users/{id}/role')
+            throw new Error('non-support resource');
+
+          await userService.validateRole(
+            event.headers['x-api-token'],
+            ROLE.ADMIN
+          );
+          res = await userService.updateRole(
+            event.pathParameters.id,
+            JSON.parse(event.body) as PutUserRoleRequest
+          );
+        }
         break;
       case 'GET':
         await userService.validateRole(

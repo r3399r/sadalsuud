@@ -83,10 +83,10 @@ export class UserService {
     return await this.dbService.getItem<User>(ALIAS, 'user', lineUser.userId);
   }
 
-  public async validateRole(token: string, specificRole: ROLE) {
+  public async validateRole(token: string, specificRole: ROLE[]) {
     const user = await this.getUserByToken(token);
-    if (user.role !== specificRole)
-      throw new Error(ERROR_CODE.PERMISSION_DENIED);
+    if (specificRole.includes(user.role)) return user;
+    throw new Error(ERROR_CODE.PERMISSION_DENIED);
   }
 
   public async updateRole(id: string, body: PutUserRoleRequest) {

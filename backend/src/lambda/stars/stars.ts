@@ -21,7 +21,7 @@ export async function stars(
 
     let res: PostStarResponse | void;
 
-    await userService.validateRole(event.headers['x-api-token'], ROLE.ADMIN);
+    await userService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
 
     switch (event.httpMethod) {
       case 'POST':

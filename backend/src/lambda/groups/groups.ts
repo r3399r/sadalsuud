@@ -26,7 +26,7 @@ export async function groups(
 
     let res: PostGroupResponse | GetGroupResponse | void;
 
-    await userService.validateRole(event.headers['x-api-token'], ROLE.ADMIN);
+    await userService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
 
     switch (event.httpMethod) {
       case 'POST':

@@ -34,6 +34,7 @@ describe('trips', () => {
     mockUserService.validateRole = jest.fn();
     mockTripService.registerTrip = jest.fn(() => dummyTrip);
     mockTripService.getTrips = jest.fn(() => [dummyTrip]);
+    mockTripService.getTrip = jest.fn(() => dummyTrip);
   });
 
   it('POST should work', async () => {
@@ -41,6 +42,7 @@ describe('trips', () => {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
       successOutput(dummyTrip)
@@ -53,6 +55,7 @@ describe('trips', () => {
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: null,
+      pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new Error('null body error'))
@@ -60,16 +63,30 @@ describe('trips', () => {
     expect(mockTripService.registerTrip).toBeCalledTimes(0);
   });
 
-  it('GET should work', async () => {
+  it('GET /users should work', async () => {
     event = {
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
+      pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
       successOutput([dummyTrip])
     );
     expect(mockTripService.getTrips).toBeCalledTimes(1);
+  });
+
+  it('GET /users/{id} should work', async () => {
+    event = {
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyTrip)
+    );
+    expect(mockTripService.getTrip).toBeCalledTimes(1);
   });
 
   it('should fail with unknown method', async () => {

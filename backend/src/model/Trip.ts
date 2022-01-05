@@ -91,10 +91,18 @@ export type PostTripRequest = Pick<
 
 export type PostTripResponse = Trip;
 
-export type GetTripResponse =
+export type GetTripsResponse =
   | Trip[]
   | (Omit<Trip, 'owner' | 'participant' | 'star'> & {
       owner: Pick<User, 'id' | 'name'>;
       participant: Pick<User, 'id' | 'name'>[];
       star: Pick<Star, 'id' | 'nickname'>[];
     })[];
+
+export type GetTripResponse =
+  | Trip
+  | (Omit<Trip, 'owner' | 'participant' | 'star'> & {
+      owner: Pick<User, 'id' | 'name'>;
+      participant: Pick<User, 'id' | 'name'>[];
+      star: Pick<Star, 'id' | 'nickname'>[];
+    });

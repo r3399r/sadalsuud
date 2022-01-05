@@ -10,6 +10,7 @@ import { TripService } from 'src/logic/TripService';
 import { UserService } from 'src/logic/UserService';
 import {
   GetTripResponse,
+  GetTripsResponse,
   PostTripRequest,
   PostTripResponse,
 } from 'src/model/Trip';
@@ -23,7 +24,7 @@ export async function trips(
     const userService: UserService = bindings.get<UserService>(UserService);
     const tripService: TripService = bindings.get<TripService>(TripService);
 
-    let res: PostTripResponse | GetTripResponse;
+    let res: PostTripResponse | GetTripsResponse | GetTripResponse;
 
     switch (event.httpMethod) {
       case 'POST':
@@ -40,7 +41,13 @@ export async function trips(
         );
         break;
       case 'GET':
-        res = await tripService.getTrips(event.headers['x-api-token']);
+        if (event.pathParameters === null)
+          res = await tripService.getTrips(event.headers['x-api-token']);
+        else
+          res = await tripService.getTrip(
+            event.headers['x-api-token'],
+            event.pathParameters.id
+          );
         break;
       default:
         throw new Error('unknown http method');

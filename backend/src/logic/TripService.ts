@@ -6,6 +6,7 @@ import { ROLE } from 'src/constant/User';
 import { Star } from 'src/model/Star';
 import {
   GetTripResponse,
+  GetTripsResponse,
   PostTripRequest,
   Trip,
   TripEntity,
@@ -43,7 +44,50 @@ export class TripService {
     return trip;
   }
 
-  public async getTrips(token: string): Promise<GetTripResponse> {
+  public async getTrip(
+    token: string,
+    tripId: string
+  ): Promise<GetTripResponse> {
+    const user = await this.userService.getUserByToken(token);
+    const trip = await this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+
+    if (user.role === ROLE.ADMIN) return trip;
+    else if (
+      [
+        ROLE.GOOD_PARTNER,
+        ROLE.GOOD_PLANNER,
+        ROLE.ROOKIE,
+        ROLE.SOFT_PARTNER,
+        ROLE.SOFT_PLANNER,
+      ].includes(user.role)
+    )
+      return {
+        ...trip,
+        owner: { id: trip.owner.id, name: trip.owner.name },
+        participant: trip.participant?.map((p: User) => ({
+          id: p.id,
+          name: p.name,
+        })),
+        star: trip.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+      };
+    else
+      return {
+        ...trip,
+        startDatetime: moment(trip.startDatetime).startOf('day').valueOf(),
+        endDatetime: moment(trip.endDatetime).endOf('day').valueOf(),
+        meetPlace: '********',
+        dismissPlace: '********',
+        detailDesc: '********',
+        owner: { id: trip.owner.id, name: trip.owner.name },
+        participant: trip.participant?.map((p: User) => ({
+          id: p.id,
+          name: p.name,
+        })),
+        star: trip.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+      };
+  }
+
+  public async getTrips(token: string): Promise<GetTripsResponse> {
     const user = await this.userService.getUserByToken(token);
     const trips = await this.dbService.getItems<Trip>(ALIAS, 'trip');
 

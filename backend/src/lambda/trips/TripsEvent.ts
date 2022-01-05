@@ -4,4 +4,5 @@ export type TripsEvent = {
     'x-api-token': string;
   };
   body: string | null;
+  pathParameters: { id: string } | null;
 };

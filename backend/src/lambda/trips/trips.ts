@@ -13,6 +13,8 @@ import {
   GetTripsResponse,
   PostTripRequest,
   PostTripResponse,
+  VerifyTripRequest,
+  VerifyTripResponse,
 } from 'src/model/Trip';
 import { TripsEvent } from './TripsEvent';
 
@@ -24,7 +26,11 @@ export async function trips(
     const userService: UserService = bindings.get<UserService>(UserService);
     const tripService: TripService = bindings.get<TripService>(TripService);
 
-    let res: PostTripResponse | GetTripsResponse | GetTripResponse;
+    let res:
+      | PostTripResponse
+      | GetTripsResponse
+      | GetTripResponse
+      | VerifyTripResponse;
 
     switch (event.httpMethod) {
       case 'POST':
@@ -48,6 +54,20 @@ export async function trips(
             event.headers['x-api-token'],
             event.pathParameters.id
           );
+        break;
+      case 'PUT':
+        if (event.body === null) throw new Error('null body error');
+        if (event.pathParameters === null)
+          throw new Error('trip id is missing');
+
+        await userService.validateRole(event.headers['x-api-token'], [
+          ROLE.ADMIN,
+        ]);
+
+        res = await tripService.verifyTrip(
+          event.pathParameters.id,
+          JSON.parse(event.body) as VerifyTripRequest
+        );
         break;
       default:
         throw new Error('unknown http method');

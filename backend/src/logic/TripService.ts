@@ -10,6 +10,7 @@ import {
   PostTripRequest,
   Trip,
   TripEntity,
+  VerifyTripRequest,
 } from 'src/model/Trip';
 import { User, UserEntity } from 'src/model/User';
 import { v4 as uuidv4 } from 'uuid';
@@ -129,5 +130,17 @@ export class TripService {
           })),
           star: v.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
         }));
+  }
+
+  public async verifyTrip(tripId: string, body: VerifyTripRequest) {
+    const oldTrip = await this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const newTrip = new TripEntity({
+      ...oldTrip,
+      verified: true,
+      expiredDatetime: body.expiredDatetime,
+    });
+    await this.dbService.putItem(ALIAS, newTrip);
+
+    return newTrip;
   }
 }

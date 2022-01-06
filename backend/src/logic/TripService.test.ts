@@ -78,6 +78,7 @@ describe('TripService', () => {
     mockDbService.createItem = jest.fn();
     mockDbService.getItems = jest.fn(() => dummyTrips);
     mockDbService.getItem = jest.fn(() => dummyTrips[0]);
+    mockDbService.putItem = jest.fn();
 
     tripService = bindings.get<TripService>(TripService);
   });
@@ -247,5 +248,15 @@ describe('TripService', () => {
         star: undefined,
       },
     ]);
+  });
+
+  it('verifyTrip should work', async () => {
+    mockDbService.getItem = jest.fn(() => dummyTrips[1]);
+    expect(
+      await tripService.verifyTrip('tripId', { expiredDatetime: 12345 })
+    ).toMatchObject({
+      verified: true,
+      expiredDatetime: 12345,
+    });
   });
 });

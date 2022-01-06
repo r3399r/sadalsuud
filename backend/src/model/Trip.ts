@@ -106,3 +106,9 @@ export type GetTripResponse =
       participant: Pick<User, 'id' | 'name'>[];
       star: Pick<Star, 'id' | 'nickname'>[];
     });
+
+export type VerifyTripRequest = {
+  expiredDatetime: number;
+};
+
+export type VerifyTripResponse = Trip;

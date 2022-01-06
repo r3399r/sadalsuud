@@ -35,6 +35,7 @@ describe('trips', () => {
     mockTripService.registerTrip = jest.fn(() => dummyTrip);
     mockTripService.getTrips = jest.fn(() => [dummyTrip]);
     mockTripService.getTrip = jest.fn(() => dummyTrip);
+    mockTripService.verifyTrip = jest.fn(() => dummyTrip);
   });
 
   it('POST should work', async () => {
@@ -87,6 +88,45 @@ describe('trips', () => {
       successOutput(dummyTrip)
     );
     expect(mockTripService.getTrip).toBeCalledTimes(1);
+  });
+
+  it('PUT /users/{id}/verify should work', async () => {
+    event = {
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyTrip)
+    );
+    expect(mockTripService.verifyTrip).toBeCalledTimes(1);
+  });
+
+  it('POST should fail if null body', async () => {
+    event = {
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('null body error'))
+    );
+    expect(mockTripService.verifyTrip).toBeCalledTimes(0);
+  });
+
+  it('POST should fail if id was missing', async () => {
+    event = {
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('trip id is missing'))
+    );
+    expect(mockTripService.verifyTrip).toBeCalledTimes(0);
   });
 
   it('should fail with unknown method', async () => {

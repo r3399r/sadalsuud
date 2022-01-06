@@ -27,6 +27,10 @@ export class TripService {
   @inject(UserService)
   private readonly userService!: UserService;
 
+  public async validateRole(token: string, specificRole: ROLE[]) {
+    return await this.userService.validateRole(token, specificRole);
+  }
+
   public async registerTrip(body: PostTripRequest, user: User) {
     const trip = new TripEntity({
       ...body,

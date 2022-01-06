@@ -5,7 +5,6 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { TripService } from 'src/logic/TripService';
-import { UserService } from 'src/logic/UserService';
 import { trips } from './trips';
 import { TripsEvent } from './TripsEvent';
 
@@ -15,7 +14,6 @@ import { TripsEvent } from './TripsEvent';
 describe('trips', () => {
   let event: TripsEvent;
   let lambdaContext: LambdaContext | undefined;
-  let mockUserService: any;
   let mockTripService: any;
   let dummyTrip: any;
 
@@ -26,12 +24,10 @@ describe('trips', () => {
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
 
-    mockUserService = {};
     mockTripService = {};
-    bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
     bindings.rebind<TripService>(TripService).toConstantValue(mockTripService);
 
-    mockUserService.validateRole = jest.fn();
+    mockTripService.validateRole = jest.fn();
     mockTripService.registerTrip = jest.fn(() => dummyTrip);
     mockTripService.getTrips = jest.fn(() => [dummyTrip]);
     mockTripService.getTrip = jest.fn(() => dummyTrip);

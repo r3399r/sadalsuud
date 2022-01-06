@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
 import { ERROR_CODE } from 'src/constant/error';
 import { ACTION } from 'src/constant/group';
+import { ROLE } from 'src/constant/User';
 import {
   Group,
   GroupEntity,
@@ -29,6 +30,10 @@ export class GroupService {
 
   @inject(StarService)
   private readonly starService!: StarService;
+
+  public async validateRole(token: string, specificRole: ROLE[]) {
+    await this.userService.validateRole(token, specificRole);
+  }
 
   public async createGroup(body: PostGroupRequest) {
     if (

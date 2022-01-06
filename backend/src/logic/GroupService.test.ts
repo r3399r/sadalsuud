@@ -65,10 +65,16 @@ describe('GroupService', () => {
     mockDbService.getItems = jest.fn(() => [dummyGroup]);
     mockDbService.putItem = jest.fn();
     mockDbService.deleteItem = jest.fn();
+    mockUserService.validateRole = jest.fn();
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockStarService.getStar = jest.fn(() => dummyStar);
 
     groupService = bindings.get<GroupService>(GroupService);
+  });
+
+  it('validateRole should wrok', async () => {
+    await groupService.validateRole('token', [ROLE.ADMIN]);
+    expect(mockUserService.validateRole).toBeCalledTimes(1);
   });
 
   it('createGroup should work', async () => {

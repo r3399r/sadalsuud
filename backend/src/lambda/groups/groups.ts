@@ -7,7 +7,6 @@ import {
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/User';
 import { GroupService } from 'src/logic/GroupService';
-import { UserService } from 'src/logic/UserService';
 import {
   GetGroupResponse,
   PatchGroupRequest,
@@ -21,12 +20,11 @@ export async function groups(
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
   try {
-    const userService: UserService = bindings.get<UserService>(UserService);
     const groupService: GroupService = bindings.get<GroupService>(GroupService);
 
     let res: PostGroupResponse | GetGroupResponse | void;
 
-    await userService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+    await groupService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
 
     switch (event.httpMethod) {
       case 'POST':

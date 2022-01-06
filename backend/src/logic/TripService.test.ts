@@ -79,8 +79,14 @@ describe('TripService', () => {
     mockDbService.getItems = jest.fn(() => dummyTrips);
     mockDbService.getItem = jest.fn(() => dummyTrips[0]);
     mockDbService.putItem = jest.fn();
+    mockUserService.validateRole = jest.fn();
 
     tripService = bindings.get<TripService>(TripService);
+  });
+
+  it('validateRole should wrok', async () => {
+    await tripService.validateRole('token', [ROLE.ADMIN]);
+    expect(mockUserService.validateRole).toBeCalledTimes(1);
   });
 
   it('registerTrip should work', async () => {

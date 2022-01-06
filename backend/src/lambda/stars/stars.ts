@@ -7,7 +7,6 @@ import {
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/User';
 import { StarService } from 'src/logic/StarService';
-import { UserService } from 'src/logic/UserService';
 import { PostStarRequest, PostStarResponse } from 'src/model/Star';
 import { StarsEvent } from './StarsEvent';
 
@@ -16,12 +15,11 @@ export async function stars(
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
   try {
-    const userService: UserService = bindings.get<UserService>(UserService);
     const starService: StarService = bindings.get<StarService>(StarService);
 
     let res: PostStarResponse | void;
 
-    await userService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+    await starService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
 
     switch (event.httpMethod) {
       case 'POST':

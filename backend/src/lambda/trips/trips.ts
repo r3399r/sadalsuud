@@ -7,7 +7,6 @@ import {
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/User';
 import { TripService } from 'src/logic/TripService';
-import { UserService } from 'src/logic/UserService';
 import {
   GetTripResponse,
   GetTripsResponse,
@@ -23,7 +22,6 @@ export async function trips(
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
   try {
-    const userService: UserService = bindings.get<UserService>(UserService);
     const tripService: TripService = bindings.get<TripService>(TripService);
 
     let res:
@@ -36,7 +34,7 @@ export async function trips(
       case 'POST':
         if (event.body === null) throw new Error('null body error');
 
-        const user = await userService.validateRole(
+        const user = await tripService.validateRole(
           event.headers['x-api-token'],
           [ROLE.ADMIN, ROLE.SOFT_PLANNER, ROLE.GOOD_PLANNER]
         );
@@ -60,7 +58,7 @@ export async function trips(
         if (event.pathParameters === null)
           throw new Error('trip id is missing');
 
-        await userService.validateRole(event.headers['x-api-token'], [
+        await tripService.validateRole(event.headers['x-api-token'], [
           ROLE.ADMIN,
         ]);
 

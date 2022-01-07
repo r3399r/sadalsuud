@@ -292,4 +292,22 @@ describe('TripService', () => {
     expect(mockDbService.getItem).toBeCalledTimes(1);
     expect(mockDbService.putItem).toBeCalledTimes(0);
   });
+
+  it('setTripMember should work', async () => {
+    mockDbService.getItem = jest
+      .fn()
+      .mockReturnValueOnce(dummyTrips[0])
+      .mockReturnValueOnce({ id: 'user-id' })
+      .mockReturnValueOnce({ id: 'star-id' });
+    expect(
+      await tripService.setTripMember('tripId', {
+        starId: ['a'],
+        participantId: ['b'],
+      })
+    ).toMatchObject({
+      ...dummyTrips[0],
+      participant: [{ id: 'user-id' }],
+      star: [{ id: 'star-id' }],
+    });
+  });
 });

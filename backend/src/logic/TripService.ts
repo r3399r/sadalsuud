@@ -3,12 +3,13 @@ import { inject, injectable } from 'inversify';
 import moment from 'moment';
 import { ALIAS } from 'src/constant';
 import { ROLE } from 'src/constant/User';
-import { Star } from 'src/model/Star';
+import { Star, StarEntity } from 'src/model/Star';
 import {
   GetTripResponse,
   GetTripsResponse,
   PostTripRequest,
   ReviseTripRequest,
+  SetTripMemberRequest,
   Trip,
   TripEntity,
   VerifyTripRequest,
@@ -170,5 +171,35 @@ export class TripService {
     await this.dbService.putItem(ALIAS, revisedTrip);
 
     return revisedTrip;
+  }
+
+  public async setTripMember(tripId: string, body: SetTripMemberRequest) {
+    const getTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const getParticipant = Promise.all(
+      body.participantId.map((userId: string) =>
+        this.dbService.getItem<User>(ALIAS, 'user', userId)
+      )
+    );
+    const getStar = Promise.all(
+      body.starId.map((starId: string) =>
+        this.dbService.getItem<Star>(ALIAS, 'star', starId)
+      )
+    );
+
+    const [trip, participants, stars] = await Promise.all([
+      getTrip,
+      getParticipant,
+      getStar,
+    ]);
+
+    const newTrip = new TripEntity({
+      ...trip,
+      participant: participants.map((v: User) => new UserEntity(v)),
+      star: stars.map((v: Star) => new StarEntity(v)),
+    });
+
+    await this.dbService.putItem(ALIAS, newTrip);
+
+    return newTrip;
   }
 }

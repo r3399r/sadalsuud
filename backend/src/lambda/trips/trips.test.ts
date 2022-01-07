@@ -33,6 +33,7 @@ describe('trips', () => {
     mockTripService.getTrip = jest.fn(() => dummyTrip);
     mockTripService.verifyTrip = jest.fn(() => dummyTrip);
     mockTripService.reviseTrip = jest.fn(() => dummyTrip);
+    mockTripService.setTripMember = jest.fn(() => dummyTrip);
   });
 
   it('POST should work', async () => {
@@ -117,6 +118,20 @@ describe('trips', () => {
       successOutput(dummyTrip)
     );
     expect(mockTripService.verifyTrip).toBeCalledTimes(1);
+  });
+
+  it('PUT /trips/{id}/member should work', async () => {
+    event = {
+      resource: '/api/trips/{id}/member',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyTrip)
+    );
+    expect(mockTripService.setTripMember).toBeCalledTimes(1);
   });
 
   it('PUT should fail if null body', async () => {

@@ -127,3 +127,10 @@ export type ReviseTripRequest = Pick<
 >;
 
 export type ReviseTripResponse = Trip;
+
+export type SetTripMemberRequest = {
+  starId: string[];
+  participantId: string[];
+};
+
+export type SetTripMemberResponse = Trip;

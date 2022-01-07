@@ -14,6 +14,8 @@ import {
   PostTripResponse,
   ReviseTripRequest,
   ReviseTripResponse,
+  SetTripMemberRequest,
+  SetTripMemberResponse,
   VerifyTripRequest,
   VerifyTripResponse,
 } from 'src/model/Trip';
@@ -31,7 +33,8 @@ export async function trips(
       | GetTripsResponse
       | GetTripResponse
       | VerifyTripResponse
-      | ReviseTripResponse;
+      | ReviseTripResponse
+      | SetTripMemberResponse;
 
     switch (event.httpMethod) {
       case 'POST':
@@ -74,6 +77,15 @@ export async function trips(
           res = await tripService.verifyTrip(
             event.pathParameters.id,
             JSON.parse(event.body) as VerifyTripRequest
+          );
+        } else if (event.resource === '/api/trips/{id}/member') {
+          await tripService.validateRole(event.headers['x-api-token'], [
+            ROLE.ADMIN,
+          ]);
+
+          res = await tripService.setTripMember(
+            event.pathParameters.id,
+            JSON.parse(event.body) as SetTripMemberRequest
           );
         } else throw new Error('unsupported resource');
         break;

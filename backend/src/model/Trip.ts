@@ -112,3 +112,18 @@ export type VerifyTripRequest = {
 };
 
 export type VerifyTripResponse = Trip;
+
+export type ReviseTripRequest = Pick<
+  Trip,
+  | 'needAccompany'
+  | 'startDatetime'
+  | 'endDatetime'
+  | 'place'
+  | 'meetPlace'
+  | 'dismissPlace'
+  | 'fee'
+  | 'briefDesc'
+  | 'detailDesc'
+>;
+
+export type ReviseTripResponse = Trip;

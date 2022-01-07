@@ -8,6 +8,7 @@ import {
   GetTripResponse,
   GetTripsResponse,
   PostTripRequest,
+  ReviseTripRequest,
   Trip,
   TripEntity,
   VerifyTripRequest,
@@ -146,5 +147,28 @@ export class TripService {
     await this.dbService.putItem(ALIAS, newTrip);
 
     return newTrip;
+  }
+
+  public async reviseTrip(
+    tripId: string,
+    body: ReviseTripRequest,
+    token: string
+  ) {
+    const getOldTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const getUser = this.userService.getUserByToken(token);
+    const [oldTrip, user] = await Promise.all([getOldTrip, getUser]);
+
+    if (oldTrip.owner.id !== user.id && user.role !== ROLE.ADMIN)
+      throw new Error('permission denied');
+
+    const revisedTrip = new TripEntity({
+      ...oldTrip,
+      ...body,
+      dateUpdated: Date.now(),
+    });
+
+    await this.dbService.putItem(ALIAS, revisedTrip);
+
+    return revisedTrip;
   }
 }

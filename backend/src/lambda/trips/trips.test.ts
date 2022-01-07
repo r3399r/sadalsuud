@@ -32,10 +32,12 @@ describe('trips', () => {
     mockTripService.getTrips = jest.fn(() => [dummyTrip]);
     mockTripService.getTrip = jest.fn(() => dummyTrip);
     mockTripService.verifyTrip = jest.fn(() => dummyTrip);
+    mockTripService.reviseTrip = jest.fn(() => dummyTrip);
   });
 
   it('POST should work', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -49,6 +51,7 @@ describe('trips', () => {
 
   it('POST should fail if null body', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -60,8 +63,9 @@ describe('trips', () => {
     expect(mockTripService.registerTrip).toBeCalledTimes(0);
   });
 
-  it('GET /users should work', async () => {
+  it('GET /trips should work', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -73,8 +77,9 @@ describe('trips', () => {
     expect(mockTripService.getTrips).toBeCalledTimes(1);
   });
 
-  it('GET /users/{id} should work', async () => {
+  it('GET /trips/{id} should work', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -86,8 +91,23 @@ describe('trips', () => {
     expect(mockTripService.getTrip).toBeCalledTimes(1);
   });
 
-  it('PUT /users/{id}/verify should work', async () => {
+  it('PUT /trips/{id} should work', async () => {
     event = {
+      resource: '/api/trips/{id}',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyTrip)
+    );
+    expect(mockTripService.reviseTrip).toBeCalledTimes(1);
+  });
+
+  it('PUT /trips/{id}/verify should work', async () => {
+    event = {
+      resource: '/api/trips/{id}/verify',
       httpMethod: 'PUT',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -99,8 +119,9 @@ describe('trips', () => {
     expect(mockTripService.verifyTrip).toBeCalledTimes(1);
   });
 
-  it('POST should fail if null body', async () => {
+  it('PUT should fail if null body', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'PUT',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -112,8 +133,9 @@ describe('trips', () => {
     expect(mockTripService.verifyTrip).toBeCalledTimes(0);
   });
 
-  it('POST should fail if id was missing', async () => {
+  it('PUT should fail if id was missing', async () => {
     event = {
+      resource: 'resource',
       httpMethod: 'PUT',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -123,6 +145,19 @@ describe('trips', () => {
       errorOutput(new Error('trip id is missing'))
     );
     expect(mockTripService.verifyTrip).toBeCalledTimes(0);
+  });
+
+  it('PUT should fail if unsupported resource', async () => {
+    event = {
+      resource: 'resource',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('unsupported resource'))
+    );
   });
 
   it('should fail with unknown method', async () => {

@@ -12,6 +12,8 @@ import {
   GetTripsResponse,
   PostTripRequest,
   PostTripResponse,
+  ReviseTripRequest,
+  ReviseTripResponse,
   VerifyTripRequest,
   VerifyTripResponse,
 } from 'src/model/Trip';
@@ -28,7 +30,8 @@ export async function trips(
       | PostTripResponse
       | GetTripsResponse
       | GetTripResponse
-      | VerifyTripResponse;
+      | VerifyTripResponse
+      | ReviseTripResponse;
 
     switch (event.httpMethod) {
       case 'POST':
@@ -57,15 +60,22 @@ export async function trips(
         if (event.body === null) throw new Error('null body error');
         if (event.pathParameters === null)
           throw new Error('trip id is missing');
+        if (event.resource === '/api/trips/{id}')
+          res = await tripService.reviseTrip(
+            event.pathParameters.id,
+            JSON.parse(event.body) as ReviseTripRequest,
+            event.headers['x-api-token']
+          );
+        else if (event.resource === '/api/trips/{id}/verify') {
+          await tripService.validateRole(event.headers['x-api-token'], [
+            ROLE.ADMIN,
+          ]);
 
-        await tripService.validateRole(event.headers['x-api-token'], [
-          ROLE.ADMIN,
-        ]);
-
-        res = await tripService.verifyTrip(
-          event.pathParameters.id,
-          JSON.parse(event.body) as VerifyTripRequest
-        );
+          res = await tripService.verifyTrip(
+            event.pathParameters.id,
+            JSON.parse(event.body) as VerifyTripRequest
+          );
+        } else throw new Error('unsupported resource');
         break;
       default:
         throw new Error('unknown http method');

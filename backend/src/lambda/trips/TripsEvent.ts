@@ -1,4 +1,5 @@
 export type TripsEvent = {
+  resource: string;
   httpMethod: string;
   headers: {
     'x-api-token': string;

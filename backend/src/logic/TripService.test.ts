@@ -1,7 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/User';
-import { PostTripRequest } from 'src/model/Trip';
+import { PostTripRequest, ReviseTripRequest } from 'src/model/Trip';
 import { User } from 'src/model/User';
 import { TripService } from './TripService';
 import { UserService } from './UserService';
@@ -26,7 +26,12 @@ describe('TripService', () => {
         meetPlace: 'there',
         dismissPlace: 'there2',
         detailDesc: 'aaa',
-        owner: { id: 'owner-id', name: 'owner-name', phone: 'xxxxx' },
+        owner: {
+          id: 'owner-id',
+          name: 'owner-name',
+          phone: 'xxxxx',
+          role: 'soft-planner',
+        },
         participant: [
           { id: 'user1-id', name: 'user1-name', phone: 'xoxox' },
           { id: 'user2-id', name: 'user2-name', phone: 'ooooo' },
@@ -264,5 +269,27 @@ describe('TripService', () => {
       verified: true,
       expiredDatetime: 12345,
     });
+  });
+
+  it('reviseTrip should work', async () => {
+    mockUserService.getUserByToken = jest.fn(() => ({
+      id: 'owner-id',
+      role: 'soft-planner',
+    }));
+    await tripService.reviseTrip('tripId', {} as ReviseTripRequest, 'token');
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+  });
+
+  it('reviseTrip should fail for permission denied', async () => {
+    mockUserService.getUserByToken = jest.fn(() => ({
+      id: 'owner-id2',
+      role: 'soft-planner',
+    }));
+    await expect(() =>
+      tripService.reviseTrip('tripId', {} as ReviseTripRequest, 'token')
+    ).rejects.toThrowError('permission denied');
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(0);
   });
 });

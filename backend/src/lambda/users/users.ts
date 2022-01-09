@@ -49,10 +49,9 @@ export async function users(
           if (event.resource !== '/api/users/{id}/role')
             throw new Error('non-support resource');
 
-          await userService.validateRole(
-            event.headers['x-api-token'],
-            ROLE.ADMIN
-          );
+          await userService.validateRole(event.headers['x-api-token'], [
+            ROLE.ADMIN,
+          ]);
           res = await userService.updateRole(
             event.pathParameters.id,
             JSON.parse(event.body) as PutUserRoleRequest
@@ -60,10 +59,9 @@ export async function users(
         }
         break;
       case 'GET':
-        await userService.validateRole(
-          event.headers['x-api-token'],
-          ROLE.ADMIN
-        );
+        await userService.validateRole(event.headers['x-api-token'], [
+          ROLE.ADMIN,
+        ]);
 
         if (event.pathParameters === null) res = await userService.getUsers();
         else res = await userService.getUserById(event.pathParameters.id);

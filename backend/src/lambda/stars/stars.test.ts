@@ -5,7 +5,6 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { StarService } from 'src/logic/StarService';
-import { UserService } from 'src/logic/UserService';
 import { stars } from './stars';
 import { StarsEvent } from './StarsEvent';
 
@@ -16,7 +15,6 @@ describe('stars', () => {
   let event: StarsEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockStarService: any;
-  let mockUserService: any;
   let dummyStar: any;
 
   beforeAll(() => {
@@ -27,11 +25,9 @@ describe('stars', () => {
     lambdaContext = { awsRequestId: '456' };
 
     mockStarService = {};
-    mockUserService = {};
     bindings.rebind<StarService>(StarService).toConstantValue(mockStarService);
-    bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
 
-    mockUserService.validateRole = jest.fn();
+    mockStarService.validateRole = jest.fn();
     mockStarService.addStar = jest.fn(() => dummyStar);
     mockStarService.removeStar = jest.fn();
   });

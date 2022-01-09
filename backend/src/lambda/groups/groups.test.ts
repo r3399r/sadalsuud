@@ -5,7 +5,6 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { GroupService } from 'src/logic/GroupService';
-import { UserService } from 'src/logic/UserService';
 import { groups } from './groups';
 import { GroupsEvent } from './GroupsEvent';
 
@@ -15,7 +14,6 @@ import { GroupsEvent } from './GroupsEvent';
 describe('groups', () => {
   let event: GroupsEvent;
   let lambdaContext: LambdaContext | undefined;
-  let mockUserService: any;
   let mockGroupService: any;
   let dummyGroup: any;
 
@@ -26,14 +24,12 @@ describe('groups', () => {
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
 
-    mockUserService = {};
     mockGroupService = {};
-    bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
     bindings
       .rebind<GroupService>(GroupService)
       .toConstantValue(mockGroupService);
 
-    mockUserService.validateRole = jest.fn();
+    mockGroupService.validateRole = jest.fn();
     mockGroupService.createGroup = jest.fn(() => dummyGroup);
     mockGroupService.getGroups = jest.fn(() => [dummyGroup]);
     mockGroupService.updateGroupMembers = jest.fn();

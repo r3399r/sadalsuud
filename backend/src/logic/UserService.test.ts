@@ -84,14 +84,14 @@ describe('UserService', () => {
   });
 
   it('validateRole should work', async () => {
-    await userService.validateRole('token', ROLE.PASSERBY);
+    await userService.validateRole('token', [ROLE.PASSERBY]);
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });
 
   it('validateRole should fail', async () => {
     await expect(
-      userService.validateRole('token', ROLE.ROOKIE)
+      userService.validateRole('token', [ROLE.ROOKIE])
     ).rejects.toThrowError(ERROR_CODE.PERMISSION_DENIED);
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);

@@ -1,8 +1,10 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ALIAS } from 'src/constant';
+import { ROLE } from 'src/constant/User';
 import { PostStarRequest, Star, StarEntity } from 'src/model/Star';
 import { v4 as uuidv4 } from 'uuid';
+import { UserService } from './UserService';
 
 /**
  * Service class for CRUD stars
@@ -11,6 +13,13 @@ import { v4 as uuidv4 } from 'uuid';
 export class StarService {
   @inject(DbService)
   private readonly dbService!: DbService;
+
+  @inject(UserService)
+  private readonly userService!: UserService;
+
+  public async validateRole(token: string, specificRole: ROLE[]) {
+    await this.userService.validateRole(token, specificRole);
+  }
 
   public async addStar(body: PostStarRequest) {
     const star = new StarEntity({

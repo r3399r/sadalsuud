@@ -293,52 +293,6 @@ Resources:
                   "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
-              "options": {
-                "consumes": [
-                  "application/json"
-                ],
-                "produces": [
-                  "application/json"
-                ],
-                "responses": {
-                  "200": {
-                    "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
-                    "headers": {
-                      "Access-Control-Allow-Origin": {
-                        "type": "string"
-                      },
-                      "Access-Control-Allow-Methods": {
-                        "type": "string"
-                      },
-                      "Access-Control-Allow-Headers": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "x-amazon-apigateway-integration": {
-                  "type": "mock",
-                  "responses": {
-                    "default": {
-                      "statusCode": "200",
-                      "responseParameters": {
-                        "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
-                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-api-token'",
-                        "method.response.header.Access-Control-Allow-Origin": "'*'"
-                      }
-                    }
-                  },
-                  "requestTemplates": {
-                    "application/json": "{\"statusCode\": 200}"
-                  },
-                  "passthroughBehavior": "when_no_match"
-                }
-              }
-            },
-            "/api/trips/{id}": {
               "put": {
                 "produces": [
                   "application/json"
@@ -425,7 +379,7 @@ Resources:
                     "default": {
                       "statusCode": "200",
                       "responseParameters": {
-                        "method.response.header.Access-Control-Allow-Methods": "'PUT,OPTIONS'",
+                        "method.response.header.Access-Control-Allow-Methods": "'GET,PUT,OPTIONS'",
                         "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-api-token'",
                         "method.response.header.Access-Control-Allow-Origin": "'*'"
                       }

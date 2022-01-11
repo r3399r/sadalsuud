@@ -19,6 +19,7 @@ describe('TripService', () => {
   let dummyTrips: any;
   let dummyGroup: any;
   let dummyUser: any;
+  let dummySign: any;
 
   beforeAll(() => {
     dummyTrips = [
@@ -83,6 +84,11 @@ describe('TripService', () => {
     dummyGroup = {
       id: 'group-id',
       user: [dummyUser],
+    };
+    dummySign = {
+      id: 'sign-id',
+      group: { ...dummyGroup, id: 'group-id-2' },
+      trip: dummyTrips[0],
     };
   });
 
@@ -324,6 +330,7 @@ describe('TripService', () => {
   });
 
   it('signTrip should work', async () => {
+    mockDbService.getItems = jest.fn(() => [dummySign]);
     mockDbService.getItem = jest
       .fn()
       .mockReturnValueOnce(dummyTrips[0])
@@ -348,5 +355,18 @@ describe('TripService', () => {
     await expect(() =>
       tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
     ).rejects.toThrowError('You cannot sign a trip whose owner is yourself.');
+  });
+
+  it('signTrip should fail if user is the owner of trip', async () => {
+    mockDbService.getItems = jest.fn(() => [
+      { ...dummySign, group: dummyGroup },
+    ]);
+    mockDbService.getItem = jest
+      .fn()
+      .mockReturnValueOnce(dummyTrips[0])
+      .mockReturnValueOnce(dummyGroup);
+    await expect(() =>
+      tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
+    ).rejects.toThrowError('You have already signed this trip before.');
   });
 });

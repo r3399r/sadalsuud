@@ -4,7 +4,7 @@ import moment from 'moment';
 import { ALIAS } from 'src/constant';
 import { ROLE } from 'src/constant/User';
 import { Group } from 'src/model/Group';
-import { SignEntity } from 'src/model/Sign';
+import { Sign, SignEntity } from 'src/model/Sign';
 import { Star } from 'src/model/Star';
 import {
   GetTripResponse,
@@ -210,7 +210,7 @@ export class TripService {
   }
 
   public async signTrip(tripId: string, body: SignTripRequest, token: string) {
-    const validateUser = await this.validateRole(token, [
+    const validateUser = this.validateRole(token, [
       ROLE.ADMIN,
       ROLE.GOOD_PARTNER,
       ROLE.SOFT_PARTNER,
@@ -218,19 +218,22 @@ export class TripService {
       ROLE.SOFT_PLANNER,
     ]);
     const getTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const [user, trip] = await Promise.all([validateUser, getTrip]);
+    if (user.id === trip.owner.id)
+      throw new Error('You cannot sign a trip whose owner is yourself.');
+
     const getGroup = this.dbService.getItem<Group>(
       ALIAS,
       'group',
       body.groupId
     );
-    const [user, trip, group] = await Promise.all([
-      validateUser,
-      getTrip,
+    const getCurrentSigns = this.dbService.getItems<Sign>(ALIAS, 'sign');
+    const [group, currentSigns] = await Promise.all([
       getGroup,
+      getCurrentSigns,
     ]);
-
-    if (user.id === trip.owner.id)
-      throw new Error('You cannot sign a trip whose owner is yourself.');
+    if (currentSigns.map((v: Sign) => v.group.id).includes(group.id))
+      throw new Error('You have already signed this trip before.');
 
     const sign = new SignEntity({
       id: uuidv4(),

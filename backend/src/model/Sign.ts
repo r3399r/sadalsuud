@@ -14,7 +14,7 @@ export type Sign = {
 /**
  * Entity class for Sign
  */
-@entity('star')
+@entity('sign')
 export class SignEntity implements Sign {
   @primaryAttribute()
   public id: string;

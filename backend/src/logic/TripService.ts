@@ -3,18 +3,21 @@ import { inject, injectable } from 'inversify';
 import moment from 'moment';
 import { ALIAS } from 'src/constant';
 import { ROLE } from 'src/constant/User';
-import { Star, StarEntity } from 'src/model/Star';
+import { Group } from 'src/model/Group';
+import { SignEntity } from 'src/model/Sign';
+import { Star } from 'src/model/Star';
 import {
   GetTripResponse,
   GetTripsResponse,
   PostTripRequest,
   ReviseTripRequest,
   SetTripMemberRequest,
+  SignTripRequest,
   Trip,
   TripEntity,
   VerifyTripRequest,
 } from 'src/model/Trip';
-import { User, UserEntity } from 'src/model/User';
+import { User } from 'src/model/User';
 import { v4 as uuidv4 } from 'uuid';
 import { UserService } from './UserService';
 
@@ -33,15 +36,18 @@ export class TripService {
     return await this.userService.validateRole(token, specificRole);
   }
 
-  public async registerTrip(body: PostTripRequest, user: User) {
+  public async registerTrip(body: PostTripRequest, token: string) {
+    const user = await this.validateRole(token, [
+      ROLE.ADMIN,
+      ROLE.SOFT_PLANNER,
+      ROLE.GOOD_PLANNER,
+    ]);
     const trip = new TripEntity({
       ...body,
       id: uuidv4(),
       verified: false,
       expiredDatetime: null,
-      owner: new UserEntity(user),
-      participant: [],
-      star: [],
+      owner: user,
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
     });
@@ -186,7 +192,7 @@ export class TripService {
       )
     );
 
-    const [trip, participants, stars] = await Promise.all([
+    const [trip, participant, star] = await Promise.all([
       getTrip,
       getParticipant,
       getStar,
@@ -194,12 +200,49 @@ export class TripService {
 
     const newTrip = new TripEntity({
       ...trip,
-      participant: participants.map((v: User) => new UserEntity(v)),
-      star: stars.map((v: Star) => new StarEntity(v)),
+      participant,
+      star,
     });
 
     await this.dbService.putItem(ALIAS, newTrip);
 
     return newTrip;
+  }
+
+  public async signTrip(tripId: string, body: SignTripRequest, token: string) {
+    const validateUser = await this.validateRole(token, [
+      ROLE.ADMIN,
+      ROLE.GOOD_PARTNER,
+      ROLE.SOFT_PARTNER,
+      ROLE.GOOD_PLANNER,
+      ROLE.SOFT_PLANNER,
+    ]);
+    const getTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const getGroup = this.dbService.getItem<Group>(
+      ALIAS,
+      'group',
+      body.groupId
+    );
+    const [user, trip, group] = await Promise.all([
+      validateUser,
+      getTrip,
+      getGroup,
+    ]);
+
+    if (user.id === trip.owner.id)
+      throw new Error('You cannot sign a trip whose owner is yourself.');
+
+    const sign = new SignEntity({
+      id: uuidv4(),
+      trip,
+      group,
+      result: false,
+      dateCreated: Date.now(),
+      dateUpdated: Date.now(),
+    });
+
+    await this.dbService.createItem(ALIAS, sign);
+
+    return sign;
   }
 }

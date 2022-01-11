@@ -3,8 +3,9 @@ import {
   relatedAttributeMany,
   relatedAttributeOne,
 } from '@y-celestial/service/lib/src/util/DbHelper';
-import { Star } from './Star';
-import { User } from './User';
+import { Sign } from './Sign';
+import { Star, StarEntity } from './Star';
+import { User, UserEntity } from './User';
 
 type Fee = { what: string; cost: number };
 
@@ -22,8 +23,8 @@ export type Trip = {
   detailDesc: string;
   expiredDatetime: number | null;
   owner: User;
-  participant: User[];
-  star: Star[];
+  participant?: User[];
+  star?: Star[];
   dateCreated: number;
   dateUpdated: number;
 };
@@ -49,9 +50,9 @@ export class TripEntity implements Trip {
   @relatedAttributeOne()
   public owner: User;
   @relatedAttributeMany()
-  public participant: User[];
+  public participant?: User[];
   @relatedAttributeMany()
-  public star: Star[];
+  public star?: Star[];
   public dateCreated: number;
   public dateUpdated: number;
 
@@ -68,9 +69,9 @@ export class TripEntity implements Trip {
     this.briefDesc = input.briefDesc;
     this.detailDesc = input.detailDesc;
     this.expiredDatetime = input.expiredDatetime;
-    this.owner = input.owner;
-    this.participant = input.participant;
-    this.star = input.star;
+    this.owner = new UserEntity(input.owner);
+    this.participant = input.participant?.map((v: User) => new UserEntity(v));
+    this.star = input.star?.map((v: Star) => new StarEntity(v));
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }
@@ -95,16 +96,16 @@ export type GetTripsResponse =
   | Trip[]
   | (Omit<Trip, 'owner' | 'participant' | 'star'> & {
       owner: Pick<User, 'id' | 'name'>;
-      participant: Pick<User, 'id' | 'name'>[];
-      star: Pick<Star, 'id' | 'nickname'>[];
+      participant?: Pick<User, 'id' | 'name'>[];
+      star?: Pick<Star, 'id' | 'nickname'>[];
     })[];
 
 export type GetTripResponse =
   | Trip
   | (Omit<Trip, 'owner' | 'participant' | 'star'> & {
       owner: Pick<User, 'id' | 'name'>;
-      participant: Pick<User, 'id' | 'name'>[];
-      star: Pick<Star, 'id' | 'nickname'>[];
+      participant?: Pick<User, 'id' | 'name'>[];
+      star?: Pick<Star, 'id' | 'nickname'>[];
     });
 
 export type VerifyTripRequest = {
@@ -134,3 +135,9 @@ export type SetTripMemberRequest = {
 };
 
 export type SetTripMemberResponse = Trip;
+
+export type SignTripRequest = {
+  groupId: string;
+};
+
+export type SignTripResponse = Sign;

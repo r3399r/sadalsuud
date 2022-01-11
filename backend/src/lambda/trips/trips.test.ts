@@ -34,11 +34,12 @@ describe('trips', () => {
     mockTripService.verifyTrip = jest.fn(() => dummyTrip);
     mockTripService.reviseTrip = jest.fn(() => dummyTrip);
     mockTripService.setTripMember = jest.fn(() => dummyTrip);
+    mockTripService.signTrip = jest.fn(() => dummyTrip);
   });
 
-  it('POST should work', async () => {
+  it('POST /api/trips should work', async () => {
     event = {
-      resource: 'resource',
+      resource: '/api/trips',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -48,6 +49,34 @@ describe('trips', () => {
       successOutput(dummyTrip)
     );
     expect(mockTripService.registerTrip).toBeCalledTimes(1);
+  });
+
+  it('POST /api/trips/{id}/sign should work', async () => {
+    event = {
+      resource: '/api/trips/{id}/sign',
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: '123' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyTrip)
+    );
+    expect(mockTripService.signTrip).toBeCalledTimes(1);
+  });
+
+  it('POST /api/trips/{id}/sign should fail if trip id is missing', async () => {
+    event = {
+      resource: '/api/trips/{id}/sign',
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('trip id is missing'))
+    );
+    expect(mockTripService.signTrip).toBeCalledTimes(0);
   });
 
   it('POST should fail if null body', async () => {
@@ -62,6 +91,19 @@ describe('trips', () => {
       errorOutput(new Error('null body error'))
     );
     expect(mockTripService.registerTrip).toBeCalledTimes(0);
+  });
+
+  it('POST should fail if unsupported resource', async () => {
+    event = {
+      resource: 'resource',
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('unsupported resource'))
+    );
   });
 
   it('GET /trips should work', async () => {

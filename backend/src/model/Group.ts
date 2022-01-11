@@ -4,8 +4,8 @@ import {
   relatedAttributeOne,
 } from '@y-celestial/service/lib/src/util/DbHelper';
 import { ACTION } from 'src/constant/group';
-import { Star } from './Star';
-import { User } from './User';
+import { Star, StarEntity } from './Star';
+import { User, UserEntity } from './User';
 
 export type Group = {
   id: string;
@@ -31,8 +31,9 @@ export class GroupEntity implements Group {
 
   constructor(input: Group) {
     this.id = input.id;
-    this.user = input.user;
-    this.star = input.star;
+    this.user = input.user.map((v: User) => new UserEntity(v));
+    this.star =
+      input.star === undefined ? undefined : new StarEntity(input.star);
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }

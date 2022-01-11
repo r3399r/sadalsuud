@@ -16,6 +16,8 @@ import {
   ReviseTripResponse,
   SetTripMemberRequest,
   SetTripMemberResponse,
+  SignTripRequest,
+  SignTripResponse,
   VerifyTripRequest,
   VerifyTripResponse,
 } from 'src/model/Trip';
@@ -34,21 +36,27 @@ export async function trips(
       | GetTripResponse
       | VerifyTripResponse
       | ReviseTripResponse
-      | SetTripMemberResponse;
+      | SetTripMemberResponse
+      | SignTripResponse;
 
     switch (event.httpMethod) {
       case 'POST':
         if (event.body === null) throw new Error('null body error');
 
-        const user = await tripService.validateRole(
-          event.headers['x-api-token'],
-          [ROLE.ADMIN, ROLE.SOFT_PLANNER, ROLE.GOOD_PLANNER]
-        );
-
-        res = await tripService.registerTrip(
-          JSON.parse(event.body) as PostTripRequest,
-          user
-        );
+        if (event.resource === '/api/trips')
+          res = await tripService.registerTrip(
+            JSON.parse(event.body) as PostTripRequest,
+            event.headers['x-api-token']
+          );
+        else if (event.resource === '/api/trips/{id}/sign') {
+          if (event.pathParameters === null)
+            throw new Error('trip id is missing');
+          res = await tripService.signTrip(
+            event.pathParameters.id,
+            JSON.parse(event.body) as SignTripRequest,
+            event.headers['x-api-token']
+          );
+        } else throw new Error('unsupported resource');
         break;
       case 'GET':
         if (event.pathParameters === null)

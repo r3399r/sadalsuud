@@ -10,8 +10,7 @@ import {
   PatchGroupRequest,
   PostGroupRequest,
 } from 'src/model/Group';
-import { StarEntity } from 'src/model/Star';
-import { User, UserEntity } from 'src/model/User';
+import { User } from 'src/model/User';
 import { v4 as uuidv4 } from 'uuid';
 import { StarService } from './StarService';
 import { UserService } from './UserService';
@@ -54,8 +53,8 @@ export class GroupService {
 
     const group = new GroupEntity({
       id: uuidv4(),
-      user: [new UserEntity(user)],
-      star: star === undefined ? undefined : new StarEntity(star),
+      user: [user],
+      star,
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
     });
@@ -111,11 +110,8 @@ export class GroupService {
 
         const newGroup = new GroupEntity({
           id: group.id,
-          user: [
-            ...group.user.map((v: User) => new UserEntity(v)),
-            new UserEntity(user),
-          ],
-          star: new StarEntity(group.star),
+          user: [...group.user, user],
+          star: group.star,
           dateCreated: group.dateCreated,
           dateUpdated: Date.now(),
         });
@@ -127,12 +123,8 @@ export class GroupService {
         if (group.user.length > 1) {
           const updatedGroup = new GroupEntity({
             id: group.id,
-            user: [
-              ...group.user
-                .filter((v: User) => v.id !== body.userId)
-                .map((v: User) => new UserEntity(v)),
-            ],
-            star: new StarEntity(group.star),
+            user: group.user.filter((v: User) => v.id !== body.userId),
+            star: group.star,
             dateCreated: group.dateCreated,
             dateUpdated: Date.now(),
           });

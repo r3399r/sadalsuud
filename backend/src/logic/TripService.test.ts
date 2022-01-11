@@ -1,8 +1,11 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/User';
-import { PostTripRequest, ReviseTripRequest } from 'src/model/Trip';
-import { User } from 'src/model/User';
+import {
+  PostTripRequest,
+  ReviseTripRequest,
+  SignTripRequest,
+} from 'src/model/Trip';
 import { TripService } from './TripService';
 import { UserService } from './UserService';
 
@@ -14,6 +17,8 @@ describe('TripService', () => {
   let mockDbService: any;
   let mockUserService: any;
   let dummyTrips: any;
+  let dummyGroup: any;
+  let dummyUser: any;
 
   beforeAll(() => {
     dummyTrips = [
@@ -72,6 +77,13 @@ describe('TripService', () => {
         owner: { id: 'owner-id3', name: 'owner-name3', phone: 'xxxxx3' },
       },
     ];
+    dummyUser = {
+      id: 'user-id',
+    };
+    dummyGroup = {
+      id: 'group-id',
+      user: [dummyUser],
+    };
   });
 
   beforeEach(() => {
@@ -84,7 +96,7 @@ describe('TripService', () => {
     mockDbService.getItems = jest.fn(() => dummyTrips);
     mockDbService.getItem = jest.fn(() => dummyTrips[0]);
     mockDbService.putItem = jest.fn();
-    mockUserService.validateRole = jest.fn();
+    mockUserService.validateRole = jest.fn(() => dummyUser);
 
     tripService = bindings.get<TripService>(TripService);
   });
@@ -95,7 +107,7 @@ describe('TripService', () => {
   });
 
   it('registerTrip should work', async () => {
-    await tripService.registerTrip({} as PostTripRequest, {} as User);
+    await tripService.registerTrip({} as PostTripRequest, 'token');
     expect(mockDbService.createItem).toBeCalledTimes(1);
   });
 
@@ -309,5 +321,32 @@ describe('TripService', () => {
       participant: [{ id: 'user-id' }],
       star: [{ id: 'star-id' }],
     });
+  });
+
+  it('signTrip should work', async () => {
+    mockDbService.getItem = jest
+      .fn()
+      .mockReturnValueOnce(dummyTrips[0])
+      .mockReturnValueOnce(dummyGroup);
+    expect(
+      await tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
+    ).toMatchObject({
+      result: false,
+      group: dummyGroup,
+    });
+  });
+
+  it('signTrip should fail if user is the owner of trip', async () => {
+    mockDbService.getItem = jest
+      .fn()
+      .mockReturnValueOnce(dummyTrips[0])
+      .mockReturnValueOnce(dummyGroup);
+    mockUserService.validateRole = jest.fn(() => ({
+      ...dummyUser,
+      id: dummyTrips[0].owner.id,
+    }));
+    await expect(() =>
+      tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
+    ).rejects.toThrowError('You cannot sign a trip whose owner is yourself.');
   });
 });

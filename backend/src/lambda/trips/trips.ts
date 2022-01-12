@@ -8,6 +8,7 @@ import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/User';
 import { TripService } from 'src/logic/TripService';
 import {
+  GetSignResponse,
   GetTripResponse,
   GetTripsResponse,
   PostTripRequest,
@@ -37,7 +38,8 @@ export async function trips(
       | VerifyTripResponse
       | ReviseTripResponse
       | SetTripMemberResponse
-      | SignTripResponse;
+      | SignTripResponse
+      | GetSignResponse;
 
     switch (event.httpMethod) {
       case 'POST':
@@ -59,13 +61,23 @@ export async function trips(
         } else throw new Error('unsupported resource');
         break;
       case 'GET':
-        if (event.pathParameters === null)
+        if (event.resource === '/api/trips')
           res = await tripService.getTrips(event.headers['x-api-token']);
-        else
+        else if (event.resource === '/api/trips/{id}') {
+          if (event.pathParameters === null)
+            throw new Error('trip id is missing');
           res = await tripService.getTrip(
             event.headers['x-api-token'],
             event.pathParameters.id
           );
+        } else if (event.resource === '/api/trips/{id}/sign') {
+          await tripService.validateRole(event.headers['x-api-token'], [
+            ROLE.ADMIN,
+          ]);
+          if (event.pathParameters === null)
+            throw new Error('trip id is missing');
+          res = await tripService.getSignByTrip(event.pathParameters.id);
+        } else throw new Error('unsupported resource');
         break;
       case 'PUT':
         if (event.body === null) throw new Error('null body error');

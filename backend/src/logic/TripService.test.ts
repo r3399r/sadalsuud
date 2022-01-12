@@ -103,6 +103,7 @@ describe('TripService', () => {
     mockDbService.getItem = jest.fn(() => dummyTrips[0]);
     mockDbService.putItem = jest.fn();
     mockUserService.validateRole = jest.fn(() => dummyUser);
+    mockDbService.getItemsByIndex = jest.fn(() => [dummySign]);
 
     tripService = bindings.get<TripService>(TripService);
   });
@@ -357,8 +358,8 @@ describe('TripService', () => {
     ).rejects.toThrowError('You cannot sign a trip whose owner is yourself.');
   });
 
-  it('signTrip should fail if user is the owner of trip', async () => {
-    mockDbService.getItems = jest.fn(() => [
+  it('signTrip should fail if user haved signed this trip', async () => {
+    mockDbService.getItemsByIndex = jest.fn(() => [
       { ...dummySign, group: dummyGroup },
     ]);
     mockDbService.getItem = jest

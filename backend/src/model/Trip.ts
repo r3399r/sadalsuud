@@ -1,8 +1,9 @@
-import { entity, primaryAttribute } from '@y-celestial/service';
 import {
+  entity,
+  primaryAttribute,
   relatedAttributeMany,
   relatedAttributeOne,
-} from '@y-celestial/service/lib/src/util/DbHelper';
+} from '@y-celestial/service';
 import { Sign } from './Sign';
 import { Star, StarEntity } from './Star';
 import { User, UserEntity } from './User';
@@ -141,3 +142,5 @@ export type SignTripRequest = {
 };
 
 export type SignTripResponse = Sign;
+
+export type GetSignResponse = Sign[];

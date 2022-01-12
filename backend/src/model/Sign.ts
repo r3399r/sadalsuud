@@ -1,4 +1,8 @@
-import { entity, primaryAttribute } from '@y-celestial/service';
+import {
+  entity,
+  primaryAttribute,
+  relatedAttributeOne,
+} from '@y-celestial/service';
 import { Group, GroupEntity } from './Group';
 import { Trip, TripEntity } from './Trip';
 
@@ -18,7 +22,9 @@ export type Sign = {
 export class SignEntity implements Sign {
   @primaryAttribute()
   public id: string;
+  @relatedAttributeOne()
   public trip: Trip;
+  @relatedAttributeOne()
   public group: Group;
   public result: boolean;
   public dateCreated: number;

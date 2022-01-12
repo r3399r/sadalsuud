@@ -209,6 +209,15 @@ export class TripService {
     return newTrip;
   }
 
+  public async getSignByTrip(tripId: string) {
+    return await this.dbService.getItemsByIndex<Sign>(
+      ALIAS,
+      'sign',
+      'trip',
+      tripId
+    );
+  }
+
   public async signTrip(tripId: string, body: SignTripRequest, token: string) {
     const validateUser = this.validateRole(token, [
       ROLE.ADMIN,
@@ -227,10 +236,9 @@ export class TripService {
       'group',
       body.groupId
     );
-    const getCurrentSigns = this.dbService.getItems<Sign>(ALIAS, 'sign');
     const [group, currentSigns] = await Promise.all([
       getGroup,
-      getCurrentSigns,
+      this.getSignByTrip(trip.id),
     ]);
     if (currentSigns.map((v: Sign) => v.group.id).includes(group.id))
       throw new Error('You have already signed this trip before.');

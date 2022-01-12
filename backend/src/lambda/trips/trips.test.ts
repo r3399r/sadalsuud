@@ -16,9 +16,11 @@ describe('trips', () => {
   let lambdaContext: LambdaContext | undefined;
   let mockTripService: any;
   let dummyTrip: any;
+  let dummySign: any;
 
   beforeAll(() => {
     dummyTrip = { id: 'test' };
+    dummySign = { id: 'sign-id' };
   });
 
   beforeEach(() => {
@@ -35,6 +37,7 @@ describe('trips', () => {
     mockTripService.reviseTrip = jest.fn(() => dummyTrip);
     mockTripService.setTripMember = jest.fn(() => dummyTrip);
     mockTripService.signTrip = jest.fn(() => dummyTrip);
+    mockTripService.getSignByTrip = jest.fn(() => [dummySign]);
   });
 
   it('POST /api/trips should work', async () => {
@@ -108,7 +111,7 @@ describe('trips', () => {
 
   it('GET /trips should work', async () => {
     event = {
-      resource: 'resource',
+      resource: '/api/trips',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -122,7 +125,7 @@ describe('trips', () => {
 
   it('GET /trips/{id} should work', async () => {
     event = {
-      resource: 'resource',
+      resource: '/api/trips/{id}',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -132,6 +135,59 @@ describe('trips', () => {
       successOutput(dummyTrip)
     );
     expect(mockTripService.getTrip).toBeCalledTimes(1);
+  });
+
+  it('GET /trips/{id} should fail if id is missing', async () => {
+    event = {
+      resource: '/api/trips/{id}',
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('trip id is missing'))
+    );
+  });
+
+  it('GET /trips/{id}/sign should work', async () => {
+    event = {
+      resource: '/api/trips/{id}/sign',
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput([dummySign])
+    );
+    expect(mockTripService.getSignByTrip).toBeCalledTimes(1);
+  });
+
+  it('GET /trips/{id}/sign should fail if id is missing', async () => {
+    event = {
+      resource: '/api/trips/{id}/sign',
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('trip id is missing'))
+    );
+  });
+
+  it('GET should fail if unsupported resource', async () => {
+    event = {
+      resource: 'resource',
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: { id: 'aa' },
+    };
+    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new Error('unsupported resource'))
+    );
   });
 
   it('PUT /trips/{id} should work', async () => {

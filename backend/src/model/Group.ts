@@ -1,8 +1,9 @@
-import { entity, primaryAttribute } from '@y-celestial/service';
 import {
+  entity,
+  primaryAttribute,
   relatedAttributeMany,
   relatedAttributeOne,
-} from '@y-celestial/service/lib/src/util/DbHelper';
+} from '@y-celestial/service';
 import { ACTION } from 'src/constant/group';
 import { Star, StarEntity } from './Star';
 import { User, UserEntity } from './User';

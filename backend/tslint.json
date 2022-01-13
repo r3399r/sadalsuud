@@ -76,6 +76,7 @@
     ],
     "no-increment-decrement": false,
     "no-inferrable-types": false,
+    "no-non-null-assertion": false,
     "no-null-keyword": false,
     "no-object-literal-type-assertion": false,
     "no-relative-imports": [

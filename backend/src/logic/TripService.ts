@@ -191,20 +191,59 @@ export class TripService {
         this.dbService.getItem<Star>(ALIAS, 'star', starId)
       )
     );
-
-    const [trip, participant, star] = await Promise.all([
+    const getSign = this.dbService.getItemsByIndex<Sign>(
+      ALIAS,
+      'sign',
+      'trip',
+      tripId
+    );
+    const [trip, participant, star, sign] = await Promise.all([
       getTrip,
       getParticipant,
       getStar,
+      getSign,
     ]);
+
+    // group without star means it is volunteer
+    const signedParticipantIds = sign
+      .filter((s: Sign) => s.group.star === undefined)
+      .map((s: Sign) => {
+        if (s.group.user.length !== 1)
+          throw new Error('volunteer group should only have 1 user');
+
+        return s.group.user[0].id;
+      });
+    // group with star means it is star group
+    const signedStarIds = sign
+      .filter((s: Sign) => s.group.star !== undefined)
+      .map((s: Sign) => s.group.star!.id);
+
+    // check input participants/stars have all signed this trip
+    if (
+      !body.participantId.every((v: string) => signedParticipantIds.includes(v))
+    )
+      throw new Error('some of input participants did not sign this trip');
+    if (!body.starId.every((v: string) => signedStarIds.includes(v)))
+      throw new Error('some of input stars did not sign this trip');
 
     const newTrip = new TripEntity({
       ...trip,
       participant,
       star,
     });
+    const newSign = sign
+      // group w/o star means it is volunteer or it is star related group
+      .filter((s: Sign) =>
+        s.group.star === undefined
+          ? body.participantId.includes(s.group.user[0].id)
+          : body.starId.includes(s.group.star.id)
+      )
+      .map((v: Sign) => new SignEntity({ ...v, result: true }));
 
-    await this.dbService.putItem(ALIAS, newTrip);
+    await Promise.all([
+      this.dbService.putItem(ALIAS, newTrip),
+      ...newSign.map((v: Sign) => this.dbService.putItem(ALIAS, v)),
+    ]);
 
     return newTrip;
   }

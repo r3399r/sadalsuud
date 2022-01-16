@@ -5,7 +5,7 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ERROR_CODE } from 'src/constant/error';
-import { UserService } from 'src/logic/UserService';
+import { MeService } from 'src/logic/MeService';
 import { me } from './me';
 import { MeEvent } from './MeEvent';
 
@@ -15,7 +15,7 @@ import { MeEvent } from './MeEvent';
 describe('me', () => {
   let event: MeEvent;
   let lambdaContext: LambdaContext | undefined;
-  let mockUserService: any;
+  let mockMeService: any;
   let dummyResult: { [key: string]: string };
 
   beforeAll(() => {
@@ -27,11 +27,11 @@ describe('me', () => {
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
 
-    // prepare mockUserService
-    mockUserService = {};
-    bindings.rebind<UserService>(UserService).toConstantValue(mockUserService);
+    // prepare mockMeService
+    mockMeService = {};
+    bindings.rebind<MeService>(MeService).toConstantValue(mockMeService);
 
-    mockUserService.getUserByToken = jest.fn(() => dummyResult);
+    mockMeService.getMe = jest.fn(() => dummyResult);
   });
 
   it('GET should work', async () => {
@@ -42,8 +42,6 @@ describe('me', () => {
     await expect(me(event, lambdaContext)).resolves.toStrictEqual(
       successOutput(dummyResult)
     );
-    expect(mockUserService.getUserByToken).toBeCalledTimes(1);
-    expect(mockUserService.getUserByToken).toBeCalledWith('test-token');
   });
 
   it('should fail with unknown method', async () => {

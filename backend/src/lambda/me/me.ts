@@ -6,8 +6,8 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ERROR_CODE } from 'src/constant/error';
-import { UserService } from 'src/logic/UserService';
-import { GetMeResponse } from 'src/model/User';
+import { MeService } from 'src/logic/MeService';
+import { GetMeResponse } from 'src/model/Me';
 import { MeEvent } from './MeEvent';
 
 export async function me(
@@ -15,13 +15,13 @@ export async function me(
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
   try {
-    const userService: UserService = bindings.get<UserService>(UserService);
+    const meService: MeService = bindings.get<MeService>(MeService);
 
     let res: GetMeResponse;
 
     switch (event.httpMethod) {
       case 'GET':
-        res = await userService.getUserByToken(event.headers['x-api-token']);
+        res = await meService.getMe(event.headers['x-api-token']);
         break;
       default:
         throw new Error(ERROR_CODE.UNKNOWN_HTTP_METHOD);

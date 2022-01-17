@@ -1,7 +1,6 @@
-import { DbService } from '@y-celestial/service';
+import { DbService, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { ERROR_CODE } from 'src/constant/error';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import {
   PostUserRequest,
   PostUserResponse,
@@ -85,7 +84,7 @@ export class UserService {
   public async validateRole(token: string, specificRole: ROLE[]) {
     const user = await this.getUserByToken(token);
     if (specificRole.includes(user.role)) return user;
-    throw new Error(ERROR_CODE.PERMISSION_DENIED);
+    throw new UnauthorizedError('permission denied');
   }
 
   public async updateRole(id: string, body: PutUserRoleRequest) {

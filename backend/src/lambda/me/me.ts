@@ -1,11 +1,11 @@
 import {
   errorOutput,
+  InternalServerError,
   LambdaContext,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ERROR_CODE } from 'src/constant/error';
 import { MeService } from 'src/logic/MeService';
 import { GetMeResponse } from 'src/model/Me';
 import { MeEvent } from './MeEvent';
@@ -24,7 +24,7 @@ export async function me(
         res = await meService.getMe(event.headers['x-api-token']);
         break;
       default:
-        throw new Error(ERROR_CODE.UNKNOWN_HTTP_METHOD);
+        throw new InternalServerError('unknown http method');
     }
 
     return successOutput(res);

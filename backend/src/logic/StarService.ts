@@ -1,6 +1,6 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { PostStarRequest, Star, StarEntity } from 'src/model/Star';
 import { v4 as uuidv4 } from 'uuid';
 import { UserService } from './UserService';

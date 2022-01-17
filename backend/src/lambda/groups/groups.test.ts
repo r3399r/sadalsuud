@@ -1,5 +1,7 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   successOutput,
 } from '@y-celestial/service';
@@ -56,7 +58,7 @@ describe('groups', () => {
       pathParameters: null,
     };
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockGroupService.createGroup).toBeCalledTimes(0);
   });
@@ -95,7 +97,7 @@ describe('groups', () => {
       pathParameters: { id: 'test-id' },
     };
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
   });
@@ -108,7 +110,7 @@ describe('groups', () => {
       pathParameters: null,
     };
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('group id is required'))
+      errorOutput(new BadRequestError('group id is required'))
     );
     expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
   });
@@ -116,7 +118,7 @@ describe('groups', () => {
   it('should fail with unknown method', async () => {
     event.httpMethod = 'unknown';
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unknown http method'))
+      errorOutput(new InternalServerError('unknown http method'))
     );
   });
 });

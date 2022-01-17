@@ -1,7 +1,12 @@
-import { DbService } from '@y-celestial/service';
+import {
+  ConflictError,
+  DbService,
+  InternalServerError,
+  UnauthorizedError,
+} from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import moment from 'moment';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { Group } from 'src/model/Group';
 import { Sign, SignEntity } from 'src/model/Sign';
 import { Star } from 'src/model/Star';
@@ -165,7 +170,7 @@ export class TripService {
     const [oldTrip, user] = await Promise.all([getOldTrip, getUser]);
 
     if (oldTrip.owner.id !== user.id && user.role !== ROLE.ADMIN)
-      throw new Error('permission denied');
+      throw new UnauthorizedError('permission denied');
 
     const revisedTrip = new TripEntity({
       ...oldTrip,
@@ -207,7 +212,9 @@ export class TripService {
       .filter((s: Sign) => s.group.star === undefined)
       .map((s: Sign) => {
         if (s.group.user.length !== 1)
-          throw new Error('volunteer group should only have 1 user');
+          throw new InternalServerError(
+            'volunteer group should only have 1 user'
+          );
 
         return s.group.user[0].id;
       });
@@ -220,9 +227,11 @@ export class TripService {
     if (
       !body.participantId.every((v: string) => signedParticipantIds.includes(v))
     )
-      throw new Error('some of input participants did not sign this trip');
+      throw new ConflictError(
+        'some of input participants did not sign this trip'
+      );
     if (!body.starId.every((v: string) => signedStarIds.includes(v)))
-      throw new Error('some of input stars did not sign this trip');
+      throw new ConflictError('some of input stars did not sign this trip');
 
     const newTrip = new TripEntity({
       ...trip,
@@ -261,7 +270,9 @@ export class TripService {
     const getTrip = this.dbService.getItem<Trip>('trip', tripId);
     const [user, trip] = await Promise.all([validateUser, getTrip]);
     if (user.id === trip.owner.id)
-      throw new Error('You cannot sign a trip whose owner is yourself.');
+      throw new ConflictError(
+        'You cannot sign a trip whose owner is yourself.'
+      );
 
     const getGroup = this.dbService.getItem<Group>('group', body.groupId);
     const [group, currentSigns] = await Promise.all([
@@ -269,7 +280,7 @@ export class TripService {
       this.getSignByTrip(trip.id),
     ]);
     if (currentSigns.map((v: Sign) => v.group.id).includes(group.id))
-      throw new Error('You have already signed this trip before.');
+      throw new ConflictError('You have already signed this trip before.');
 
     const sign = new SignEntity({
       id: uuidv4(),

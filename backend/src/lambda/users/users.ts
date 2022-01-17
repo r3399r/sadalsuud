@@ -1,11 +1,13 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { UserService } from 'src/logic/UserService';
 import {
   GetUserResponse,
@@ -32,14 +34,16 @@ export async function users(
 
     switch (event.httpMethod) {
       case 'POST':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
         res = await userService.addUser(
           event.headers['x-api-token'],
           JSON.parse(event.body) as PostUserResponse
         );
         break;
       case 'PUT':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
         if (event.pathParameters === null)
           res = await userService.updateUser(
             event.headers['x-api-token'],
@@ -47,7 +51,7 @@ export async function users(
           );
         else {
           if (event.resource !== '/api/users/{id}/role')
-            throw new Error('non-support resource');
+            throw new InternalServerError('non-support resource');
 
           await userService.validateRole(event.headers['x-api-token'], [
             ROLE.ADMIN,
@@ -67,7 +71,7 @@ export async function users(
         else res = await userService.getUserById(event.pathParameters.id);
         break;
       default:
-        throw new Error('unknown http method');
+        throw new InternalServerError('unknown http method');
     }
 
     return successOutput(res);

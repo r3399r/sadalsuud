@@ -1,6 +1,6 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import {
   PostTripRequest,
   ReviseTripRequest,

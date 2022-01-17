@@ -9,5 +9,5 @@ export {
   GetUsersResponse,
   User,
 } from 'src/model/User';
-export { ROLE } from 'src/constant/User';
+export { ROLE } from 'src/constant/role';
 export { Group, PostGroupRequest, PostGroupResponse } from 'src/model/Group';

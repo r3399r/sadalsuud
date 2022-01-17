@@ -1,8 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ERROR_CODE } from 'src/constant/error';
 import { ACTION } from 'src/constant/group';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { Group } from 'src/model/Group';
 import { Star } from 'src/model/Star';
 import { User } from 'src/model/User';
@@ -104,7 +103,7 @@ describe('GroupService', () => {
       groupService.createGroup({
         userId: 'user-id',
       })
-    ).rejects.toThrowError(ERROR_CODE.DUPLICATED_GROUP_OF_USER);
+    ).rejects.toThrowError('volunteer user already exists');
   });
 
   it('createGroup should throw error if star exists', async () => {
@@ -113,7 +112,7 @@ describe('GroupService', () => {
         userId: 'test-id',
         starId: 'star-id',
       })
-    ).rejects.toThrowError(ERROR_CODE.DUPLICATED_GROUP_OF_STAR);
+    ).rejects.toThrowError('star already in one of existing group');
   });
 
   it('getGroups should work', async () => {
@@ -122,9 +121,7 @@ describe('GroupService', () => {
   });
 
   it('getGroups should return [] when error', async () => {
-    mockDbService.getItems = jest.fn(() => {
-      throw new Error();
-    });
+    mockDbService.getItems = jest.fn(() => []);
     expect(await groupService.getGroups()).toStrictEqual([]);
   });
 
@@ -144,7 +141,7 @@ describe('GroupService', () => {
         action: ACTION.ADD,
         userId: 'user-id',
       })
-    ).rejects.toThrowError(ERROR_CODE.USER_EXISTS);
+    ).rejects.toThrowError('user already exists');
   });
 
   it('updateGroupMembers should work with REMOVE and delete group', async () => {
@@ -180,7 +177,7 @@ describe('GroupService', () => {
         action: ACTION.REMOVE,
         userId: 'user-id-2',
       })
-    ).rejects.toThrowError(ERROR_CODE.USER_NOT_EXIST);
+    ).rejects.toThrowError('user does not exist in this group');
   });
 
   it('updateGroupMembers should fail if no star', async () => {
@@ -195,7 +192,7 @@ describe('GroupService', () => {
         action: ACTION.REMOVE,
         userId: 'user-id-2',
       })
-    ).rejects.toThrowError(ERROR_CODE.GROUP_SHOULD_HAVE_STAR);
+    ).rejects.toThrowError('input group should be a star-group');
   });
 
   it('updateGroupMembers should fail if action does not support', async () => {
@@ -204,6 +201,6 @@ describe('GroupService', () => {
         action: 'not-support' as ACTION,
         userId: 'user-id-2',
       })
-    ).rejects.toThrowError(ERROR_CODE.UNEXPECTED_ACTION);
+    ).rejects.toThrowError('Internal Server Error');
   });
 });

@@ -1,11 +1,13 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { GroupService } from 'src/logic/GroupService';
 import {
   GetGroupResponse,
@@ -28,7 +30,8 @@ export async function groups(
 
     switch (event.httpMethod) {
       case 'POST':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
 
         res = await groupService.createGroup(
           JSON.parse(event.body) as PostGroupRequest
@@ -38,16 +41,17 @@ export async function groups(
         res = await groupService.getGroups();
         break;
       case 'PATCH':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
         if (event.pathParameters === null)
-          throw new Error('group id is required');
+          throw new BadRequestError('group id is required');
         res = await groupService.updateGroupMembers(
           event.pathParameters.id,
           JSON.parse(event.body) as PatchGroupRequest
         );
         break;
       default:
-        throw new Error('unknown http method');
+        throw new InternalServerError('unknown http method');
     }
 
     return successOutput(res);

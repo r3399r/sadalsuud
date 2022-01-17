@@ -1,5 +1,7 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   successOutput,
 } from '@y-celestial/service';
@@ -53,7 +55,7 @@ describe('stars', () => {
       pathParameters: null,
     };
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockStarService.addStar).toBeCalledTimes(0);
   });
@@ -79,7 +81,7 @@ describe('stars', () => {
       pathParameters: null,
     };
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('star id is required'))
+      errorOutput(new BadRequestError('star id is required'))
     );
     expect(mockStarService.removeStar).toBeCalledTimes(0);
   });
@@ -87,7 +89,7 @@ describe('stars', () => {
   it('should fail with unknown method', async () => {
     event.httpMethod = 'unknown';
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unknown http method'))
+      errorOutput(new InternalServerError('unknown http method'))
     );
   });
 });

@@ -1,8 +1,12 @@
-import { DbService } from '@y-celestial/service';
+import {
+  BadRequestError,
+  ConflictError,
+  DbService,
+  InternalServerError,
+} from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { ERROR_CODE } from 'src/constant/error';
 import { ACTION } from 'src/constant/group';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import {
   Group,
   GroupEntity,
@@ -38,12 +42,12 @@ export class GroupService {
       body.starId !== undefined &&
       (await this.starExistsInSomeGroup(body.starId))
     )
-      throw new Error(ERROR_CODE.DUPLICATED_GROUP_OF_STAR);
+      throw new ConflictError('star already in one of existing group');
     if (
       body.starId === undefined &&
       (await this.userHasIndividualGroup(body.userId))
     )
-      throw new Error(ERROR_CODE.DUPLICATED_GROUP_OF_USER);
+      throw new ConflictError('volunteer user already exists');
     const user = await this.userService.getUserById(body.userId);
     const star =
       body.starId === undefined
@@ -65,12 +69,8 @@ export class GroupService {
   }
 
   public async getGroups() {
-    try {
-      if (this.groups === undefined)
-        this.groups = await this.dbService.getItems<Group>('group');
-    } catch (e) {
-      this.groups = [];
-    }
+    if (this.groups === undefined)
+      this.groups = await this.dbService.getItems<Group>('group');
 
     return this.groups;
   }
@@ -99,12 +99,12 @@ export class GroupService {
   public async updateGroupMembers(id: string, body: PatchGroupRequest) {
     const group = await this.dbService.getItem<Group>('group', id);
     if (group.star === undefined)
-      throw new Error(ERROR_CODE.GROUP_SHOULD_HAVE_STAR);
+      throw new BadRequestError('input group should be a star-group');
 
     switch (body.action) {
       case ACTION.ADD:
         if (group.user.findIndex((v: User) => v.id === body.userId) >= 0)
-          throw new Error(ERROR_CODE.USER_EXISTS);
+          throw new ConflictError('user already exists');
         const user = await this.userService.getUserById(body.userId);
 
         const newGroup = new GroupEntity({
@@ -118,7 +118,7 @@ export class GroupService {
         break;
       case ACTION.REMOVE:
         if (group.user.findIndex((v: User) => v.id === body.userId) < 0)
-          throw new Error(ERROR_CODE.USER_NOT_EXIST);
+          throw new ConflictError('user does not exist in this group');
         if (group.user.length > 1) {
           const updatedGroup = new GroupEntity({
             id: group.id,
@@ -131,7 +131,7 @@ export class GroupService {
         } else await this.dbService.deleteItem('group', group.id);
         break;
       default:
-        throw new Error(ERROR_CODE.UNEXPECTED_ACTION);
+        throw new InternalServerError();
     }
 
     this.groups = undefined;

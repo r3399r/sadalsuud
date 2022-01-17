@@ -1,10 +1,12 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { UserService } from 'src/logic/UserService';
 import { users } from './users';
 import { UsersEvent } from './UsersEvent';
@@ -61,7 +63,7 @@ describe('users', () => {
       pathParameters: null,
     };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockUserService.addUser).toBeCalledTimes(0);
   });
@@ -89,7 +91,7 @@ describe('users', () => {
       pathParameters: null,
     };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockUserService.updateUser).toBeCalledTimes(0);
   });
@@ -117,7 +119,7 @@ describe('users', () => {
       pathParameters: { id: 'aa' },
     };
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('non-support resource'))
+      errorOutput(new InternalServerError('non-support resource'))
     );
   });
 
@@ -152,7 +154,7 @@ describe('users', () => {
   it('should fail with unknown method', async () => {
     event.httpMethod = 'unknown';
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unknown http method'))
+      errorOutput(new InternalServerError('unknown http method'))
     );
   });
 });

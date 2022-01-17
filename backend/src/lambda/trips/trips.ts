@@ -1,11 +1,13 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { TripService } from 'src/logic/TripService';
 import {
   GetSignResponse,
@@ -43,7 +45,8 @@ export async function trips(
 
     switch (event.httpMethod) {
       case 'POST':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
 
         if (event.resource === '/api/trips')
           res = await tripService.registerTrip(
@@ -52,20 +55,20 @@ export async function trips(
           );
         else if (event.resource === '/api/trips/{id}/sign') {
           if (event.pathParameters === null)
-            throw new Error('trip id is missing');
+            throw new BadRequestError('trip id is missing');
           res = await tripService.signTrip(
             event.pathParameters.id,
             JSON.parse(event.body) as SignTripRequest,
             event.headers['x-api-token']
           );
-        } else throw new Error('unsupported resource');
+        } else throw new InternalServerError('unsupported resource');
         break;
       case 'GET':
         if (event.resource === '/api/trips')
           res = await tripService.getTrips(event.headers['x-api-token']);
         else if (event.resource === '/api/trips/{id}') {
           if (event.pathParameters === null)
-            throw new Error('trip id is missing');
+            throw new BadRequestError('trip id is missing');
           res = await tripService.getTrip(
             event.headers['x-api-token'],
             event.pathParameters.id
@@ -75,14 +78,15 @@ export async function trips(
             ROLE.ADMIN,
           ]);
           if (event.pathParameters === null)
-            throw new Error('trip id is missing');
+            throw new BadRequestError('trip id is missing');
           res = await tripService.getSignByTrip(event.pathParameters.id);
-        } else throw new Error('unsupported resource');
+        } else throw new InternalServerError('unsupported resource');
         break;
       case 'PUT':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
         if (event.pathParameters === null)
-          throw new Error('trip id is missing');
+          throw new BadRequestError('trip id is missing');
         if (event.resource === '/api/trips/{id}')
           res = await tripService.reviseTrip(
             event.pathParameters.id,
@@ -107,10 +111,10 @@ export async function trips(
             event.pathParameters.id,
             JSON.parse(event.body) as SetTripMemberRequest
           );
-        } else throw new Error('unsupported resource');
+        } else throw new InternalServerError('unsupported resource');
         break;
       default:
-        throw new Error('unknown http method');
+        throw new InternalServerError('unknown http method');
     }
 
     return successOutput(res);

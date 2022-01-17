@@ -1,11 +1,13 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { StarService } from 'src/logic/StarService';
 import { PostStarRequest, PostStarResponse } from 'src/model/Star';
 import { StarsEvent } from './StarsEvent';
@@ -23,7 +25,8 @@ export async function stars(
 
     switch (event.httpMethod) {
       case 'POST':
-        if (event.body === null) throw new Error('null body error');
+        if (event.body === null)
+          throw new BadRequestError('body should not be empty');
 
         res = await starService.addStar(
           JSON.parse(event.body) as PostStarRequest
@@ -31,12 +34,12 @@ export async function stars(
         break;
       case 'DELETE':
         if (event.pathParameters === null)
-          throw new Error('star id is required');
+          throw new BadRequestError('star id is required');
 
         res = await starService.removeStar(event.pathParameters.id);
         break;
       default:
-        throw new Error('unknown http method');
+        throw new InternalServerError('unknown http method');
     }
 
     return successOutput(res);

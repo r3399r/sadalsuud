@@ -1,5 +1,7 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   LambdaOutput,
   successOutput,
@@ -21,14 +23,14 @@ export async function variables(
     switch (event.httpMethod) {
       case 'GET':
         if (event.queryStringParameters === null)
-          throw new Error('null query string parameters');
+          throw new BadRequestError('null query string parameters');
         if (event.queryStringParameters.name === undefined)
-          throw new Error('missing parameter name');
+          throw new BadRequestError('missing parameter name');
 
         res = variablesService.getParameters(event.queryStringParameters.name);
         break;
       default:
-        throw new Error('unknown http method');
+        throw new InternalServerError('unknown http method');
     }
 
     return successOutput(res);

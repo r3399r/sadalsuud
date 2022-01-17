@@ -1,7 +1,6 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ERROR_CODE } from 'src/constant/error';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 import { LineService } from './LineService';
 import { UserService } from './UserService';
 
@@ -92,7 +91,7 @@ describe('UserService', () => {
   it('validateRole should fail', async () => {
     await expect(
       userService.validateRole('token', [ROLE.ROOKIE])
-    ).rejects.toThrowError(ERROR_CODE.PERMISSION_DENIED);
+    ).rejects.toThrowError('permission denied');
     expect(mockLineService.getProfile).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });

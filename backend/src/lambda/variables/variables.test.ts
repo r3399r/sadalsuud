@@ -1,5 +1,7 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   successOutput,
 } from '@y-celestial/service';
@@ -54,7 +56,7 @@ describe('variables', () => {
       queryStringParameters: null,
     };
     await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null query string parameters'))
+      errorOutput(new BadRequestError('null query string parameters'))
     );
   });
 
@@ -64,7 +66,7 @@ describe('variables', () => {
       queryStringParameters: {} as any as VariablesParams,
     };
     await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('missing parameter name'))
+      errorOutput(new BadRequestError('missing parameter name'))
     );
   });
 
@@ -74,7 +76,7 @@ describe('variables', () => {
       queryStringParameters: null,
     };
     await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unknown http method'))
+      errorOutput(new InternalServerError('unknown http method'))
     );
   });
 });

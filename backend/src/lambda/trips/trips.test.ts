@@ -1,5 +1,7 @@
 import {
+  BadRequestError,
   errorOutput,
+  InternalServerError,
   LambdaContext,
   successOutput,
 } from '@y-celestial/service';
@@ -77,7 +79,7 @@ describe('trips', () => {
       pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('trip id is missing'))
+      errorOutput(new BadRequestError('trip id is missing'))
     );
     expect(mockTripService.signTrip).toBeCalledTimes(0);
   });
@@ -91,7 +93,7 @@ describe('trips', () => {
       pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockTripService.registerTrip).toBeCalledTimes(0);
   });
@@ -105,7 +107,7 @@ describe('trips', () => {
       pathParameters: { id: 'aa' },
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unsupported resource'))
+      errorOutput(new InternalServerError('unsupported resource'))
     );
   });
 
@@ -146,7 +148,7 @@ describe('trips', () => {
       pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('trip id is missing'))
+      errorOutput(new BadRequestError('trip id is missing'))
     );
   });
 
@@ -173,7 +175,7 @@ describe('trips', () => {
       pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('trip id is missing'))
+      errorOutput(new BadRequestError('trip id is missing'))
     );
   });
 
@@ -186,7 +188,7 @@ describe('trips', () => {
       pathParameters: { id: 'aa' },
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unsupported resource'))
+      errorOutput(new InternalServerError('unsupported resource'))
     );
   });
 
@@ -241,7 +243,7 @@ describe('trips', () => {
       pathParameters: { id: 'aa' },
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('null body error'))
+      errorOutput(new BadRequestError('body should not be empty'))
     );
     expect(mockTripService.verifyTrip).toBeCalledTimes(0);
   });
@@ -255,7 +257,7 @@ describe('trips', () => {
       pathParameters: null,
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('trip id is missing'))
+      errorOutput(new BadRequestError('trip id is missing'))
     );
     expect(mockTripService.verifyTrip).toBeCalledTimes(0);
   });
@@ -269,14 +271,14 @@ describe('trips', () => {
       pathParameters: { id: 'aa' },
     };
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unsupported resource'))
+      errorOutput(new InternalServerError('unsupported resource'))
     );
   });
 
   it('should fail with unknown method', async () => {
     event.httpMethod = 'unknown';
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new Error('unknown http method'))
+      errorOutput(new InternalServerError('unknown http method'))
     );
   });
 });

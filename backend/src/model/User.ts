@@ -1,5 +1,5 @@
 import { entity, primaryAttribute } from '@y-celestial/service';
-import { ROLE } from 'src/constant/User';
+import { ROLE } from 'src/constant/role';
 
 export type User = {
   id: string;

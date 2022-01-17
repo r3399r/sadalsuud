@@ -9,6 +9,7 @@
 @mixin card {
   padding: 10px;
   border-radius: 10px;
+  margin-bottom: 10px;
 }
 .header {
   font-size: 20px;
@@ -17,7 +18,6 @@
 }
 .goal {
   @include card;
-  margin-bottom: 10px;
   .flex {
     display: flex;
     flex-direction: column;
@@ -35,11 +35,9 @@
 }
 .how {
   @include card;
-  margin-bottom: 10px;
 }
 .more {
   @include card;
-  margin-bottom: 60px;
   .flex {
     display: flex;
     justify-content: space-around;
@@ -54,6 +52,10 @@
       }
     }
   }
+}
+.ver {
+  text-align: center;
+  margin-bottom: 60px;
 }
 
 .icon {

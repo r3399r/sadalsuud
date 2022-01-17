@@ -1,9 +1,6 @@
 <app-loader *ngIf="isLoading"></app-loader>
 <div *ngIf="!isLoading && user && !isEdit" class="self">
-  <div class="header">
-    <div>我的檔案</div>
-    <button mat-raised-button color="primary" type="button" (click)="onClick()">修改資料</button>
-  </div>
+  <div class="header">我的檔案</div>
   <div class="table">
     <div>
       <div class="title">名字</div>
@@ -23,6 +20,12 @@
     </div>
   </div>
   <hr />
+  <div class="buttons">
+    <button mat-raised-button color="primary" type="button" (click)="onClick()">
+      修改基本資料
+    </button>
+    <button mat-stroked-button color="primary" type="button" (click)="onLogout()">登出</button>
+  </div>
 </div>
 <app-user-form
   (formSubmit)="onFormSubmit($event)"

@@ -9,10 +9,6 @@
 .header {
   font-size: 20px;
   font-weight: bold;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 .table {
   > div {
@@ -41,4 +37,9 @@
 }
 .role {
   color: $orange;
+}
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }

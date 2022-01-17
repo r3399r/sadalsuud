@@ -1,28 +1,37 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ROLE } from '@y-celestial/sadalsuud-service';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { UserComponent } from './user.component';
 import { UserService } from 'src/app/services/user.service';
 import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
+import { AuthService } from 'src/app/services/auth.service';
 
 describe('UserComponent', () => {
   let component: UserComponent;
   let fixture: ComponentFixture<UserComponent>;
   let userServiceSpy: jasmine.SpyObj<UserService>;
   let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
+  let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
     userServiceSpy = jasmine.createSpyObj('UserService', ['getUser', 'addUser', 'updateUser']);
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['logout']);
     userServiceSpy.getUser.and.resolveTo();
     userServiceSpy.addUser.and.resolveTo();
     userServiceSpy.updateUser.and.resolveTo();
+    routerSpy = spyOn(Router.prototype, 'navigate');
 
     await TestBed.configureTestingModule({
       declarations: [UserComponent],
+      imports: [RouterTestingModule],
       providers: [
         { provide: UserService, useValue: userServiceSpy },
         { provide: MatSnackBar, useValue: matSnackBarSpy },
+        { provide: AuthService, useValue: authServiceSpy },
       ],
     }).compileComponents();
   });
@@ -86,5 +95,10 @@ describe('UserComponent', () => {
     expect(component.getRole(ROLE.GOOD_PLANNER)).toBe(ROLE_LOCALE.PLANEER);
     expect(component.getRole(ROLE.ADMIN)).toBe(ROLE_LOCALE.ADMIN);
     expect(component.getRole('xxx' as ROLE)).toBe(ROLE_LOCALE.PASSERBY);
+  });
+
+  it('onLogout should work', () => {
+    component.onLogout();
+    expect(authServiceSpy.logout).toHaveBeenCalledTimes(1);
   });
 });

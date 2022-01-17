@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GetUserResponse, PostUserRequest, ROLE, User } from '@y-celestial/sadalsuud-service';
+import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-user',
@@ -14,7 +16,12 @@ export class UserComponent implements OnInit {
   isLoading = true;
   isEdit = false;
 
-  constructor(private userService: UserService, private snackBar: MatSnackBar) {}
+  constructor(
+    private userService: UserService,
+    private snackBar: MatSnackBar,
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     this.userService
@@ -73,5 +80,10 @@ export class UserComponent implements OnInit {
 
   onClick() {
     this.isEdit = true;
+  }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

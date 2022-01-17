@@ -93,4 +93,10 @@ export class AuthService {
     localStorage.setItem('expire_at', String(Date.now() + token.expires_in * 1000));
     localStorage.setItem('refresh_token', token.refresh_token);
   }
+
+  public logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('expire_at');
+    localStorage.removeItem('refresh_token');
+  }
 }

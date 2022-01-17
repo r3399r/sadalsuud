@@ -1,7 +1,6 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import moment from 'moment';
-import { ALIAS } from 'src/constant';
 import { ROLE } from 'src/constant/User';
 import { Group } from 'src/model/Group';
 import { Sign, SignEntity } from 'src/model/Sign';
@@ -52,7 +51,7 @@ export class TripService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.createItem(ALIAS, trip);
+    await this.dbService.createItem(trip);
 
     return trip;
   }
@@ -62,7 +61,7 @@ export class TripService {
     tripId: string
   ): Promise<GetTripResponse> {
     const user = await this.userService.getUserByToken(token);
-    const trip = await this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const trip = await this.dbService.getItem<Trip>('trip', tripId);
 
     if (user.role === ROLE.ADMIN) return trip;
     else if (
@@ -102,7 +101,7 @@ export class TripService {
 
   public async getTrips(token: string): Promise<GetTripsResponse> {
     const user = await this.userService.getUserByToken(token);
-    const trips = await this.dbService.getItems<Trip>(ALIAS, 'trip');
+    const trips = await this.dbService.getItems<Trip>('trip');
 
     if (user.role === ROLE.ADMIN) return trips;
     else if (
@@ -145,13 +144,13 @@ export class TripService {
   }
 
   public async verifyTrip(tripId: string, body: VerifyTripRequest) {
-    const oldTrip = await this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const oldTrip = await this.dbService.getItem<Trip>('trip', tripId);
     const newTrip = new TripEntity({
       ...oldTrip,
       verified: true,
       expiredDatetime: body.expiredDatetime,
     });
-    await this.dbService.putItem(ALIAS, newTrip);
+    await this.dbService.putItem(newTrip);
 
     return newTrip;
   }
@@ -161,7 +160,7 @@ export class TripService {
     body: ReviseTripRequest,
     token: string
   ) {
-    const getOldTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const getOldTrip = this.dbService.getItem<Trip>('trip', tripId);
     const getUser = this.userService.getUserByToken(token);
     const [oldTrip, user] = await Promise.all([getOldTrip, getUser]);
 
@@ -174,25 +173,24 @@ export class TripService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.putItem(ALIAS, revisedTrip);
+    await this.dbService.putItem(revisedTrip);
 
     return revisedTrip;
   }
 
   public async setTripMember(tripId: string, body: SetTripMemberRequest) {
-    const getTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const getTrip = this.dbService.getItem<Trip>('trip', tripId);
     const getParticipant = Promise.all(
       body.participantId.map((userId: string) =>
-        this.dbService.getItem<User>(ALIAS, 'user', userId)
+        this.dbService.getItem<User>('user', userId)
       )
     );
     const getStar = Promise.all(
       body.starId.map((starId: string) =>
-        this.dbService.getItem<Star>(ALIAS, 'star', starId)
+        this.dbService.getItem<Star>('star', starId)
       )
     );
     const getSign = this.dbService.getItemsByIndex<Sign>(
-      ALIAS,
       'sign',
       'trip',
       tripId
@@ -241,20 +239,15 @@ export class TripService {
       .map((v: Sign) => new SignEntity({ ...v, result: true }));
 
     await Promise.all([
-      this.dbService.putItem(ALIAS, newTrip),
-      ...newSign.map((v: Sign) => this.dbService.putItem(ALIAS, v)),
+      this.dbService.putItem(newTrip),
+      ...newSign.map((v: Sign) => this.dbService.putItem(v)),
     ]);
 
     return newTrip;
   }
 
   public async getSignByTrip(tripId: string) {
-    return await this.dbService.getItemsByIndex<Sign>(
-      ALIAS,
-      'sign',
-      'trip',
-      tripId
-    );
+    return await this.dbService.getItemsByIndex<Sign>('sign', 'trip', tripId);
   }
 
   public async signTrip(tripId: string, body: SignTripRequest, token: string) {
@@ -265,16 +258,12 @@ export class TripService {
       ROLE.GOOD_PLANNER,
       ROLE.SOFT_PLANNER,
     ]);
-    const getTrip = this.dbService.getItem<Trip>(ALIAS, 'trip', tripId);
+    const getTrip = this.dbService.getItem<Trip>('trip', tripId);
     const [user, trip] = await Promise.all([validateUser, getTrip]);
     if (user.id === trip.owner.id)
       throw new Error('You cannot sign a trip whose owner is yourself.');
 
-    const getGroup = this.dbService.getItem<Group>(
-      ALIAS,
-      'group',
-      body.groupId
-    );
+    const getGroup = this.dbService.getItem<Group>('group', body.groupId);
     const [group, currentSigns] = await Promise.all([
       getGroup,
       this.getSignByTrip(trip.id),
@@ -291,7 +280,7 @@ export class TripService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.createItem(ALIAS, sign);
+    await this.dbService.createItem(sign);
 
     return sign;
   }

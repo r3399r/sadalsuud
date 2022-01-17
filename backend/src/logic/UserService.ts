@@ -1,6 +1,5 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { ALIAS } from 'src/constant';
 import { ERROR_CODE } from 'src/constant/error';
 import { ROLE } from 'src/constant/User';
 import {
@@ -42,7 +41,7 @@ export class UserService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.createItem(ALIAS, user);
+    await this.dbService.createItem(user);
 
     return user;
   }
@@ -64,23 +63,23 @@ export class UserService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.putItem(ALIAS, newUser);
+    await this.dbService.putItem(newUser);
 
     return newUser;
   }
 
   public async getUsers() {
-    return await this.dbService.getItems<User>(ALIAS, 'user');
+    return await this.dbService.getItems<User>('user');
   }
 
   public async getUserById(id: string) {
-    return await this.dbService.getItem<User>(ALIAS, 'user', id);
+    return await this.dbService.getItem<User>('user', id);
   }
 
   public async getUserByToken(token: string) {
     const lineUser = await this.lineService.getProfile(token);
 
-    return await this.dbService.getItem<User>(ALIAS, 'user', lineUser.userId);
+    return await this.dbService.getItem<User>('user', lineUser.userId);
   }
 
   public async validateRole(token: string, specificRole: ROLE[]) {
@@ -103,7 +102,7 @@ export class UserService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.putItem(ALIAS, newUser);
+    await this.dbService.putItem(newUser);
 
     return newUser;
   }

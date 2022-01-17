@@ -1,6 +1,5 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { ALIAS } from 'src/constant';
 import { ERROR_CODE } from 'src/constant/error';
 import { ACTION } from 'src/constant/group';
 import { ROLE } from 'src/constant/User';
@@ -59,7 +58,7 @@ export class GroupService {
       dateUpdated: Date.now(),
     });
 
-    await this.dbService.createItem(ALIAS, group);
+    await this.dbService.createItem(group);
     this.groups = undefined;
 
     return group;
@@ -68,7 +67,7 @@ export class GroupService {
   public async getGroups() {
     try {
       if (this.groups === undefined)
-        this.groups = await this.dbService.getItems<Group>(ALIAS, 'group');
+        this.groups = await this.dbService.getItems<Group>('group');
     } catch (e) {
       this.groups = [];
     }
@@ -98,7 +97,7 @@ export class GroupService {
   }
 
   public async updateGroupMembers(id: string, body: PatchGroupRequest) {
-    const group = await this.dbService.getItem<Group>(ALIAS, 'group', id);
+    const group = await this.dbService.getItem<Group>('group', id);
     if (group.star === undefined)
       throw new Error(ERROR_CODE.GROUP_SHOULD_HAVE_STAR);
 
@@ -115,7 +114,7 @@ export class GroupService {
           dateCreated: group.dateCreated,
           dateUpdated: Date.now(),
         });
-        await this.dbService.putItem(ALIAS, newGroup);
+        await this.dbService.putItem(newGroup);
         break;
       case ACTION.REMOVE:
         if (group.user.findIndex((v: User) => v.id === body.userId) < 0)
@@ -128,8 +127,8 @@ export class GroupService {
             dateCreated: group.dateCreated,
             dateUpdated: Date.now(),
           });
-          await this.dbService.putItem(ALIAS, updatedGroup);
-        } else await this.dbService.deleteItem(ALIAS, 'group', group.id);
+          await this.dbService.putItem(updatedGroup);
+        } else await this.dbService.deleteItem('group', group.id);
         break;
       default:
         throw new Error(ERROR_CODE.UNEXPECTED_ACTION);

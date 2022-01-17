@@ -17,6 +17,9 @@ Parameters:
   Project:
     Type: String
     Default: sadalsuud
+  Alias:
+    Type: String
+    Default: S0
   TargetEnvr:
     Type: String
     Description: The target environment for API Gateway deployment.
@@ -1635,6 +1638,7 @@ Resources:
       Environment:
         Variables:
           ENVR: !Sub ${TargetEnvr}
+          ALIAS: !Sub ${Alias}
   InvokePermissionMe:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaMe]
@@ -1656,6 +1660,7 @@ Resources:
       Environment:
         Variables:
           ENVR: !Sub ${TargetEnvr}
+          ALIAS: !Sub ${Alias}
   InvokePermissionGroups:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaGroups]
@@ -1677,6 +1682,7 @@ Resources:
       Environment:
         Variables:
           ENVR: !Sub ${TargetEnvr}
+          ALIAS: !Sub ${Alias}
   InvokePermissionStars:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaStars]
@@ -1698,6 +1704,7 @@ Resources:
       Environment:
         Variables:
           ENVR: !Sub ${TargetEnvr}
+          ALIAS: !Sub ${Alias}
   InvokePermissionTrips:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaTrips]
@@ -1719,6 +1726,7 @@ Resources:
       Environment:
         Variables:
           ENVR: !Sub ${TargetEnvr}
+          ALIAS: !Sub ${Alias}
   InvokePermissionUsers:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaUsers]

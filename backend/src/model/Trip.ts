@@ -4,8 +4,9 @@ import {
   relatedAttributeMany,
   relatedAttributeOne,
 } from '@y-celestial/service';
+import { Group, GroupEntity } from './Group';
 import { Sign } from './Sign';
-import { Star, StarEntity } from './Star';
+import { Star } from './Star';
 import { User, UserEntity } from './User';
 
 type Fee = { what: string; cost: number };
@@ -24,8 +25,7 @@ export type Trip = {
   detailDesc: string;
   expiredDatetime: number | null;
   owner: User;
-  participant?: User[];
-  star?: Star[];
+  joinedGroup?: Group[];
   dateCreated: number;
   dateUpdated: number;
 };
@@ -51,9 +51,7 @@ export class TripEntity implements Trip {
   @relatedAttributeOne()
   public owner: User;
   @relatedAttributeMany()
-  public participant?: User[];
-  @relatedAttributeMany()
-  public star?: Star[];
+  public joinedGroup?: Group[];
   public dateCreated: number;
   public dateUpdated: number;
 
@@ -71,8 +69,7 @@ export class TripEntity implements Trip {
     this.detailDesc = input.detailDesc;
     this.expiredDatetime = input.expiredDatetime;
     this.owner = new UserEntity(input.owner);
-    this.participant = input.participant?.map((v: User) => new UserEntity(v));
-    this.star = input.star?.map((v: Star) => new StarEntity(v));
+    this.joinedGroup = input.joinedGroup?.map((v: Group) => new GroupEntity(v));
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }
@@ -94,19 +91,25 @@ export type PostTripRequest = Pick<
 export type PostTripResponse = Trip;
 
 export type GetTripsResponse =
-  | Trip[]
-  | (Omit<Trip, 'owner' | 'participant' | 'star'> & {
-      owner: Pick<User, 'id' | 'name'>;
-      participant?: Pick<User, 'id' | 'name'>[];
-      star?: Pick<Star, 'id' | 'nickname'>[];
+  | (Omit<Trip, 'joinedGroup'> & {
+      volunteer: User[];
+      star: Star[];
+    })[]
+  | (Omit<Trip, 'owner' | 'joinedGroup'> & {
+      owner: { id: string; name: string };
+      volunteer: { id: string; name: string }[];
+      star: { id: string; nickname: string }[];
     })[];
 
 export type GetTripResponse =
-  | Trip
-  | (Omit<Trip, 'owner' | 'participant' | 'star'> & {
-      owner: Pick<User, 'id' | 'name'>;
-      participant?: Pick<User, 'id' | 'name'>[];
-      star?: Pick<Star, 'id' | 'nickname'>[];
+  | (Omit<Trip, 'joinedGroup'> & {
+      volunteer: User[];
+      star: Star[];
+    })
+  | (Omit<Trip, 'owner' | 'joinedGroup'> & {
+      owner: { id: string; name: string };
+      volunteer: { id: string; name: string }[];
+      star: { id: string; nickname: string }[];
     });
 
 export type VerifyTripRequest = {
@@ -131,8 +134,7 @@ export type ReviseTripRequest = Pick<
 export type ReviseTripResponse = Trip;
 
 export type SetTripMemberRequest = {
-  starId: string[];
-  participantId: string[];
+  groupId: string[];
 };
 
 export type SetTripMemberResponse = Trip;

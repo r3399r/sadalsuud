@@ -1,7 +1,6 @@
 import {
   ConflictError,
   DbService,
-  InternalServerError,
   UnauthorizedError,
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
@@ -23,6 +22,7 @@ import {
 } from 'src/model/Trip';
 import { User } from 'src/model/User';
 import { v4 as uuidv4 } from 'uuid';
+import { GroupService } from './GroupService';
 import { UserService } from './UserService';
 
 /**
@@ -68,7 +68,11 @@ export class TripService {
     const user = await this.userService.getUserByToken(token);
     const trip = await this.dbService.getItem<Trip>('trip', tripId);
 
-    if (user.role === ROLE.ADMIN) return trip;
+    if (user.role === ROLE.ADMIN)
+      return {
+        ...trip,
+        ...GroupService.convertGroup(trip.joinedGroup ?? []),
+      };
     else if (
       [
         ROLE.GOOD_PARTNER,
@@ -77,17 +81,22 @@ export class TripService {
         ROLE.SOFT_PARTNER,
         ROLE.SOFT_PLANNER,
       ].includes(user.role)
-    )
+    ) {
+      const { volunteer, star } = GroupService.convertGroup(
+        trip.joinedGroup ?? []
+      );
+
       return {
         ...trip,
         owner: { id: trip.owner.id, name: trip.owner.name },
-        participant: trip.participant?.map((p: User) => ({
-          id: p.id,
-          name: p.name,
-        })),
-        star: trip.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+        volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
+        star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
       };
-    else
+    } else {
+      const { volunteer, star } = GroupService.convertGroup(
+        trip.joinedGroup ?? []
+      );
+
       return {
         ...trip,
         startDatetime: moment(trip.startDatetime).startOf('day').valueOf(),
@@ -96,19 +105,21 @@ export class TripService {
         dismissPlace: '********',
         detailDesc: '********',
         owner: { id: trip.owner.id, name: trip.owner.name },
-        participant: trip.participant?.map((p: User) => ({
-          id: p.id,
-          name: p.name,
-        })),
-        star: trip.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+        volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
+        star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
       };
+    }
   }
 
   public async getTrips(token: string): Promise<GetTripsResponse> {
     const user = await this.userService.getUserByToken(token);
     const trips = await this.dbService.getItems<Trip>('trip');
 
-    if (user.role === ROLE.ADMIN) return trips;
+    if (user.role === ROLE.ADMIN)
+      return trips.map((v: Trip) => ({
+        ...v,
+        ...GroupService.convertGroup(v.joinedGroup ?? []),
+      }));
     else if (
       [
         ROLE.GOOD_PARTNER,
@@ -120,32 +131,38 @@ export class TripService {
     )
       return trips
         .filter((v: Trip) => v.verified === true)
-        .map((v: Trip) => ({
-          ...v,
-          owner: { id: v.owner.id, name: v.owner.name },
-          participant: v.participant?.map((p: User) => ({
-            id: p.id,
-            name: p.name,
-          })),
-          star: v.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
-        }));
+        .map((v: Trip) => {
+          const { volunteer, star } = GroupService.convertGroup(
+            v.joinedGroup ?? []
+          );
+
+          return {
+            ...v,
+            owner: { id: v.owner.id, name: v.owner.name },
+            volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
+            star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+          };
+        });
     else
       return trips
         .filter((v: Trip) => v.verified === true)
-        .map((v: Trip) => ({
-          ...v,
-          startDatetime: moment(v.startDatetime).startOf('day').valueOf(),
-          endDatetime: moment(v.endDatetime).endOf('day').valueOf(),
-          meetPlace: '********',
-          dismissPlace: '********',
-          detailDesc: '********',
-          owner: { id: v.owner.id, name: v.owner.name },
-          participant: v.participant?.map((p: User) => ({
-            id: p.id,
-            name: p.name,
-          })),
-          star: v.star?.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
-        }));
+        .map((v: Trip) => {
+          const { volunteer, star } = GroupService.convertGroup(
+            v.joinedGroup ?? []
+          );
+
+          return {
+            ...v,
+            startDatetime: moment(v.startDatetime).startOf('day').valueOf(),
+            endDatetime: moment(v.endDatetime).endOf('day').valueOf(),
+            meetPlace: '********',
+            dismissPlace: '********',
+            detailDesc: '********',
+            owner: { id: v.owner.id, name: v.owner.name },
+            volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
+            star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+          };
+        });
   }
 
   public async verifyTrip(tripId: string, body: VerifyTripRequest) {
@@ -185,14 +202,9 @@ export class TripService {
 
   public async setTripMember(tripId: string, body: SetTripMemberRequest) {
     const getTrip = this.dbService.getItem<Trip>('trip', tripId);
-    const getParticipant = Promise.all(
-      body.participantId.map((userId: string) =>
-        this.dbService.getItem<User>('user', userId)
-      )
-    );
-    const getStar = Promise.all(
-      body.starId.map((starId: string) =>
-        this.dbService.getItem<Star>('star', starId)
+    const getGroup = Promise.all(
+      body.groupId.map((id: string) =>
+        this.dbService.getItem<Group>('group', id)
       )
     );
     const getSign = this.dbService.getItemsByIndex<Sign>(
@@ -200,51 +212,22 @@ export class TripService {
       'trip',
       tripId
     );
-    const [trip, participant, star, sign] = await Promise.all([
-      getTrip,
-      getParticipant,
-      getStar,
-      getSign,
-    ]);
+    const [trip, group, sign] = await Promise.all([getTrip, getGroup, getSign]);
 
-    // group without star means it is volunteer
-    const signedParticipantIds = sign
-      .filter((s: Sign) => s.group.star === undefined)
-      .map((s: Sign) => {
-        if (s.group.user.length !== 1)
-          throw new InternalServerError(
-            'volunteer group should only have 1 user'
-          );
-
-        return s.group.user[0].id;
-      });
-    // group with star means it is star group
-    const signedStarIds = sign
-      .filter((s: Sign) => s.group.star !== undefined)
-      .map((s: Sign) => s.group.star!.id);
-
-    // check input participants/stars have all signed this trip
+    // check input group have all signed this trip
     if (
-      !body.participantId.every((v: string) => signedParticipantIds.includes(v))
+      !body.groupId.every((v: string) =>
+        sign.map((o: Sign) => o.group.id).includes(v)
+      )
     )
-      throw new ConflictError(
-        'some of input participants did not sign this trip'
-      );
-    if (!body.starId.every((v: string) => signedStarIds.includes(v)))
-      throw new ConflictError('some of input stars did not sign this trip');
+      throw new ConflictError('some of input groups did not sign this trip');
 
     const newTrip = new TripEntity({
       ...trip,
-      participant,
-      star,
+      joinedGroup: group,
     });
     const newSign = sign
-      // group w/o star means it is volunteer or it is star related group
-      .filter((s: Sign) =>
-        s.group.star === undefined
-          ? body.participantId.includes(s.group.user[0].id)
-          : body.starId.includes(s.group.star.id)
-      )
+      .filter((s: Sign) => body.groupId.includes(s.group.id))
       .map((v: Sign) => new SignEntity({ ...v, result: true }));
 
     await Promise.all([

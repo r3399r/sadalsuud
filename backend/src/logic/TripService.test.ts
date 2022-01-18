@@ -17,11 +17,29 @@ describe('TripService', () => {
   let mockDbService: any;
   let mockUserService: any;
   let dummyTrips: any;
-  let dummyGroup: any;
+  let dummyGroups: any;
   let dummyUser: any;
   let dummySigns: any;
 
   beforeAll(() => {
+    dummyUser = {
+      id: 'user-id',
+    };
+    dummyGroups = [
+      {
+        id: 'group-id-1',
+        user: [{ id: 'user-id-1', name: 'user-name-2', phone: 'xoxox' }],
+        star: {
+          id: 'star-id-1',
+          name: 'star-name-1',
+          nickname: 'star-nickname-1',
+        },
+      },
+      {
+        id: 'group-id-2',
+        user: [{ id: 'user-id-2', name: 'user-name-2', phone: 'xoxox' }],
+      },
+    ];
     dummyTrips = [
       {
         verified: true,
@@ -38,14 +56,7 @@ describe('TripService', () => {
           phone: 'xxxxx',
           role: 'soft-planner',
         },
-        participant: [
-          { id: 'user1-id', name: 'user1-name', phone: 'xoxox' },
-          { id: 'user2-id', name: 'user2-name', phone: 'ooooo' },
-        ],
-        star: [
-          { id: 'star1-id', name: 'star1-name', nickname: 'star1-nickname' },
-          { id: 'star2-id', name: 'star2-name', nickname: 'star2-nickname' },
-        ],
+        joinedGroup: dummyGroups,
       },
       {
         verified: false,
@@ -57,14 +68,7 @@ describe('TripService', () => {
         dismissPlace: 'there4',
         detailDesc: 'aaa2',
         owner: { id: 'owner-id2', name: 'owner-name2', phone: 'xxxxx2' },
-        participant: [
-          { id: 'user1-id2', name: 'user1-name2', phone: 'xoxox2' },
-          { id: 'user2-id2', name: 'user2-name2', phone: 'ooooo2' },
-        ],
-        star: [
-          { id: 'star1-id2', name: 'star1-name2', nickname: 'star1-nickname2' },
-          { id: 'star2-id2', name: 'star2-name2', nickname: 'star2-nickname2' },
-        ],
+        joinedGroup: dummyGroups,
       },
       {
         verified: true,
@@ -78,29 +82,30 @@ describe('TripService', () => {
         owner: { id: 'owner-id3', name: 'owner-name3', phone: 'xxxxx3' },
       },
     ];
-    dummyUser = {
-      id: 'user-id',
-    };
-    dummyGroup = {
-      id: 'group-id',
-      user: [dummyUser],
-    };
     dummySigns = [
       {
         id: 'sign-1',
         trip: dummyTrips[0],
-        group: { id: 'group1', star: undefined, user: [{ id: 'user1-id' }] },
+        group: {
+          id: 'group-id-1',
+          star: undefined,
+          user: [{ id: 'user1-id' }],
+        },
       },
       {
         id: 'sign-2',
         trip: dummyTrips[0],
-        group: { id: 'group2', star: undefined, user: [{ id: 'user-id-no' }] },
+        group: {
+          id: 'group-id-2',
+          star: undefined,
+          user: [{ id: 'user-id-no' }],
+        },
       },
       {
         id: 'sign-3',
         trip: dummyTrips[0],
         group: {
-          id: 'group3',
+          id: 'group-id-3',
           star: { id: 'star1-id' },
           user: [{ id: 'user2-id' }],
         },
@@ -109,7 +114,7 @@ describe('TripService', () => {
         id: 'sign-4',
         trip: dummyTrips[0],
         group: {
-          id: 'group4',
+          id: 'group-id-4',
           star: { id: 'star-id-no' },
           user: [{ id: 'user3-id' }],
         },
@@ -145,124 +150,108 @@ describe('TripService', () => {
 
   it('getTrip should work with admin', async () => {
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ADMIN }));
-    expect(await tripService.getTrip('token', 'tripId')).toBe(dummyTrips[0]);
-  });
-
-  it('getTrip should work with rookie', async () => {
-    mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      verified: true,
-      id: 'test1',
-      startDatetime: 1641372225000,
-      endDatetime: 1641373225000,
-      place: 'here',
-      meetPlace: 'there',
-      dismissPlace: 'there2',
-      detailDesc: 'aaa',
-      owner: { id: 'owner-id', name: 'owner-name' },
-      participant: [
-        { id: 'user1-id', name: 'user1-name' },
-        { id: 'user2-id', name: 'user2-name' },
-      ],
+      ...dummyTrips[0],
+      volunteer: [{ id: 'user-id-2', name: 'user-name-2', phone: 'xoxox' }],
       star: [
-        { id: 'star1-id', nickname: 'star1-nickname' },
-        { id: 'star2-id', nickname: 'star2-nickname' },
+        { id: 'star-id-1', name: 'star-name-1', nickname: 'star-nickname-1' },
       ],
     });
 
     mockDbService.getItem = jest.fn(() => dummyTrips[2]);
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      verified: true,
-      id: 'test3',
-      startDatetime: 1641372225000,
-      endDatetime: 1641373225000,
-      place: 'here',
-      meetPlace: 'there',
-      dismissPlace: 'there2',
-      detailDesc: 'aaa',
+      ...dummyTrips[2],
+      owner: { id: 'owner-id3', name: 'owner-name3', phone: 'xxxxx3' },
+      volunteer: [],
+      star: [],
+    });
+  });
+
+  it('getTrip should work with rookie', async () => {
+    mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
+    expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
+      ...dummyTrips[0],
+      owner: { id: 'owner-id', name: 'owner-name' },
+      volunteer: [{ id: 'user-id-2', name: 'user-name-2' }],
+      star: [{ id: 'star-id-1', nickname: 'star-nickname-1' }],
+    });
+
+    mockDbService.getItem = jest.fn(() => dummyTrips[2]);
+    expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
+      ...dummyTrips[2],
       owner: { id: 'owner-id3', name: 'owner-name3' },
-      participant: undefined,
-      star: undefined,
+      volunteer: [],
+      star: [],
     });
   });
 
   it('getTrip should work with passerby', async () => {
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.PASSERBY }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      verified: true,
-      id: 'test1',
+      ...dummyTrips[0],
       startDatetime: 1641312000000,
       endDatetime: 1641398399999,
-      place: 'here',
       meetPlace: '********',
       dismissPlace: '********',
       detailDesc: '********',
       owner: { id: 'owner-id', name: 'owner-name' },
-      participant: [
-        { id: 'user1-id', name: 'user1-name' },
-        { id: 'user2-id', name: 'user2-name' },
-      ],
-      star: [
-        { id: 'star1-id', nickname: 'star1-nickname' },
-        { id: 'star2-id', nickname: 'star2-nickname' },
-      ],
+      volunteer: [{ id: 'user-id-2', name: 'user-name-2' }],
+      star: [{ id: 'star-id-1', nickname: 'star-nickname-1' }],
     });
 
     mockDbService.getItem = jest.fn(() => dummyTrips[2]);
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      verified: true,
-      id: 'test3',
+      ...dummyTrips[2],
       startDatetime: 1641312000000,
       endDatetime: 1641398399999,
-      place: 'here',
       meetPlace: '********',
       dismissPlace: '********',
       detailDesc: '********',
       owner: { id: 'owner-id3', name: 'owner-name3' },
-      participant: undefined,
-      star: undefined,
+      volunteer: [],
+      star: [],
     });
   });
 
   it('getTrips should work with admin', async () => {
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ADMIN }));
-    expect(await tripService.getTrips('token')).toBe(dummyTrips);
+    expect(await tripService.getTrips('token')).toStrictEqual([
+      {
+        ...dummyTrips[0],
+        volunteer: [{ id: 'user-id-2', name: 'user-name-2', phone: 'xoxox' }],
+        star: [
+          { id: 'star-id-1', name: 'star-name-1', nickname: 'star-nickname-1' },
+        ],
+      },
+      {
+        ...dummyTrips[1],
+        volunteer: [{ id: 'user-id-2', name: 'user-name-2', phone: 'xoxox' }],
+        star: [
+          { id: 'star-id-1', name: 'star-name-1', nickname: 'star-nickname-1' },
+        ],
+      },
+      {
+        ...dummyTrips[2],
+        volunteer: [],
+        star: [],
+      },
+    ]);
   });
 
   it('getTrips should work with rookie', async () => {
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
     expect(await tripService.getTrips('token')).toStrictEqual([
       {
-        verified: true,
-        id: 'test1',
-        startDatetime: 1641372225000,
-        endDatetime: 1641373225000,
-        place: 'here',
-        meetPlace: 'there',
-        dismissPlace: 'there2',
-        detailDesc: 'aaa',
+        ...dummyTrips[0],
         owner: { id: 'owner-id', name: 'owner-name' },
-        participant: [
-          { id: 'user1-id', name: 'user1-name' },
-          { id: 'user2-id', name: 'user2-name' },
-        ],
-        star: [
-          { id: 'star1-id', nickname: 'star1-nickname' },
-          { id: 'star2-id', nickname: 'star2-nickname' },
-        ],
+        volunteer: [{ id: 'user-id-2', name: 'user-name-2' }],
+        star: [{ id: 'star-id-1', nickname: 'star-nickname-1' }],
       },
       {
-        verified: true,
-        id: 'test3',
-        startDatetime: 1641372225000,
-        endDatetime: 1641373225000,
-        place: 'here',
-        meetPlace: 'there',
-        dismissPlace: 'there2',
-        detailDesc: 'aaa',
+        ...dummyTrips[2],
         owner: { id: 'owner-id3', name: 'owner-name3' },
-        participant: undefined,
-        star: undefined,
+        volunteer: [],
+        star: [],
       },
     ]);
   });
@@ -271,36 +260,26 @@ describe('TripService', () => {
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.PASSERBY }));
     expect(await tripService.getTrips('token')).toStrictEqual([
       {
-        verified: true,
-        id: 'test1',
+        ...dummyTrips[0],
         startDatetime: 1641312000000,
         endDatetime: 1641398399999,
-        place: 'here',
         meetPlace: '********',
         dismissPlace: '********',
         detailDesc: '********',
         owner: { id: 'owner-id', name: 'owner-name' },
-        participant: [
-          { id: 'user1-id', name: 'user1-name' },
-          { id: 'user2-id', name: 'user2-name' },
-        ],
-        star: [
-          { id: 'star1-id', nickname: 'star1-nickname' },
-          { id: 'star2-id', nickname: 'star2-nickname' },
-        ],
+        volunteer: [{ id: 'user-id-2', name: 'user-name-2' }],
+        star: [{ id: 'star-id-1', nickname: 'star-nickname-1' }],
       },
       {
-        verified: true,
-        id: 'test3',
+        ...dummyTrips[2],
         startDatetime: 1641312000000,
         endDatetime: 1641398399999,
-        place: 'here',
         meetPlace: '********',
         dismissPlace: '********',
         detailDesc: '********',
         owner: { id: 'owner-id3', name: 'owner-name3' },
-        participant: undefined,
-        star: undefined,
+        volunteer: [],
+        star: [],
       },
     ]);
   });
@@ -341,77 +320,31 @@ describe('TripService', () => {
     mockDbService.getItem = jest
       .fn()
       .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce({ id: 'user-id' })
-      .mockReturnValueOnce({ id: 'star-id' });
+      .mockReturnValueOnce(dummyGroups[0])
+      .mockReturnValueOnce(dummyGroups[1]);
     expect(
       await tripService.setTripMember('tripId', {
-        starId: ['star1-id'],
-        participantId: ['user1-id'],
+        groupId: ['group-id-1', 'group-id-2'],
       })
     ).toMatchObject({
       ...dummyTrips[0],
-      participant: [{ id: 'user-id' }],
-      star: [{ id: 'star-id' }],
+      joinedGroup: [{ id: 'group-id-1' }, { id: 'group-id-2' }],
     });
     expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
     expect(mockDbService.putItem).toBeCalledTimes(3);
   });
 
-  it('setTripMember should fail if input participant did not sign', async () => {
+  it('setTripMember should fail if input group did not sign', async () => {
     mockDbService.getItem = jest
       .fn()
       .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce({ id: 'user-id' })
-      .mockReturnValueOnce({ id: 'star-id' });
+      .mockReturnValueOnce(dummyGroups[0])
+      .mockReturnValueOnce(dummyGroups[1]);
     await expect(() =>
       tripService.setTripMember('tripId', {
-        starId: ['star1-id'],
-        participantId: ['user1-id', 'user-id-xxx'],
+        groupId: ['group-id-1', 'group-id-no'],
       })
-    ).rejects.toThrowError('some of input participants did not sign this trip');
-    expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
-    expect(mockDbService.putItem).toBeCalledTimes(0);
-  });
-
-  it('setTripMember should fail if input star did not sign', async () => {
-    mockDbService.getItem = jest
-      .fn()
-      .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce({ id: 'user-id' })
-      .mockReturnValueOnce({ id: 'star-id' });
-    await expect(() =>
-      tripService.setTripMember('tripId', {
-        starId: ['star1-id', 'star-id-xxx'],
-        participantId: ['user1-id'],
-      })
-    ).rejects.toThrowError('some of input stars did not sign this trip');
-    expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
-    expect(mockDbService.putItem).toBeCalledTimes(0);
-  });
-
-  it('setTripMember should fail if group in db not saved well', async () => {
-    mockDbService.getItem = jest
-      .fn()
-      .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce({ id: 'user-id' })
-      .mockReturnValueOnce({ id: 'star-id' });
-    mockDbService.getItemsByIndex = jest.fn(() => [
-      {
-        id: 'sign-1',
-        trip: dummyTrips[0],
-        group: {
-          id: 'group1',
-          star: undefined,
-          user: [{ id: 'user1-id' }, { id: 'weird-user-id' }],
-        },
-      },
-    ]);
-    await expect(() =>
-      tripService.setTripMember('tripId', {
-        starId: ['star1-id'],
-        participantId: ['user1-id'],
-      })
-    ).rejects.toThrowError('volunteer group should only have 1 user');
+    ).rejects.toThrowError('some of input groups did not sign this trip');
     expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
     expect(mockDbService.putItem).toBeCalledTimes(0);
   });
@@ -421,13 +354,19 @@ describe('TripService', () => {
     mockDbService.getItem = jest
       .fn()
       .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce(dummyGroup);
+      .mockReturnValueOnce({
+        id: 'group-id-5',
+        user: [{ id: 'user-id-5' }],
+      });
     mockDbService.getItemsByIndex = jest.fn(() => dummySigns);
     expect(
       await tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
     ).toMatchObject({
       result: false,
-      group: dummyGroup,
+      group: {
+        id: 'group-id-5',
+        user: [{ id: 'user-id-5' }],
+      },
     });
   });
 
@@ -435,7 +374,10 @@ describe('TripService', () => {
     mockDbService.getItem = jest
       .fn()
       .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce(dummyGroup);
+      .mockReturnValueOnce({
+        id: 'group-id-5',
+        user: [{ id: 'owner-id' }],
+      });
     mockUserService.validateRole = jest.fn(() => ({
       ...dummyUser,
       id: dummyTrips[0].owner.id,
@@ -447,12 +389,12 @@ describe('TripService', () => {
 
   it('signTrip should fail if user haved signed this trip', async () => {
     mockDbService.getItemsByIndex = jest.fn(() => [
-      { ...dummySigns, group: dummyGroup },
+      { ...dummySigns, group: dummyGroups[0] },
     ]);
     mockDbService.getItem = jest
       .fn()
       .mockReturnValueOnce(dummyTrips[0])
-      .mockReturnValueOnce(dummyGroup);
+      .mockReturnValueOnce(dummyGroups[0]);
     await expect(() =>
       tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
     ).rejects.toThrowError('You have already signed this trip before.');

@@ -13,6 +13,7 @@ import {
   PatchGroupRequest,
   PostGroupRequest,
 } from 'src/model/Group';
+import { Star } from 'src/model/Star';
 import { User } from 'src/model/User';
 import { v4 as uuidv4 } from 'uuid';
 import { StarService } from './StarService';
@@ -135,5 +136,16 @@ export class GroupService {
     }
 
     this.groups = undefined;
+  }
+
+  public static convertGroup(groups: Group[]) {
+    const volunteer: User[] = [];
+    const star: Star[] = [];
+    groups.forEach((group: Group) => {
+      if (group.star === undefined) volunteer.push(group.user[0]);
+      else star.push(group.star);
+    });
+
+    return { volunteer, star };
   }
 }

@@ -3,9 +3,12 @@ import { Trip } from './Trip';
 import { User } from './User';
 
 export type GetMeResponse = User & {
-  myTrip: Trip[];
+  myTrip: Omit<Trip, 'owner'>[];
   myGroup: {
     group: Group;
-    signedTrip: (Trip & { result: boolean })[];
+    signedTrip: (Omit<Trip, 'owner' | 'joinedGroup'> & {
+      owner: { id: string; name: string };
+      result: boolean;
+    })[];
   }[];
 };

@@ -19,10 +19,16 @@ export class MeService {
 
   public async getMe(token: string): Promise<GetMeResponse> {
     const user = await this.userService.getUserByToken(token);
-    const [myTrip, group] = await Promise.all([
+    const [trip, group] = await Promise.all([
       this.dbService.getItemsByIndex<Trip>('trip', 'user', user.id),
       this.dbService.getItemsByIndex<Group>('group', 'user', user.id),
     ]);
+
+    const myTrip = trip.map((v: Trip) => {
+      const { owner, ...rest } = v;
+
+      return rest;
+    });
 
     const myGroup = await Promise.all(
       group.map(async (v: Group) => {
@@ -34,7 +40,15 @@ export class MeService {
 
         return {
           group: v,
-          signedTrip: sign.map((s: Sign) => ({ ...s.trip, result: s.result })),
+          signedTrip: sign.map((s: Sign) => {
+            const { owner, joinedGroup, ...rest } = s.trip;
+
+            return {
+              ...rest,
+              owner: { id: owner.id, name: owner.name },
+              result: s.result,
+            };
+          }),
         };
       })
     );

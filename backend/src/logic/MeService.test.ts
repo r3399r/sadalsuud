@@ -30,19 +30,21 @@ describe('MeService', () => {
 
     mockDbService.getItemsByIndex = jest
       .fn()
-      .mockReturnValueOnce([{ id: 'trip1' }])
+      .mockReturnValueOnce([
+        { id: 'trip1', owner: { id: 'user-id', name: 'xxx' } },
+      ])
       .mockReturnValueOnce([dummyGroup1, dummyGroup2])
       .mockReturnValueOnce([
         {
           id: 'sign1',
           group: dummyGroup1,
-          trip: { id: 'trip2' },
+          trip: { id: 'trip2', owner: { id: 'owner-id', name: 'ooo' } },
           result: false,
         },
         {
           id: 'sign2',
           group: dummyGroup1,
-          trip: { id: 'trip3' },
+          trip: { id: 'trip3', owner: { id: 'owner-id', name: 'ooo' } },
           result: true,
         },
       ])
@@ -50,13 +52,13 @@ describe('MeService', () => {
         {
           id: 'sign3',
           group: dummyGroup2,
-          trip: { id: 'trip4' },
+          trip: { id: 'trip4', owner: { id: 'owner-id', name: 'ooo' } },
           result: false,
         },
         {
           id: 'sign4',
           group: dummyGroup2,
-          trip: { id: 'trip5' },
+          trip: { id: 'trip5', owner: { id: 'owner-id', name: 'ooo' } },
           result: true,
         },
       ]);
@@ -73,15 +75,31 @@ describe('MeService', () => {
         {
           group: dummyGroup1,
           signedTrip: [
-            { id: 'trip2', result: false },
-            { id: 'trip3', result: true },
+            {
+              id: 'trip2',
+              owner: { id: 'owner-id', name: 'ooo' },
+              result: false,
+            },
+            {
+              id: 'trip3',
+              owner: { id: 'owner-id', name: 'ooo' },
+              result: true,
+            },
           ],
         },
         {
           group: dummyGroup2,
           signedTrip: [
-            { id: 'trip4', result: false },
-            { id: 'trip5', result: true },
+            {
+              id: 'trip4',
+              owner: { id: 'owner-id', name: 'ooo' },
+              result: false,
+            },
+            {
+              id: 'trip5',
+              owner: { id: 'owner-id', name: 'ooo' },
+              result: true,
+            },
           ],
         },
       ],

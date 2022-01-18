@@ -4,6 +4,8 @@ import { User } from './User';
 
 export type GetMeResponse = User & {
   myTrip: Trip[];
-  joinedTrip: Trip[];
-  myGroup: Group[];
+  myGroup: {
+    group: Group;
+    signedTrip: (Trip & { result: boolean })[];
+  }[];
 };

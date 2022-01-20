@@ -1,0 +1,44 @@
+@import '/src/style/variables';
+@import '/src/style/common';
+
+.self {
+  padding: 20px;
+}
+.time {
+  padding: 20px 0;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.place {
+  padding: 20px 0;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.desc {
+  padding: 20px 0;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+.need {
+  padding: 20px 0;
+}
+.fee {
+  padding: 20px 0;
+  .hint {
+    margin-bottom: 8px;
+  }
+  .item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+}
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}

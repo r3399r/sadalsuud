@@ -1,0 +1,14 @@
+@import '/src/style/variables';
+
+.self {
+  padding: 10px;
+  @media (min-width: $sm) {
+    padding: 20px;
+  }
+}
+.card {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}

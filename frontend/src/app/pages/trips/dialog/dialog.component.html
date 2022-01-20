@@ -1,0 +1,5 @@
+<div mat-dialog-title class="header">確認資料</div>
+<div mat-dialog-actions class="buttons">
+  <button mat-button (click)="onCancel()">取消</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>確認</button>
+</div>

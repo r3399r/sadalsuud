@@ -1,1 +1,10 @@
-<p>trips works!</p>
+<app-loader *ngIf="isLoading"></app-loader>
+<div class="self" *ngIf="!isAdd && !isLoading">
+  <button mat-raised-button color="primary" type="button" (click)="onAdd()">新增出遊</button>
+  <div class="card" *ngFor="let trip of trips">{{ trip.id }}</div>
+</div>
+<app-trip-form
+  *ngIf="isAdd"
+  (formSubmit)="onFormSubmit($event)"
+  (emitterCancel)="onCancel()"
+></app-trip-form>

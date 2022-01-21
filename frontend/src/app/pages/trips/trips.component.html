@@ -7,4 +7,5 @@
   *ngIf="isAdd"
   (formSubmit)="onFormSubmit($event)"
   (emitterCancel)="onCancel()"
+  [isLoading]="isLoading"
 ></app-trip-form>

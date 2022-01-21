@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import moment from 'moment';
@@ -14,7 +14,8 @@ import { DialogComponent } from 'src/app/pages/trips/dialog/dialog.component';
 export class TripFormComponent implements OnInit {
   @Output() emitterCancel = new EventEmitter();
   @Output() formSubmit = new EventEmitter<PostTripRequest>();
-  minDate: Date = new Date();
+  @Input() isLoading: boolean | undefined;
+  minDate = new Date();
   tripForm = this.fb.group({
     date: [moment(null), [Validators.required, momentValidator()]],
     startTime: ['', [Validators.pattern(/^([0-1][0-9]|2[0-3])[0-5][0-9]$/), Validators.required]],

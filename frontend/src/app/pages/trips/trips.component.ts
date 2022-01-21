@@ -42,7 +42,7 @@ export class TripsComponent implements OnInit {
     this.tripService
       .createTrip(event)
       .then(() => {
-        // this.trips = res;
+        this.isAdd = false;
       })
       .catch((e) => {
         this.snackBar.open(e.message, undefined, { duration: 4000 });

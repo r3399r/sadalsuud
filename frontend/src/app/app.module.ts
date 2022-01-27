@@ -21,7 +21,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
-import { TripsComponent } from './pages/trips/trips.component';
 import { QuestionsComponent } from './pages/questions/questions.component';
 import { UserComponent } from './pages/user/user.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
@@ -32,13 +31,13 @@ import { MY_NATIVE_DATE_FORMATS } from './constants/dateFormats';
 import { DialogComponent as UserDialogComponent } from './pages/user/dialog/dialog.component';
 import { TripFormComponent } from './pages/trips/trip-form/trip-form.component';
 import { DialogComponent as TripDialogComponent } from './pages/trips/dialog/dialog.component';
+import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     LandingComponent,
-    TripsComponent,
     QuestionsComponent,
     UserComponent,
     SidenavComponent,
@@ -48,6 +47,7 @@ import { DialogComponent as TripDialogComponent } from './pages/trips/dialog/dia
     TripFormComponent,
     UserDialogComponent,
     TripDialogComponent,
+    TripListComponent,
   ],
   imports: [
     MatSidenavModule,

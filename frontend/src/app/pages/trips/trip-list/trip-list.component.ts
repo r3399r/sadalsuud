@@ -5,11 +5,11 @@ import moment from 'moment';
 import { TripService } from 'src/app/services/trip.service';
 
 @Component({
-  selector: 'app-trips',
-  templateUrl: './trips.component.html',
-  styleUrls: ['./trips.component.scss'],
+  selector: 'app-trip-list',
+  templateUrl: './trip-list.component.html',
+  styleUrls: ['./trip-list.component.scss'],
 })
-export class TripsComponent implements OnInit {
+export class TripListComponent implements OnInit {
   trips: GetTripsResponse | undefined;
   isLoading = true;
   isAdd = false;

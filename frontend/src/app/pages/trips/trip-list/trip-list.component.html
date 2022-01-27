@@ -5,7 +5,7 @@
   </button>
   <div class="no-data" *ngIf="trips && trips.length === 0"><img src="assets/no-data.png" /></div>
   <div *ngFor="let trip of trips; let odd = odd">
-    <div [class]="odd ? 'odd' : 'even'">
+    <div [class]="odd ? 'odd' : 'even'" (click)="onClick(trip.id)">
       <div>
         <div class="key">日期</div>
         <div>{{ getDate(trip.startDatetime) }}</div>

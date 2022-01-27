@@ -32,6 +32,7 @@ import { DialogComponent as UserDialogComponent } from './pages/user/dialog/dial
 import { TripFormComponent } from './pages/trips/trip-form/trip-form.component';
 import { DialogComponent as TripDialogComponent } from './pages/trips/dialog/dialog.component';
 import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
+import { TripDetailComponent } from './pages/trips/trip-detail/trip-detail.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
     UserDialogComponent,
     TripDialogComponent,
     TripListComponent,
+    TripDetailComponent,
   ],
   imports: [
     MatSidenavModule,

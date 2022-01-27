@@ -1,32 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { TripListComponent } from './trip-list.component';
+import { GetTripResponse } from '@y-celestial/sadalsuud-service';
+import { TripDetailComponent } from './trip-detail.component';
 import { TripService } from 'src/app/services/trip.service';
 
-describe('TripListComponent', () => {
-  let component: TripListComponent;
-  let fixture: ComponentFixture<TripListComponent>;
+describe('TripDetailComponent', () => {
+  let component: TripDetailComponent;
+  let fixture: ComponentFixture<TripDetailComponent>;
   let tripServiceSpy: jasmine.SpyObj<TripService>;
-  let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(async () => {
-    tripServiceSpy = jasmine.createSpyObj('TripService', ['getTrips']);
-    matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
-    tripServiceSpy.getTrips.and.resolveTo();
+    tripServiceSpy = jasmine.createSpyObj('TripService', ['getTrip']);
+    tripServiceSpy.getTrip.and.resolveTo();
 
     await TestBed.configureTestingModule({
-      declarations: [TripListComponent],
+      declarations: [TripDetailComponent],
       imports: [RouterTestingModule],
-      providers: [
-        { provide: TripService, useValue: tripServiceSpy },
-        { provide: MatSnackBar, useValue: matSnackBarSpy },
-      ],
+      providers: [{ provide: TripService, useValue: tripServiceSpy }],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TripListComponent);
+    fixture = TestBed.createComponent(TripDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

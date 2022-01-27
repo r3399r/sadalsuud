@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { GetTripsResponse, PostTripRequest } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
 import { TripService } from 'src/app/services/trip.service';
@@ -14,7 +15,11 @@ export class TripListComponent implements OnInit {
   isLoading = true;
   isAdd = false;
 
-  constructor(private tripService: TripService, private snackBar: MatSnackBar) {}
+  constructor(
+    private tripService: TripService,
+    private snackBar: MatSnackBar,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     this.tripService
@@ -51,6 +56,10 @@ export class TripListComponent implements OnInit {
       .finally(() => {
         this.isLoading = false;
       });
+  }
+
+  onClick(id: string) {
+    this.router.navigate([`trips/${id}`]);
   }
 
   getDate(datetime: number) {

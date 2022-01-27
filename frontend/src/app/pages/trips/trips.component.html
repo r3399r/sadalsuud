@@ -1,11 +1,31 @@
 <app-loader *ngIf="isLoading"></app-loader>
 <div class="self" *ngIf="!isAdd && !isLoading">
-  <button mat-raised-button color="primary" type="button" (click)="onAdd()">新增出遊</button>
-  <div class="card" *ngFor="let trip of trips">{{ trip.id }}</div>
+  <button class="button" mat-raised-button color="primary" type="button" (click)="onAdd()">
+    新增出遊
+  </button>
+  <div class="no-data" *ngIf="trips && trips.length === 0"><img src="assets/no-data.png" /></div>
+  <div *ngFor="let trip of trips; let odd = odd">
+    <div [class]="odd ? 'odd' : 'even'">
+      <div>
+        <div class="key">日期</div>
+        <div>{{ getDate(trip.startDatetime) }}</div>
+      </div>
+      <div>
+        <div class="key">時間</div>
+        <div>{{ getTime(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
+      </div>
+      <div>
+        <div class="key">地點</div>
+        <div>{{ trip.place }}</div>
+      </div>
+      <div>{{ trip.briefDesc }}</div>
+    </div>
+  </div>
 </div>
 <app-trip-form
   *ngIf="isAdd"
   (formSubmit)="onFormSubmit($event)"
   (emitterCancel)="onCancel()"
   [isLoading]="isLoading"
-></app-trip-form>
+>
+</app-trip-form>

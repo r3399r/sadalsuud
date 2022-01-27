@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GetTripsResponse, PostTripRequest } from '@y-celestial/sadalsuud-service';
+import moment from 'moment';
 import { TripService } from 'src/app/services/trip.service';
 
 @Component({
@@ -50,5 +51,13 @@ export class TripsComponent implements OnInit {
       .finally(() => {
         this.isLoading = false;
       });
+  }
+
+  getDate(datetime: number) {
+    return moment.unix(datetime).format('YYYY/MM/DD');
+  }
+
+  getTime(datetime: number) {
+    return moment.unix(datetime).format('HH:mm');
   }
 }

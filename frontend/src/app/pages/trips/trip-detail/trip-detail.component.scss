@@ -1,0 +1,33 @@
+@import '/src/style/variables';
+
+.self {
+  padding: 10px;
+  @media (min-width: $sm) {
+    padding: 20px;
+  }
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.key {
+  font-weight: bold;
+}
+.fee {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  > div {
+    padding: 1px 6px;
+    border-radius: 10px;
+    background-color: $pale-blue;
+  }
+}
+.detail {
+  white-space: pre;
+}

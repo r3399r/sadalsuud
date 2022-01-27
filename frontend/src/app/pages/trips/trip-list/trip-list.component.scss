@@ -1,0 +1,44 @@
+@import '/src/style/variables';
+
+@mixin card {
+  border-bottom: 1px solid $black-30;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  > div {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    @media (min-width: $sm) {
+      justify-content: flex-start;
+    }
+  }
+}
+.self {
+  padding: 15px 0;
+}
+.button {
+  margin: 0 0 15px 20px;
+}
+.odd {
+  @include card;
+  background-color: $snow;
+}
+.even {
+  @include card;
+  background-color: $cream;
+}
+.key {
+  font-weight: bold;
+}
+.no-data {
+  display: flex;
+  justify-content: center;
+  > img {
+    max-height: 75vh;
+    max-width: 90%;
+  }
+}

@@ -21,7 +21,8 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "@y-celestial/service"
+              "@y-celestial/service",
+              "@y-celestial/sadalsuud-service"
             ],
             "outputPath": "dist",
             "index": "src/index.html",

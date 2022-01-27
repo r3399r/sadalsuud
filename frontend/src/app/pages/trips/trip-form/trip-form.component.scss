@@ -1,0 +1,72 @@
+@import '/src/style/variables';
+@import '/src/style/common';
+
+.self {
+  padding: 10px;
+  @media (min-width: $sm) {
+    padding: 20px;
+  }
+}
+.date {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  @media (min-width: $sm) {
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .time {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+}
+.place {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  @media (min-width: $sm) {
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+  }
+}
+.desc {
+  padding: 20px 0;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+.need {
+  padding: 20px 0;
+}
+.fee {
+  padding: 20px 0;
+  .hint {
+    margin-bottom: 8px;
+  }
+  .item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    column-gap: 15px;
+
+    padding: 0 10px 10px 10px;
+    margin: 5px 0;
+    border: 1px solid $grey-40;
+    border-radius: 10px;
+    @media (min-width: $sm) {
+      padding: 0;
+      margin: 0;
+      border: none;
+    }
+  }
+}
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}

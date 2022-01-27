@@ -1,0 +1,156 @@
+<div class="self">
+  <div class="header">新增出遊</div>
+  <form [formGroup]="tripForm" (ngSubmit)="onSubmit()" id="trip-form">
+    <div class="date">
+      <mat-form-field appearance="standard">
+        <mat-label>日期</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker1"
+          formControlName="date"
+          autocomplete="off"
+          [min]="minDate"
+          [disabled]="isLoading ?? false"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1 touchUi></mat-datepicker>
+      </mat-form-field>
+      <div class="time">
+        <mat-form-field appearance="standard">
+          <mat-label>開始時間</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="startTime"
+            autocomplete="off"
+            [disabled]="isLoading ?? false"
+          />
+          <mat-hint>請輸入時間例如：0900、1530</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="standard">
+          <mat-label>結束時間</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="endTime"
+            autocomplete="off"
+            [disabled]="isLoading ?? false"
+          />
+          <mat-hint>請輸入時間例如：1300、1640</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="place">
+      <mat-form-field appearance="standard">
+        <mat-label>地點</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="place"
+          autocomplete="off"
+          [disabled]="isLoading ?? false"
+        />
+        <mat-hint>例如：兒童新樂園</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="standard">
+        <mat-label>集合地點</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="meetPlace"
+          autocomplete="off"
+          [disabled]="isLoading ?? false"
+        />
+        <mat-hint>例如：捷運劍潭站 1 號出口</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="standard">
+        <mat-label>解散地點</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="dismissPlace"
+          autocomplete="off"
+          [disabled]="isLoading ?? false"
+        />
+        <mat-hint>例如：兒童新樂園門口</mat-hint>
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="desc">
+      <mat-form-field appearance="standard">
+        <mat-label>簡介</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="briefDesc"
+          autocomplete="off"
+          [disabled]="isLoading ?? false"
+        />
+        <mat-hint>請用一行文字簡介此活動，將顯示於清單中</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>活動詳情</mat-label>
+        <textarea
+          matInput
+          formControlName="detailDesc"
+          (keyup)="autoGrowTextZone($event)"
+          [disabled]="isLoading ?? false"
+        ></textarea>
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="need">
+      <mat-checkbox formControlName="needAccompany" [disabled]="isLoading ?? false"
+        >家人是否必須陪同</mat-checkbox
+      >
+    </div>
+    <mat-divider></mat-divider>
+    <div class="fee">
+      <div class="hint">若有必要花費時請新增，例如：門票 100</div>
+      <div *ngFor="let fee of fees.controls; let i = index" formArrayName="fee">
+        <div formGroupName="{{ i }}" class="item">
+          <mat-form-field appearance="standard">
+            <mat-label>什麼</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="what"
+              autocomplete="off"
+              [disabled]="isLoading ?? false"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="standard">
+            <mat-label>大概費用(台幣)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="cost"
+              autocomplete="off"
+              [disabled]="isLoading ?? false"
+            />
+          </mat-form-field>
+          <button (click)="removeFee(i)" type="button" color="warn" mat-raised-button>刪除</button>
+        </div>
+      </div>
+      <button (click)="addFee()" type="button" mat-raised-button [disabled]="isLoading ?? false">
+        新增花費
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="buttons">
+      <button mat-raised-button type="button" (click)="onCancel()" [disabled]="isLoading ?? false">
+        取消
+      </button>
+      <button
+        id="btn-submit"
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="isLoading ?? false"
+      >
+        送出
+      </button>
+    </div>
+  </form>
+</div>

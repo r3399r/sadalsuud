@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { UserFormComponent } from './user-form.component';
@@ -16,6 +17,7 @@ describe('UserFormComponent', () => {
     >);
 
     await TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
       declarations: [UserFormComponent],
       providers: [{ provide: MatDialog, useValue: matDialogSpy }],
     }).compileComponents();

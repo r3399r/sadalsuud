@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { GetUserResponse, PostUserRequest, ROLE, User } from '@y-celestial/sadalsuud-service';
+import { PostUserRequest, ROLE, User } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
@@ -26,7 +26,7 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     this.userService
       .getUser()
-      .then((res: GetUserResponse) => {
+      .then((res: User) => {
         this.user = res;
       })
       .catch((e) => {

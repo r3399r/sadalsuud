@@ -5,7 +5,8 @@
   @media (min-width: $sm) {
     padding: 20px;
   }
-
+}
+.content {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -30,4 +31,10 @@
 }
 .detail {
   white-space: pre;
+}
+.buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
 import { TripListComponent } from './trip-list.component';
 import { TripService } from 'src/app/services/trip.service';
 
@@ -9,10 +10,12 @@ describe('TripListComponent', () => {
   let fixture: ComponentFixture<TripListComponent>;
   let tripServiceSpy: jasmine.SpyObj<TripService>;
   let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
     tripServiceSpy = jasmine.createSpyObj('TripService', ['getTrips']);
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
+    routerSpy = spyOn(Router.prototype, 'navigate');
     tripServiceSpy.getTrips.and.resolveTo();
 
     await TestBed.configureTestingModule({
@@ -41,5 +44,20 @@ describe('TripListComponent', () => {
 
   it('getTime should work', () => {
     expect(component.getTime(1643590800)).toBe('09:00');
+  });
+
+  it('onAdd should work', () => {
+    component.onAdd();
+    expect(component.isAdd).toBe(true);
+  });
+
+  it('onCancel should work', () => {
+    component.onCancel();
+    expect(component.isAdd).toBe(false);
+  });
+
+  it('onClcik should work', () => {
+    component.onClick('test-id');
+    expect(routerSpy).toHaveBeenCalledTimes(1);
   });
 });

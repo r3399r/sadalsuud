@@ -1,39 +1,54 @@
 <app-loader *ngIf="!trip"></app-loader>
 <div class="self" *ngIf="trip">
-  <div class="item">
-    <div class="key">日期</div>
-    <div>{{ getDate(trip.startDatetime) }}</div>
+  <div class="content">
+    <div class="item">
+      <div class="key">日期</div>
+      <div>{{ getDate(trip.startDatetime) }}</div>
+    </div>
+    <div class="item">
+      <div class="key">時間</div>
+      <div>{{ getTime(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
+    </div>
+    <div class="item">
+      <div class="key">地點</div>
+      <div>{{ trip.place }}</div>
+    </div>
+    <div class="item">
+      <div class="key">活動負責人</div>
+      <div>{{ trip.owner.name }}</div>
+    </div>
+    <div class="item">
+      <div class="key">集合地點</div>
+      <div>{{ trip.meetPlace }}</div>
+    </div>
+    <div class="item">
+      <div class="key">解散地點</div>
+      <div>{{ trip.dismissPlace }}</div>
+    </div>
+    <div class="item">
+      <div class="key">家長是否需同行</div>
+      <div>{{ trip.needAccompany === true ? '是' : '否' }}</div>
+    </div>
+    <div class="key">可能花費</div>
+    <div class="fee">
+      <div *ngFor="let fee of trip.fee">{{ fee.what }} ${{ fee.cost }}</div>
+    </div>
+    <div class="key">活動詳情</div>
+    <div class="detail">{{ trip.detailDesc }}</div>
   </div>
-  <div class="item">
-    <div class="key">時間</div>
-    <div>{{ getTime(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
+  <div class="buttons">
+    <button
+      *ngFor="let groupInfo of user?.myGroup"
+      class="button"
+      mat-raised-button
+      color="primary"
+      type="button"
+      (click)="onSign(groupInfo)"
+    >
+      {{ buttonName(groupInfo) }}
+    </button>
+    <button *ngIf="showEdit()" class="button" mat-raised-button color="accent" type="button">
+      修改出遊
+    </button>
   </div>
-  <div class="item">
-    <div class="key">地點</div>
-    <div>{{ trip.place }}</div>
-  </div>
-  <div class="item">
-    <div class="key">活動負責人</div>
-    <div>{{ trip.owner.name }}</div>
-  </div>
-  <div class="item">
-    <div class="key">集合地點</div>
-    <div>{{ trip.meetPlace }}</div>
-  </div>
-  <div class="item">
-    <div class="key">解散地點</div>
-    <div>{{ trip.dismissPlace }}</div>
-  </div>
-  <div class="item">
-    <div class="key">家長是否需同行</div>
-    <div>{{ trip.needAccompany === true ? '是' : '否' }}</div>
-  </div>
-  <div class="key">可能花費</div>
-  <div class="fee">
-    <div *ngFor="let fee of trip.fee">{{ fee.what }} ${{ fee.cost }}</div>
-  </div>
-  <div class="key">活動詳情</div>
-  <div class="detail">{{ trip.detailDesc }}</div>
-  <button class="button" mat-raised-button color="primary" type="button">我要報名</button>
-  <button class="button" mat-raised-button color="accent" type="button">修改出遊</button>
 </div>

@@ -43,6 +43,17 @@ describe('UserService', () => {
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
   });
 
+  it('getUser should work with multiple calls', async () => {
+    await service.getUser();
+    await service.getUser();
+    expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('refreshUser should work', async () => {
+    await service.refreshUser();
+    expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
+  });
+
   it('getUser should throw unexpected error', async () => {
     httpClientSpy.get.and.rejectWith(new Error('message'));
     await expectAsync(service.getUser()).toBeRejected();

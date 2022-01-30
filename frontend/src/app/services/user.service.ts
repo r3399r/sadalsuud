@@ -12,10 +12,18 @@ import { HttpClientService } from './http-client.service';
   providedIn: 'root',
 })
 export class UserService {
+  private user: GetMeResponse | undefined;
+
   constructor(private http: HttpClientService) {}
 
-  public async getUser() {
-    return await this.http.get<GetMeResponse>('me');
+  public async getUser(): Promise<GetMeResponse> {
+    if (this.user !== undefined) return this.user;
+    this.user = await this.http.get<GetMeResponse>('me');
+    return this.user;
+  }
+
+  public async refreshUser() {
+    this.user = await this.http.get<GetMeResponse>('me');
   }
 
   public async addUser(data: PostUserRequest) {

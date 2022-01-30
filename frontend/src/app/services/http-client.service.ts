@@ -37,7 +37,7 @@ export class HttpClientService {
       });
       return await lastValueFrom(observable$);
     } catch (e) {
-      if (e.message === 'invalid_grant' || e.message === ERROR_CODE.TOKEN_INFO_INCOMPLETE) {
+      if (e.error?.error === 'invalid_grant' || e.message === ERROR_CODE.TOKEN_INFO_INCOMPLETE) {
         this.router.navigate(['login']);
         throw new Error(ERROR.TOKEN_EXPIRED);
       } else {

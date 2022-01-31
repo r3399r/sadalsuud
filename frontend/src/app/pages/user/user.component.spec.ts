@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ROLE } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserComponent } from './user.component';
 import { UserService } from 'src/app/services/user.service';
 import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
@@ -28,6 +29,7 @@ describe('UserComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [UserComponent],
       imports: [RouterTestingModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: UserService, useValue: userServiceSpy },
         { provide: MatSnackBar, useValue: matSnackBarSpy },

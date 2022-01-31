@@ -1,20 +1,21 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { PostTripRequest } from '@y-celestial/sadalsuud-service';
+import moment from 'moment';
+import { TripService } from 'src/app/services/trip.service';
 import { momentValidator } from 'src/util/validator';
 import { DialogComponent } from 'src/app/pages/trips/dialog/dialog.component';
 
 @Component({
-  selector: 'app-trip-form',
-  templateUrl: './trip-form.component.html',
-  styleUrls: ['./trip-form.component.scss'],
+  selector: 'app-trip-editor',
+  templateUrl: './trip-editor.component.html',
+  styleUrls: ['./trip-editor.component.scss'],
 })
-export class TripFormComponent implements OnInit {
-  @Output() emitterCancel = new EventEmitter();
-  @Output() formSubmit = new EventEmitter<PostTripRequest>();
-  @Input() isLoading: boolean | undefined;
+export class TripEditorComponent implements OnInit {
+  isLoading = false;
   minDate = new Date();
   tripForm = this.fb.group({
     date: [moment(null), [Validators.required, momentValidator()]],
@@ -29,12 +30,18 @@ export class TripFormComponent implements OnInit {
     needAccompany: [false],
   });
 
-  constructor(private dialog: MatDialog, private fb: FormBuilder) {}
+  constructor(
+    private dialog: MatDialog,
+    private fb: FormBuilder,
+    private router: Router,
+    private tripService: TripService,
+    private snackBar: MatSnackBar,
+  ) {}
 
   ngOnInit(): void {}
 
   onCancel() {
-    this.emitterCancel.emit();
+    this.router.navigate(['trips']);
   }
 
   onSubmit() {
@@ -58,7 +65,7 @@ export class TripFormComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((data: PostTripRequest) => {
-        if (data) this.formSubmit.emit(data);
+        if (data) this.onFormSubmit(data);
       });
     }
   }
@@ -77,6 +84,21 @@ export class TripFormComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  private onFormSubmit(data: PostTripRequest) {
+    this.isLoading = true;
+    this.tripService
+      .createTrip(data)
+      .then(() => {
+        this.router.navigate(['user']);
+      })
+      .catch((e) => {
+        this.snackBar.open(e.message, undefined, { duration: 4000 });
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 
   get fees() {

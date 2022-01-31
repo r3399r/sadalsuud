@@ -47,7 +47,14 @@
     >
       {{ buttonName(groupInfo) }}
     </button>
-    <button *ngIf="showEdit()" class="button" mat-raised-button color="accent" type="button">
+    <button
+      *ngIf="showEdit()"
+      class="button"
+      mat-raised-button
+      color="accent"
+      type="button"
+      (click)="onEdit()"
+    >
       修改出遊
     </button>
   </div>

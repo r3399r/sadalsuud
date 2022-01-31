@@ -29,10 +29,10 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { UserFormComponent } from './pages/user/user-form/user-form.component';
 import { MY_NATIVE_DATE_FORMATS } from './constants/dateFormats';
 import { DialogComponent as UserDialogComponent } from './pages/user/dialog/dialog.component';
-import { TripFormComponent } from './pages/trips/trip-form/trip-form.component';
 import { DialogComponent as TripDialogComponent } from './pages/trips/dialog/dialog.component';
 import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
 import { TripDetailComponent } from './pages/trips/trip-detail/trip-detail.component';
+import { TripEditorComponent } from './pages/trips/trip-editor/trip-editor.component';
 
 @NgModule({
   declarations: [
@@ -45,11 +45,11 @@ import { TripDetailComponent } from './pages/trips/trip-detail/trip-detail.compo
     LoginComponent,
     LoaderComponent,
     UserFormComponent,
-    TripFormComponent,
     UserDialogComponent,
     TripDialogComponent,
     TripListComponent,
     TripDetailComponent,
+    TripEditorComponent,
   ],
   imports: [
     MatSidenavModule,

@@ -1,11 +1,11 @@
 <app-loader *ngIf="isLoading"></app-loader>
-<div class="self" *ngIf="!isAdd && !isLoading">
-  <button class="button" mat-raised-button color="primary" type="button" (click)="onAdd()">
+<div class="self" *ngIf="!isLoading">
+  <button class="button" mat-raised-button color="primary" type="button" (click)="onCreate()">
     新增出遊
   </button>
   <div class="no-data" *ngIf="trips && trips.length === 0"><img src="assets/no-data.png" /></div>
   <div *ngFor="let trip of trips; let odd = odd">
-    <div [class]="odd ? 'odd' : 'even'" (click)="onClick(trip.id)">
+    <div [class]="odd ? 'odd' : 'even'" (click)="onTripClick(trip.id)">
       <div>
         <div class="key">日期</div>
         <div>{{ getDate(trip.startDatetime) }}</div>
@@ -22,10 +22,3 @@
     </div>
   </div>
 </div>
-<app-trip-form
-  *ngIf="isAdd"
-  (formSubmit)="onFormSubmit($event)"
-  (emitterCancel)="onCancel()"
-  [isLoading]="isLoading"
->
-</app-trip-form>

@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { UserFormComponent } from './user-form.component';
@@ -17,7 +19,7 @@ describe('UserFormComponent', () => {
     >);
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
+      imports: [ReactiveFormsModule, MatNativeDateModule],
       declarations: [UserFormComponent],
       providers: [{ provide: MatDialog, useValue: matDialogSpy }],
     }).compileComponents();

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TripListComponent } from './trip-list.component';
 import { TripService } from 'src/app/services/trip.service';
 
@@ -21,6 +22,7 @@ describe('TripListComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [TripListComponent],
       imports: [RouterTestingModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: TripService, useValue: tripServiceSpy },
         { provide: MatSnackBar, useValue: matSnackBarSpy },
@@ -46,18 +48,13 @@ describe('TripListComponent', () => {
     expect(component.getTime(1643590800)).toBe('09:00');
   });
 
-  it('onAdd should work', () => {
-    component.onAdd();
-    expect(component.isAdd).toBe(true);
+  it('onCreate should work', () => {
+    component.onCreate();
+    expect(routerSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('onCancel should work', () => {
-    component.onCancel();
-    expect(component.isAdd).toBe(false);
-  });
-
-  it('onClcik should work', () => {
-    component.onClick('test-id');
+  it('onTripClick should work', () => {
+    component.onTripClick('test-id');
     expect(routerSpy).toHaveBeenCalledTimes(1);
   });
 });

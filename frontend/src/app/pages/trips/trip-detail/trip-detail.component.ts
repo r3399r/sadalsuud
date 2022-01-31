@@ -66,6 +66,10 @@ export class TripDetailComponent implements OnInit {
     return false;
   }
 
+  onEdit() {
+    this.router.navigate([`trips/${this.trip!.id}`]);
+  }
+
   getDate(datetime: number) {
     return moment.unix(datetime).format('YYYY/MM/DD');
   }

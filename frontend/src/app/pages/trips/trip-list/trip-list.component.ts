@@ -13,7 +13,6 @@ import { TripService } from 'src/app/services/trip.service';
 export class TripListComponent implements OnInit {
   trips: GetTripsResponse | undefined;
   isLoading = true;
-  isAdd = false;
 
   constructor(
     private tripService: TripService,
@@ -35,30 +34,11 @@ export class TripListComponent implements OnInit {
       });
   }
 
-  onAdd() {
-    this.isAdd = true;
+  onCreate() {
+    this.router.navigate(['trips/editor']);
   }
 
-  onCancel() {
-    this.isAdd = false;
-  }
-
-  onFormSubmit(event: PostTripRequest) {
-    this.isLoading = true;
-    this.tripService
-      .createTrip(event)
-      .then(() => {
-        this.isAdd = false;
-      })
-      .catch((e) => {
-        this.snackBar.open(e.message, undefined, { duration: 4000 });
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
-  }
-
-  onClick(id: string) {
+  onTripClick(id: string) {
     this.router.navigate([`trips/${id}`]);
   }
 

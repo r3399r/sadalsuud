@@ -4,6 +4,8 @@ import {
   GetTripsResponse,
   PostTripRequest,
   PostTripResponse,
+  ReviseTripRequest,
+  ReviseTripResponse,
   SignTripRequest,
   SignTripResponse,
 } from '@y-celestial/sadalsuud-service';
@@ -22,6 +24,10 @@ export class TripService {
 
   public async createTrip(data: PostTripRequest) {
     return await this.http.post<PostTripResponse, PostTripRequest>('trips', data);
+  }
+
+  public async editTrip(id: string, data: ReviseTripRequest) {
+    return await this.http.put<ReviseTripResponse, ReviseTripRequest>(`trips/${id}`, data);
   }
 
   public async getTrip(id: string) {

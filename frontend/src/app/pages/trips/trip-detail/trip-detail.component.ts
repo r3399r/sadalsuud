@@ -67,7 +67,7 @@ export class TripDetailComponent implements OnInit {
   }
 
   onEdit() {
-    this.router.navigate([`trips/${this.trip!.id}`]);
+    this.router.navigate(['trips/editor'], { state: { data: this.trip } });
   }
 
   getDate(datetime: number) {

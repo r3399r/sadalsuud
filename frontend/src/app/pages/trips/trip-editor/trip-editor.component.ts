@@ -3,8 +3,9 @@ import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { PostTripRequest } from '@y-celestial/sadalsuud-service';
+import { PostTripRequest, Trip } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
+import { Location } from '@angular/common';
 import { TripService } from 'src/app/services/trip.service';
 import { momentValidator } from 'src/util/validator';
 import { DialogComponent } from 'src/app/pages/trips/dialog/dialog.component';
@@ -16,6 +17,7 @@ import { DialogComponent } from 'src/app/pages/trips/dialog/dialog.component';
 })
 export class TripEditorComponent implements OnInit {
   isLoading = false;
+  editId: string | undefined;
   minDate = new Date();
   tripForm = this.fb.group({
     date: [moment(null), [Validators.required, momentValidator()]],
@@ -36,9 +38,32 @@ export class TripEditorComponent implements OnInit {
     private router: Router,
     private tripService: TripService,
     private snackBar: MatSnackBar,
+    private location: Location,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const trip = (this.location.getState() as { data: any }).data as Trip;
+    if (trip !== undefined) {
+      this.editId = trip.id;
+      this.tripForm.controls['date'].setValue(moment(trip.startDatetime * 1000));
+      this.tripForm.controls['startTime'].setValue(moment(trip.startDatetime).format('HHmm'));
+      this.tripForm.controls['endTime'].setValue(moment(trip.endDatetime).format('HHmm'));
+      this.tripForm.controls['place'].setValue(trip.place);
+      this.tripForm.controls['meetPlace'].setValue(trip.meetPlace);
+      this.tripForm.controls['dismissPlace'].setValue(trip.dismissPlace);
+      this.tripForm.controls['briefDesc'].setValue(trip.briefDesc);
+      this.tripForm.controls['detailDesc'].setValue(trip.detailDesc);
+      this.tripForm.controls['needAccompany'].setValue(trip.needAccompany);
+      trip.fee.forEach((fee: Trip['fee'][0]) => {
+        this.fees.push(
+          this.fb.group({
+            what: [fee.what, Validators.required],
+            cost: [fee.cost, Validators.required],
+          }),
+        );
+      });
+    }
+  }
 
   onCancel() {
     this.router.navigate(['trips']);
@@ -88,17 +113,30 @@ export class TripEditorComponent implements OnInit {
 
   private onFormSubmit(data: PostTripRequest) {
     this.isLoading = true;
-    this.tripService
-      .createTrip(data)
-      .then(() => {
-        this.router.navigate(['user']);
-      })
-      .catch((e) => {
-        this.snackBar.open(e.message, undefined, { duration: 4000 });
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
+    if (this.editId !== undefined)
+      this.tripService
+        .editTrip(this.editId, data)
+        .then(() => {
+          this.router.navigate([`trips/${this.editId}`]);
+        })
+        .catch((e) => {
+          this.snackBar.open(e.message, undefined, { duration: 4000 });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    else
+      this.tripService
+        .createTrip(data)
+        .then(() => {
+          this.router.navigate(['user']);
+        })
+        .catch((e) => {
+          this.snackBar.open(e.message, undefined, { duration: 4000 });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
   }
 
   get fees() {

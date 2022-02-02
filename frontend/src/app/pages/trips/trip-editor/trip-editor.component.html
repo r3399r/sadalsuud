@@ -10,7 +10,7 @@
           formControlName="date"
           autocomplete="off"
           [min]="minDate"
-          [disabled]="isLoading ?? false"
+          [attr.disabled]="isLoading ?? false"
         />
         <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
         <mat-datepicker #picker1 touchUi></mat-datepicker>
@@ -23,7 +23,7 @@
             type="text"
             formControlName="startTime"
             autocomplete="off"
-            [disabled]="isLoading ?? false"
+            [attr.disabled]="isLoading ?? false"
           />
           <mat-hint>請輸入時間例如：0900、1530</mat-hint>
         </mat-form-field>
@@ -34,7 +34,7 @@
             type="text"
             formControlName="endTime"
             autocomplete="off"
-            [disabled]="isLoading ?? false"
+            [attr.disabled]="isLoading ?? false"
           />
           <mat-hint>請輸入時間例如：1300、1640</mat-hint>
         </mat-form-field>
@@ -49,7 +49,7 @@
           type="text"
           formControlName="place"
           autocomplete="off"
-          [disabled]="isLoading ?? false"
+          [attr.disabled]="isLoading ?? false"
         />
         <mat-hint>例如：兒童新樂園</mat-hint>
       </mat-form-field>
@@ -60,7 +60,7 @@
           type="text"
           formControlName="meetPlace"
           autocomplete="off"
-          [disabled]="isLoading ?? false"
+          [attr.disabled]="isLoading ?? false"
         />
         <mat-hint>例如：捷運劍潭站 1 號出口</mat-hint>
       </mat-form-field>
@@ -71,7 +71,7 @@
           type="text"
           formControlName="dismissPlace"
           autocomplete="off"
-          [disabled]="isLoading ?? false"
+          [attr.disabled]="isLoading ?? false"
         />
         <mat-hint>例如：兒童新樂園門口</mat-hint>
       </mat-form-field>
@@ -85,7 +85,7 @@
           type="text"
           formControlName="briefDesc"
           autocomplete="off"
-          [disabled]="isLoading ?? false"
+          [attr.disabled]="isLoading ?? false"
         />
         <mat-hint>請用一行文字簡介此活動，將顯示於清單中</mat-hint>
       </mat-form-field>
@@ -95,13 +95,13 @@
           matInput
           formControlName="detailDesc"
           (keyup)="autoGrowTextZone($event)"
-          [disabled]="isLoading ?? false"
+          [attr.disabled]="isLoading ?? false"
         ></textarea>
       </mat-form-field>
     </div>
     <mat-divider></mat-divider>
     <div class="need">
-      <mat-checkbox formControlName="needAccompany" [disabled]="isLoading ?? false"
+      <mat-checkbox formControlName="needAccompany" [attr.disabled]="isLoading ?? false"
         >家人是否必須陪同</mat-checkbox
       >
     </div>
@@ -117,7 +117,7 @@
               type="text"
               formControlName="what"
               autocomplete="off"
-              [disabled]="isLoading ?? false"
+              [attr.disabled]="isLoading ?? false"
             />
           </mat-form-field>
           <mat-form-field appearance="standard">
@@ -127,19 +127,29 @@
               type="number"
               formControlName="cost"
               autocomplete="off"
-              [disabled]="isLoading ?? false"
+              [attr.disabled]="isLoading ?? false"
             />
           </mat-form-field>
           <button (click)="removeFee(i)" type="button" color="warn" mat-raised-button>刪除</button>
         </div>
       </div>
-      <button (click)="addFee()" type="button" mat-raised-button [disabled]="isLoading ?? false">
+      <button
+        (click)="addFee()"
+        type="button"
+        mat-raised-button
+        [attr.disabled]="isLoading ?? false"
+      >
         新增花費
       </button>
     </div>
     <mat-divider></mat-divider>
     <div class="buttons">
-      <button mat-raised-button type="button" (click)="onCancel()" [disabled]="isLoading ?? false">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="onCancel()"
+        [attr.disabled]="isLoading ?? false"
+      >
         取消
       </button>
       <button
@@ -147,7 +157,7 @@
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="isLoading ?? false"
+        [attr.disabled]="isLoading ?? false"
       >
         送出
       </button>

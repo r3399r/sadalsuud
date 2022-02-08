@@ -45,7 +45,6 @@ export class MeService {
 
             return {
               ...rest,
-              owner: { id: owner.id, name: owner.name },
               result: s.result,
             };
           }),

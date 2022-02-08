@@ -7,7 +7,6 @@ export type GetMeResponse = User & {
   myGroup: {
     group: Group;
     signedTrip: (Omit<Trip, 'owner' | 'joinedGroup'> & {
-      owner: { id: string; name: string };
       result: boolean;
     })[];
   }[];

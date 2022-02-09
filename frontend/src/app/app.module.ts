@@ -33,6 +33,7 @@ import { DialogComponent as TripDialogComponent } from './pages/trips/dialog/dia
 import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
 import { TripDetailComponent } from './pages/trips/trip-detail/trip-detail.component';
 import { TripEditorComponent } from './pages/trips/trip-editor/trip-editor.component';
+import { AdminComponent } from './pages/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { TripEditorComponent } from './pages/trips/trip-editor/trip-editor.compo
     TripListComponent,
     TripDetailComponent,
     TripEditorComponent,
+    AdminComponent,
   ],
   imports: [
     MatSidenavModule,

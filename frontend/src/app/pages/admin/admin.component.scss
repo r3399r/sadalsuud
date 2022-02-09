@@ -1,0 +1,13 @@
+@import '/src/style/variables';
+
+.self {
+  margin: 10px;
+  @media (min-width: $sm) {
+    padding: 20px;
+  }
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PAGES } from './constants/pages';
+import { AdminGuard } from './guard/admin.guard';
 import { AuthGuard } from './guard/auth.guard';
+import { AdminComponent } from './pages/admin/admin.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { QuestionsComponent } from './pages/questions/questions.component';
@@ -17,6 +19,7 @@ const routes: Routes = [
   { path: PAGES.QUESTIONS, component: QuestionsComponent },
   { path: PAGES.USER, component: UserComponent, canActivate: [AuthGuard] },
   { path: PAGES.LOGIN, component: LoginComponent },
+  { path: PAGES.ADMIN, component: AdminComponent, canActivate: [AdminGuard] },
   { path: '', component: LandingComponent },
   { path: '**', redirectTo: '' },
 ];

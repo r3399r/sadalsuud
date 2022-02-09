@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PostUserRequest, ROLE, User } from '@y-celestial/sadalsuud-service';
+import {
+  GetMeResponse,
+  PostUserRequest,
+  PostUserResponse,
+  PutUserResponse,
+  ROLE,
+} from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
@@ -12,7 +18,7 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./user.component.scss'],
 })
 export class UserComponent implements OnInit {
-  user: User | undefined;
+  user: GetMeResponse | undefined;
   isLoading = true;
   isEdit = false;
 
@@ -26,7 +32,7 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     this.userService
       .getUser()
-      .then((res: User) => {
+      .then((res: GetMeResponse) => {
         this.user = res;
       })
       .catch((e) => {
@@ -42,8 +48,8 @@ export class UserComponent implements OnInit {
     if (event.type === 'add')
       this.userService
         .addUser(event.data)
-        .then((res: User) => {
-          this.user = res;
+        .then((res: PostUserResponse) => {
+          this.user = { ...(this.user as GetMeResponse), ...res };
         })
         .catch((e) => {
           this.snackBar.open(e.message, undefined, { duration: 4000 });
@@ -54,8 +60,8 @@ export class UserComponent implements OnInit {
     else
       this.userService
         .updateUser(event.data)
-        .then((res: User) => {
-          this.user = res;
+        .then((res: PutUserResponse) => {
+          this.user = { ...(this.user as GetMeResponse), ...res };
         })
         .catch((e) => {
           this.snackBar.open(e.message, undefined, { duration: 4000 });
@@ -78,6 +84,11 @@ export class UserComponent implements OnInit {
     return ROLE_LOCALE.PASSERBY;
   }
 
+  isAdmin() {
+    if (this.user?.role === ROLE.ADMIN) return true;
+    return false;
+  }
+
   onClick() {
     this.isEdit = true;
   }
@@ -85,5 +96,9 @@ export class UserComponent implements OnInit {
   onLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  onClickAdmin() {
+    this.router.navigate(['/admin']);
   }
 }

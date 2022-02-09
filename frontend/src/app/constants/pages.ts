@@ -4,4 +4,5 @@ export enum PAGES {
   QUESTIONS = 'questions',
   USER = 'user',
   LOGIN = 'login',
+  ADMIN = 'admin',
 }

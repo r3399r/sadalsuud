@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ROLE } from '@y-celestial/sadalsuud-service';
+import { GetMeResponse, ROLE } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -90,6 +90,11 @@ describe('UserComponent', () => {
     });
   });
 
+  it('onCancel should work', () => {
+    component.onCancel();
+    expect(component.isEdit).toBeFalse();
+  });
+
   it('getRole should work', () => {
     expect(component.getRole(ROLE.PASSERBY)).toBe(ROLE_LOCALE.PASSERBY);
     expect(component.getRole(ROLE.ROOKIE)).toBe(ROLE_LOCALE.ROOKIE);
@@ -99,8 +104,29 @@ describe('UserComponent', () => {
     expect(component.getRole('xxx' as ROLE)).toBe(ROLE_LOCALE.PASSERBY);
   });
 
+  it('isAdmin should work', () => {
+    expect(component.isAdmin()).toBeFalse();
+
+    userServiceSpy.getUser.and.resolveTo({ role: ROLE.ADMIN } as GetMeResponse);
+    fixture.detectChanges();
+    component.ngOnInit();
+    fixture.whenStable().then(() => {
+      expect(component.isAdmin()).toBeTrue();
+    });
+  });
+
+  it('onClick should work', () => {
+    component.onClick();
+    expect(component.isEdit).toBeTrue();
+  });
+
   it('onLogout should work', () => {
     component.onLogout();
     expect(authServiceSpy.logout).toHaveBeenCalledTimes(1);
+  });
+
+  it('onClickAdmin should work', () => {
+    component.onClickAdmin();
+    expect(routerSpy).toHaveBeenCalledTimes(1);
   });
 });

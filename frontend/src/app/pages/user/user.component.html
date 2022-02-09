@@ -24,6 +24,9 @@
     <button mat-raised-button color="primary" type="button" (click)="onClick()">
       修改基本資料
     </button>
+    <button *ngIf="isAdmin()" mat-raised-button color="warn" type="button" (click)="onClickAdmin()">
+      管理員頁面
+    </button>
     <button mat-stroked-button color="primary" type="button" (click)="onLogout()">登出</button>
   </div>
 </div>

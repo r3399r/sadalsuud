@@ -6,7 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./admin.component.scss'],
 })
 export class AdminComponent implements OnInit {
+  page = 'user';
   constructor() {}
 
   ngOnInit(): void {}
+
+  onClick(page: string) {
+    this.page = page;
+  }
 }

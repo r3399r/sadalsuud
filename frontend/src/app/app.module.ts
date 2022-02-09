@@ -34,6 +34,10 @@ import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
 import { TripDetailComponent } from './pages/trips/trip-detail/trip-detail.component';
 import { TripEditorComponent } from './pages/trips/trip-editor/trip-editor.component';
 import { AdminComponent } from './pages/admin/admin.component';
+import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
+import { GroupManagementComponent } from './pages/admin/group-management/group-management.component';
+import { TripManagementComponent } from './pages/admin/trip-management/trip-management.component';
+import { StarManagementComponent } from './pages/admin/star-management/star-management.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +56,10 @@ import { AdminComponent } from './pages/admin/admin.component';
     TripDetailComponent,
     TripEditorComponent,
     AdminComponent,
+    UserManagementComponent,
+    GroupManagementComponent,
+    TripManagementComponent,
+    StarManagementComponent,
   ],
   imports: [
     MatSidenavModule,

@@ -1,8 +1,16 @@
 <div class="self">
   <div class="buttons">
-    <button mat-stroked-button color="primary" type="button">使用者清單</button>
-    <button mat-stroked-button color="primary" type="button">群組清單</button>
-    <button mat-stroked-button color="primary" type="button">出遊審核</button>
-    <button mat-stroked-button color="primary" type="button">星兒清單</button>
+    <button mat-stroked-button color="primary" type="button" (click)="onClick('user')">
+      使用者
+    </button>
+    <button mat-stroked-button color="primary" type="button" (click)="onClick('group')">
+      群組
+    </button>
+    <button mat-stroked-button color="primary" type="button" (click)="onClick('trip')">出遊</button>
+    <button mat-stroked-button color="primary" type="button" (click)="onClick('star')">星兒</button>
   </div>
+  <app-user-management *ngIf="page === 'user'"></app-user-management>
+  <app-group-management *ngIf="page === 'group'"></app-group-management>
+  <app-trip-management *ngIf="page === 'trip'"></app-trip-management>
+  <app-star-management *ngIf="page === 'star'"></app-star-management>
 </div>

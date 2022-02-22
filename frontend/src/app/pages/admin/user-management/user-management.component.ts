@@ -23,7 +23,16 @@ export class UserManagementComponent implements AfterViewInit {
   users: MatTableDataSource<User> = new MatTableDataSource<User>([]);
   roles = Object.values(ROLE);
   statuses = Object.values(STATUS);
-  displayedColumns = ['name', 'phone', 'birthday', 'role', 'status', 'dateUpdated', 'edit'];
+  displayedColumns = [
+    'name',
+    'phone',
+    'birthday',
+    'nGroups',
+    'role',
+    'status',
+    'dateUpdated',
+    'edit',
+  ];
   isEdit: Map<string, PutUserRoleRequest> = new Map();
 
   constructor(private userService: UserService, private snackBar: MatSnackBar) {}

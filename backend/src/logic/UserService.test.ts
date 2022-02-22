@@ -14,7 +14,7 @@ describe('UserService', () => {
   let dummyUser: any;
 
   beforeAll(() => {
-    dummyUser = { role: ROLE.PASSERBY, phone: 'phone' };
+    dummyUser = { id: 'aaa', role: ROLE.PASSERBY, phone: 'phone' };
   });
 
   beforeEach(() => {
@@ -32,6 +32,7 @@ describe('UserService', () => {
     mockDbService.putItem = jest.fn();
     mockDbService.getItem = jest.fn(() => dummyUser);
     mockDbService.getItems = jest.fn(() => [dummyUser]);
+    mockDbService.getItemsByIndex = jest.fn(() => [dummyUser]);
 
     userService = bindings.get<UserService>(UserService);
   });
@@ -69,6 +70,7 @@ describe('UserService', () => {
   it('getUsers should work', async () => {
     await userService.getUsers();
     expect(mockDbService.getItems).toBeCalledTimes(1);
+    expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
   });
 
   it('getUsers should work', async () => {

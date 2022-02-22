@@ -1,5 +1,10 @@
 export { VariablesResponse, VariablesParams } from 'src/model/Variable';
-export { PostStarResponse, PostStarRequest, Star } from 'src/model/Star';
+export {
+  PostStarResponse,
+  PostStarRequest,
+  Star,
+  GetStarsResponse,
+} from 'src/model/Star';
 export {
   PostUserRequest,
   PostUserResponse,

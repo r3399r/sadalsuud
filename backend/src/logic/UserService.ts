@@ -1,7 +1,9 @@
 import { DbService, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ROLE, STATUS } from 'src/constant/user';
+import { Group } from 'src/model/Group';
 import {
+  GetUsersResponse,
   PostUserRequest,
   PostUserResponse,
   PutUserRequest,
@@ -68,8 +70,20 @@ export class UserService {
     return newUser;
   }
 
-  public async getUsers() {
-    return await this.dbService.getItems<User>('user');
+  public async getUsers(): Promise<GetUsersResponse> {
+    const users = await this.dbService.getItems<User>('user');
+
+    return await Promise.all(
+      users.map(async (user: User) => {
+        const groups = await this.dbService.getItemsByIndex<Group>(
+          'group',
+          'user',
+          user.id
+        );
+
+        return { ...user, nGroups: groups.length };
+      })
+    );
   }
 
   public async getUserById(id: string) {

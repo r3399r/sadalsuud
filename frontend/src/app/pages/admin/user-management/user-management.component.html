@@ -1,7 +1,7 @@
 <div>
   <table *ngIf="users" mat-table [dataSource]="users" class="mat-elevation-z8" matSort>
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>姓名</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>名稱</th>
       <td mat-cell *matCellDef="let user">{{ user.name }}</td>
     </ng-container>
     <ng-container matColumnDef="phone">
@@ -29,6 +29,10 @@
           }}</mat-option>
         </mat-select>
       </td>
+    </ng-container>
+    <ng-container matColumnDef="dateUpdated">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>更新時間</th>
+      <td mat-cell *matCellDef="let user">{{ getDate(user.dateUpdated) }}</td>
     </ng-container>
     <ng-container matColumnDef="edit">
       <th mat-header-cell *matHeaderCellDef mat-sort-header></th>

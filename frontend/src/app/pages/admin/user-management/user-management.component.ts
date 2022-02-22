@@ -10,6 +10,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import moment from 'moment';
 import { getRole, getUserStatus } from 'src/app/util/ui';
 import { UserService } from 'src/app/services/user.service';
 
@@ -22,7 +23,7 @@ export class UserManagementComponent implements AfterViewInit {
   users: MatTableDataSource<User> = new MatTableDataSource<User>([]);
   roles = Object.values(ROLE);
   statuses = Object.values(STATUS);
-  displayedColumns = ['name', 'phone', 'birthday', 'role', 'status', 'edit'];
+  displayedColumns = ['name', 'phone', 'birthday', 'role', 'status', 'dateUpdated', 'edit'];
   isEdit: Map<string, PutUserRoleRequest> = new Map();
 
   constructor(private userService: UserService, private snackBar: MatSnackBar) {}
@@ -52,6 +53,10 @@ export class UserManagementComponent implements AfterViewInit {
 
   getUserStatus(status: STATUS) {
     return getUserStatus(status);
+  }
+
+  getDate(ts: number) {
+    return moment(ts).format('YYYY/MM/DD HH:mm:ss');
   }
 
   onEdit(id: string) {

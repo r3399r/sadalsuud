@@ -81,4 +81,14 @@ describe('UserService', () => {
     await expectAsync(service.updateUser(putUserData)).toBeRejected();
     expect(httpClientSpy.put).toHaveBeenCalledTimes(1);
   });
+
+  it('getAllUsers should work', async () => {
+    await service.getAllUsers();
+    expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('updateUserStatus should work', async () => {
+    await service.updateUserStatus('id', {});
+    expect(httpClientSpy.put).toHaveBeenCalledTimes(1);
+  });
 });

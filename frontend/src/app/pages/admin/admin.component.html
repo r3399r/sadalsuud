@@ -1,16 +1,16 @@
 <div class="self">
-  <div class="buttons">
-    <button mat-stroked-button color="primary" type="button" (click)="onClick('user')">
-      使用者
-    </button>
-    <button mat-stroked-button color="primary" type="button" (click)="onClick('group')">
-      群組
-    </button>
-    <button mat-stroked-button color="primary" type="button" (click)="onClick('trip')">出遊</button>
-    <button mat-stroked-button color="primary" type="button" (click)="onClick('star')">星兒</button>
-  </div>
-  <app-user-management *ngIf="page === 'user'"></app-user-management>
-  <app-group-management *ngIf="page === 'group'"></app-group-management>
-  <app-trip-management *ngIf="page === 'trip'"></app-trip-management>
-  <app-star-management *ngIf="page === 'star'"></app-star-management>
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="使用者"
+      ><ng-template matTabContent><app-user-management></app-user-management></ng-template
+    ></mat-tab>
+    <mat-tab label="群組"
+      ><ng-template matTabContent><app-group-management></app-group-management></ng-template
+    ></mat-tab>
+    <mat-tab label="出遊"
+      ><ng-template matTabContent><app-trip-management></app-trip-management></ng-template
+    ></mat-tab>
+    <mat-tab label="星兒"
+      ><ng-template matTabContent><app-star-management></app-star-management></ng-template
+    ></mat-tab>
+  </mat-tab-group>
 </div>

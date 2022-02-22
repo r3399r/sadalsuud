@@ -7,7 +7,7 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/role';
+import { ROLE } from 'src/constant/user';
 import { StarService } from 'src/logic/StarService';
 import { PostStarRequest, PostStarResponse } from 'src/model/Star';
 import { StarsEvent } from './StarsEvent';

@@ -11,7 +11,7 @@ describe('TripService', () => {
   let userServiceSpy: jasmine.SpyObj<UserService>;
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClientService', ['get', 'post']);
+    httpClientSpy = jasmine.createSpyObj('HttpClientService', ['get', 'post', 'put']);
     userServiceSpy = jasmine.createSpyObj('UserService', ['refreshUser']);
 
     TestBed.configureTestingModule({
@@ -35,6 +35,11 @@ describe('TripService', () => {
   it('createTrip should work', async () => {
     await service.createTrip({} as PostTripRequest);
     expect(httpClientSpy.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('editTrip should work', async () => {
+    await service.editTrip('id', {} as PostTripRequest);
+    expect(httpClientSpy.put).toHaveBeenCalledTimes(1);
   });
 
   it('getTrip should work', async () => {

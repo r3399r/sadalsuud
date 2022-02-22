@@ -1,7 +1,7 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ACTION } from 'src/constant/group';
-import { ROLE } from 'src/constant/role';
+import { ROLE, STATUS } from 'src/constant/user';
 import { Group } from 'src/model/Group';
 import { Star } from 'src/model/Star';
 import { User } from 'src/model/User';
@@ -28,7 +28,7 @@ describe('GroupService', () => {
       name: 'name',
       phone: 'phone',
       birthday: '1111/11/11',
-      verified: false,
+      status: STATUS.UNVERIFIED,
       role: ROLE.ADMIN,
       dateCreated: 123,
       dateUpdated: 123,

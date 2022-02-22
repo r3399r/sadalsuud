@@ -6,7 +6,7 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/role';
+import { ROLE } from 'src/constant/user';
 import { UserService } from 'src/logic/UserService';
 import { users } from './users';
 import { UsersEvent } from './UsersEvent';
@@ -33,7 +33,7 @@ describe('users', () => {
 
     mockUserService.addUser = jest.fn(() => dummyUser);
     mockUserService.updateUser = jest.fn(() => dummyUser);
-    mockUserService.updateRole = jest.fn(() => dummyUser);
+    mockUserService.updateUserStatus = jest.fn(() => dummyUser);
     mockUserService.getUserById = jest.fn(() => dummyUser);
     mockUserService.getUsers = jest.fn(() => [dummyUser]);
     mockUserService.getUserByToken = jest.fn(() => dummyUser);
@@ -96,9 +96,9 @@ describe('users', () => {
     expect(mockUserService.updateUser).toBeCalledTimes(0);
   });
 
-  it('PUT /users/{id}/role should work', async () => {
+  it('PUT /users/{id}/status should work', async () => {
     event = {
-      resource: '/api/users/{id}/role',
+      resource: '/api/users/{id}/status',
       httpMethod: 'PUT',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -107,10 +107,10 @@ describe('users', () => {
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
       successOutput(dummyUser)
     );
-    expect(mockUserService.updateRole).toBeCalledTimes(1);
+    expect(mockUserService.updateUserStatus).toBeCalledTimes(1);
   });
 
-  it('PUT /users/{id}/role should fail if resource is wrong', async () => {
+  it('PUT /users/{id}/status should fail if resource is wrong', async () => {
     event = {
       resource: '/api/users/{id}/xxx',
       httpMethod: 'PUT',

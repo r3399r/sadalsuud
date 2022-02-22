@@ -7,7 +7,7 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/role';
+import { ROLE } from 'src/constant/user';
 import { UserService } from 'src/logic/UserService';
 import {
   GetUserResponse,
@@ -50,13 +50,13 @@ export async function users(
             JSON.parse(event.body) as PutUserRequest
           );
         else {
-          if (event.resource !== '/api/users/{id}/role')
+          if (event.resource !== '/api/users/{id}/status')
             throw new InternalServerError('non-support resource');
 
           await userService.validateRole(event.headers['x-api-token'], [
             ROLE.ADMIN,
           ]);
-          res = await userService.updateRole(
+          res = await userService.updateUserStatus(
             event.pathParameters.id,
             JSON.parse(event.body) as PutUserRoleRequest
           );

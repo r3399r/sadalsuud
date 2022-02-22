@@ -8,7 +8,10 @@
     </div>
     <div>
       <div class="title">聯絡方式</div>
-      <div><span *ngIf="!user.verified" class="unverified">(待認證)</span>{{ user.phone }}</div>
+      <div>
+        <span *ngIf="!isVerified()" class="status">{{ displayStatus() }}</span
+        >{{ user.phone }}
+      </div>
     </div>
     <div>
       <div class="title">生日</div>

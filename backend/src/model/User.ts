@@ -1,12 +1,12 @@
 import { entity, primaryAttribute } from '@y-celestial/service';
-import { ROLE } from 'src/constant/role';
+import { ROLE, STATUS } from 'src/constant/user';
 
 export type User = {
   id: string;
   name: string;
   phone: string;
   birthday: string;
-  verified: boolean;
+  status: STATUS;
   role: ROLE;
   dateCreated: number;
   dateUpdated: number;
@@ -22,7 +22,7 @@ export class UserEntity implements User {
   public name: string;
   public phone: string;
   public birthday: string;
-  public verified: boolean;
+  public status: STATUS;
   public role: ROLE;
   public dateCreated: number;
   public dateUpdated: number;
@@ -32,7 +32,7 @@ export class UserEntity implements User {
     this.name = input.name;
     this.phone = input.phone;
     this.birthday = input.birthday;
-    this.verified = input.verified;
+    this.status = input.status;
     this.role = input.role;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
@@ -59,6 +59,6 @@ export type GetUserResponse = User;
 
 export type GetUsersResponse = User[];
 
-export type PutUserRoleRequest = { role: ROLE };
+export type PutUserRoleRequest = { role?: ROLE; status?: STATUS };
 
 export type PutUserRoleResponse = User;

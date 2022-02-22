@@ -1402,7 +1402,7 @@ Resources:
                 }
               }
             },
-            "/api/users/{id}/role": {
+            "/api/users/{id}/status": {
               "put": {
                 "produces": [
                   "application/json"

@@ -1,6 +1,6 @@
 import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/role';
+import { ROLE, STATUS } from 'src/constant/user';
 import { LineService } from './LineService';
 import { UserService } from './UserService';
 
@@ -96,13 +96,15 @@ describe('UserService', () => {
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });
 
-  it('updateRole should work', async () => {
-    await userService.updateRole('test-id', { role: ROLE.ROOKIE });
+  it('updateUserStatus should work', async () => {
+    await userService.updateUserStatus('test-id', {
+      status: STATUS.WRONG_PHONE,
+    });
     expect(mockDbService.putItem).toBeCalledTimes(1);
   });
 
-  it('updateRole should work if role is PASSERBY', async () => {
-    await userService.updateRole('test-id', { role: ROLE.PASSERBY });
+  it('updateUserStatus should work if role is PASSERBY', async () => {
+    await userService.updateUserStatus('test-id', { role: ROLE.PASSERBY });
     expect(mockDbService.putItem).toBeCalledTimes(1);
   });
 });

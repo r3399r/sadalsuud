@@ -15,11 +15,14 @@ export class AdminGuard implements CanActivate {
   ) {}
 
   async canActivate(): Promise<boolean | UrlTree> {
-    const isLogin = this.authService.isLogin();
-    const user = await this.userService.getUser();
-    const isAdmin = user.role === ROLE.ADMIN;
-
-    if (isLogin && isAdmin) return true;
-    return this.router.parseUrl('/');
+    try {
+      const isLogin = this.authService.isLogin();
+      const user = await this.userService.getUser();
+      const isAdmin = user.role === ROLE.ADMIN;
+      if (!isLogin || !isAdmin) throw Error();
+      return true;
+    } catch {
+      return this.router.parseUrl('/');
+    }
   }
 }

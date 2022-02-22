@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserComponent } from './user.component';
 import { UserService } from 'src/app/services/user.service';
-import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
+import { ROLE as ROLE_LOCALE } from 'src/app/locales/user';
 import { AuthService } from 'src/app/services/auth.service';
 
 describe('UserComponent', () => {
@@ -97,11 +97,6 @@ describe('UserComponent', () => {
 
   it('getRole should work', () => {
     expect(component.getRole(ROLE.PASSERBY)).toBe(ROLE_LOCALE.PASSERBY);
-    expect(component.getRole(ROLE.ROOKIE)).toBe(ROLE_LOCALE.ROOKIE);
-    expect(component.getRole(ROLE.GOOD_PARTNER)).toBe(ROLE_LOCALE.PARTNER);
-    expect(component.getRole(ROLE.GOOD_PLANNER)).toBe(ROLE_LOCALE.PLANEER);
-    expect(component.getRole(ROLE.ADMIN)).toBe(ROLE_LOCALE.ADMIN);
-    expect(component.getRole('xxx' as ROLE)).toBe(ROLE_LOCALE.PASSERBY);
   });
 
   it('isAdmin should work', () => {

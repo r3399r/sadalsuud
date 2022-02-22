@@ -6,11 +6,12 @@ import {
   PostUserResponse,
   PutUserResponse,
   ROLE,
+  STATUS,
 } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
-import { ROLE as ROLE_LOCALE } from 'src/app/locales/role';
 import { AuthService } from 'src/app/services/auth.service';
+import { getRole, getUserStatus } from 'src/app/util/ui';
 
 @Component({
   selector: 'app-user',
@@ -77,11 +78,16 @@ export class UserComponent implements OnInit {
   }
 
   getRole(role: ROLE) {
-    if (role === ROLE.ROOKIE) return ROLE_LOCALE.ROOKIE;
-    if (role === ROLE.GOOD_PARTNER || role === ROLE.SOFT_PARTNER) return ROLE_LOCALE.PARTNER;
-    if (role === ROLE.GOOD_PLANNER || role === ROLE.SOFT_PLANNER) return ROLE_LOCALE.PLANEER;
-    if (role === ROLE.ADMIN) return ROLE_LOCALE.ADMIN;
-    return ROLE_LOCALE.PASSERBY;
+    return getRole(role);
+  }
+
+  isVerified() {
+    return this.user?.status === STATUS.VERIFIED;
+  }
+
+  displayStatus() {
+    if (this.user === undefined) return '';
+    return `(${getUserStatus(this.user.status)})`;
   }
 
   isAdmin() {

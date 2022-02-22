@@ -7,7 +7,7 @@ import { PostTripRequest, Trip } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
 import { Location } from '@angular/common';
 import { TripService } from 'src/app/services/trip.service';
-import { momentValidator } from 'src/util/validator';
+import { momentValidator } from 'src/app/util/validator';
 import { DialogComponent } from 'src/app/pages/trips/dialog/dialog.component';
 
 @Component({

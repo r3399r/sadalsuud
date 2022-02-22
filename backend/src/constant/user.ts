@@ -7,3 +7,10 @@ export enum ROLE {
   SOFT_PLANNER = 'soft-planner',
   ADMIN = 'admin',
 }
+
+export enum STATUS {
+  VERIFIED = 'verified',
+  UNVERIFIED = 'unverified',
+  WRONG_PHONE = 'wrongPhone',
+  PHONE_UPDATED = 'phoneUpdated',
+}

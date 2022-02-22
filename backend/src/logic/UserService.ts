@@ -1,6 +1,6 @@
 import { DbService, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { ROLE } from 'src/constant/role';
+import { ROLE, STATUS } from 'src/constant/user';
 import {
   PostUserRequest,
   PostUserResponse,
@@ -34,7 +34,7 @@ export class UserService {
       name: body.name,
       phone: body.phone,
       birthday: body.birthday,
-      verified: false,
+      status: STATUS.UNVERIFIED,
       role: ROLE.PASSERBY,
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
@@ -56,8 +56,9 @@ export class UserService {
       name: body.name,
       phone: body.phone,
       birthday: body.birthday,
-      verified: oldUser.phone === body.phone ? oldUser.verified : false,
-      role: oldUser.role,
+      status:
+        oldUser.phone === body.phone ? oldUser.status : STATUS.PHONE_UPDATED,
+      role: oldUser.phone === body.phone ? oldUser.role : ROLE.PASSERBY,
       dateCreated: oldUser.dateCreated,
       dateUpdated: Date.now(),
     });
@@ -87,7 +88,7 @@ export class UserService {
     throw new UnauthorizedError('permission denied');
   }
 
-  public async updateRole(id: string, body: PutUserRoleRequest) {
+  public async updateUserStatus(id: string, body: PutUserRoleRequest) {
     const oldUser = await this.getUserById(id);
 
     const newUser = new UserEntity({
@@ -95,8 +96,8 @@ export class UserService {
       name: oldUser.name,
       phone: oldUser.phone,
       birthday: oldUser.birthday,
-      verified: body.role === ROLE.PASSERBY ? false : true,
-      role: body.role,
+      status: body.status ?? oldUser.status,
+      role: body.role ?? oldUser.role,
       dateCreated: oldUser.dateCreated,
       dateUpdated: Date.now(),
     });

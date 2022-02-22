@@ -5,7 +5,7 @@ import {
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import moment from 'moment';
-import { ROLE } from 'src/constant/role';
+import { ROLE } from 'src/constant/user';
 import { Group } from 'src/model/Group';
 import { Sign, SignEntity } from 'src/model/Sign';
 import { Star } from 'src/model/Star';

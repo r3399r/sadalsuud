@@ -28,5 +28,5 @@ export {
   Trip,
 } from 'src/model/Trip';
 export { GetMeResponse } from 'src/model/Me';
-export { ROLE } from 'src/constant/role';
+export { ROLE, STATUS } from 'src/constant/user';
 export { Group, PostGroupRequest, PostGroupResponse } from 'src/model/Group';

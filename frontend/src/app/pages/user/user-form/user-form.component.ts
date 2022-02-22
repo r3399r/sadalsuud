@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PostUserRequest, User } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
-import { momentValidator } from 'src/util/validator';
+import { momentValidator } from 'src/app/util/validator';
 import { DialogComponent } from 'src/app/pages/user/dialog/dialog.component';
 
 @Component({

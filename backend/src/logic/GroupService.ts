@@ -6,7 +6,7 @@ import {
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ACTION } from 'src/constant/group';
-import { ROLE } from 'src/constant/role';
+import { ROLE } from 'src/constant/user';
 import {
   Group,
   GroupEntity,

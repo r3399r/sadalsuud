@@ -10,7 +10,7 @@ import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/user';
 import { GroupService } from 'src/logic/GroupService';
 import {
-  GetGroupResponse,
+  GetGroupsResponse,
   PatchGroupRequest,
   PostGroupRequest,
   PostGroupResponse,
@@ -24,7 +24,7 @@ export async function groups(
   try {
     const groupService: GroupService = bindings.get<GroupService>(GroupService);
 
-    let res: PostGroupResponse | GetGroupResponse | void;
+    let res: PostGroupResponse | GetGroupsResponse | void;
 
     await groupService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
 

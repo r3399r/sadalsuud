@@ -47,7 +47,7 @@ export type PostGroupRequest = {
 
 export type PostGroupResponse = Group;
 
-export type GetGroupResponse = Group[];
+export type GetGroupsResponse = Group[];
 
 export type PatchGroupRequest = {
   action: ACTION;

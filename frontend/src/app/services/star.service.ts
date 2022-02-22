@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Star } from '@y-celestial/sadalsuud-service';
+import { Star, GetStarsResponse } from '@y-celestial/sadalsuud-service';
 import { HttpClientService } from './http-client.service';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { HttpClientService } from './http-client.service';
 export class StarService {
   constructor(private http: HttpClientService) {}
 
-  public async getAllStars(): Promise<Star[]> {
+  public async getAllStars(): Promise<GetStarsResponse> {
     return await this.http.get<Star[]>('stars');
   }
 }

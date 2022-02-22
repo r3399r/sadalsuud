@@ -20,7 +20,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements AfterViewInit {
-  users: MatTableDataSource<User> = new MatTableDataSource<User>([]);
+  users: MatTableDataSource<GetUsersResponse[0]> = new MatTableDataSource<GetUsersResponse[0]>([]);
   roles = Object.values(ROLE);
   statuses = Object.values(STATUS);
   displayedColumns = [

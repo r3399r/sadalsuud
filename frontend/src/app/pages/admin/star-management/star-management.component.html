@@ -1,1 +1,20 @@
-<p>star-management works!</p>
+<div>
+  <button mat-raised-button color="primary" class="addBtn">新增星星</button>
+  <table mat-table [dataSource]="stars" class="mat-elevation-z8" matSort>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>姓名</th>
+      <td mat-cell *matCellDef="let star">{{ star.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="nickname">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>暱稱</th>
+      <td mat-cell *matCellDef="let star">{{ star.nickname }}</td>
+    </ng-container>
+    <ng-container matColumnDef="birthday">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>生日</th>
+      <td mat-cell *matCellDef="let star">{{ star.birthday }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

@@ -31,7 +31,21 @@ describe('stars', () => {
 
     mockStarService.validateRole = jest.fn();
     mockStarService.addStar = jest.fn(() => dummyStar);
+    mockStarService.getStars = jest.fn(() => [dummyStar]);
     mockStarService.removeStar = jest.fn();
+  });
+
+  it('GET /stars should work', async () => {
+    event = {
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput([dummyStar])
+    );
+    expect(mockStarService.getStars).toBeCalledTimes(1);
   });
 
   it('POST should work', async () => {

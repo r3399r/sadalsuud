@@ -9,7 +9,11 @@ import {
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/user';
 import { StarService } from 'src/logic/StarService';
-import { PostStarRequest, PostStarResponse } from 'src/model/Star';
+import {
+  GetStarsResponse,
+  PostStarRequest,
+  PostStarResponse,
+} from 'src/model/Star';
 import { StarsEvent } from './StarsEvent';
 
 export async function stars(
@@ -19,11 +23,14 @@ export async function stars(
   try {
     const starService: StarService = bindings.get<StarService>(StarService);
 
-    let res: PostStarResponse | void;
+    let res: PostStarResponse | void | GetStarsResponse;
 
     await starService.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
 
     switch (event.httpMethod) {
+      case 'GET':
+        res = await starService.getStars();
+        break;
       case 'POST':
         if (event.body === null)
           throw new BadRequestError('body should not be empty');

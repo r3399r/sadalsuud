@@ -1,0 +1,26 @@
+@import '/src/style/variables';
+
+.addBtn {
+  margin: 10px 0;
+}
+table {
+  width: 100%;
+}
+.mat-row .mat-cell {
+  cursor: pointer;
+}
+.mat-row:hover .mat-cell {
+  background-color: $pale-orange;
+}
+.mat-column-name {
+  white-space: nowrap;
+  padding: 0 5px;
+}
+.mat-column-nickname {
+  white-space: nowrap;
+  padding: 0 5px;
+}
+.mat-column-birthday {
+  white-space: nowrap;
+  padding: 0 5px;
+}

@@ -42,4 +42,8 @@ export class StarService {
   public async getStar(id: string) {
     return await this.dbService.getItem<Star>('star', id);
   }
+
+  public async getStars() {
+    return await this.dbService.getItems<Star>('star');
+  }
 }

@@ -21,6 +21,7 @@ describe('StarService', () => {
     mockDbService.createItem = jest.fn();
     mockDbService.deleteItem = jest.fn();
     mockDbService.getItem = jest.fn();
+    mockDbService.getItems = jest.fn();
     mockUserService.validateRole = jest.fn();
 
     starService = bindings.get<StarService>(StarService);
@@ -48,5 +49,10 @@ describe('StarService', () => {
   it('getStar should work', async () => {
     await starService.getStar('test-id');
     expect(mockDbService.getItem).toBeCalledTimes(1);
+  });
+
+  it('getStars should work', async () => {
+    await starService.getStars();
+    expect(mockDbService.getItems).toBeCalledTimes(1);
   });
 });

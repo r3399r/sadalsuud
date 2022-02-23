@@ -34,6 +34,7 @@ export {
 } from 'src/model/Trip';
 export { GetMeResponse } from 'src/model/Me';
 export { ROLE, STATUS } from 'src/constant/user';
+export { ACTION } from 'src/constant/group';
 export {
   Group,
   PostGroupRequest,

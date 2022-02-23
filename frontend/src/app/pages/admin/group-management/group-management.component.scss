@@ -1,4 +1,21 @@
+@import '/src/style/variables';
+
+.form {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: $pale-blue;
+
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.input {
+  width: 360px;
+}
 .flex {
   display: flex;
   gap: 10px;
+  align-items: center;
 }

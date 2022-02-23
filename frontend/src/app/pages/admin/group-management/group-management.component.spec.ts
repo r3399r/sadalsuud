@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ReactiveFormsModule } from '@angular/forms';
 import { GroupManagementComponent } from './group-management.component';
 import { GroupService } from 'src/app/services/group.service';
 
@@ -6,6 +8,7 @@ describe('GroupManagementComponent', () => {
   let component: GroupManagementComponent;
   let fixture: ComponentFixture<GroupManagementComponent>;
   let groupServiceSpy: jasmine.SpyObj<GroupService>;
+  let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let dummyGroup: any;
 
   beforeAll(() => {
@@ -16,12 +19,24 @@ describe('GroupManagementComponent', () => {
   });
 
   beforeEach(async () => {
-    groupServiceSpy = jasmine.createSpyObj('GroupService', ['getAllGroups']);
+    groupServiceSpy = jasmine.createSpyObj('GroupService', [
+      'getAllGroups',
+      'addGroup',
+      'addGroupMember',
+      'removeGroupMember',
+    ]);
+    matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     groupServiceSpy.getAllGroups.and.resolveTo(dummyGroup);
+    groupServiceSpy.addGroupMember.and.resolveTo();
+    groupServiceSpy.removeGroupMember.and.resolveTo();
 
     await TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
       declarations: [GroupManagementComponent],
-      providers: [{ provide: GroupService, useValue: groupServiceSpy }],
+      providers: [
+        { provide: GroupService, useValue: groupServiceSpy },
+        { provide: MatSnackBar, useValue: matSnackBarSpy },
+      ],
     }).compileComponents();
   });
 
@@ -33,5 +48,56 @@ describe('GroupManagementComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('onRefresh should work', () => {
+    component.onRefresh();
+    fixture.whenStable().then(() => {
+      expect(groupServiceSpy.getAllGroups).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('onInput should work', () => {
+    component.onInput({ target: { value: 'a' } }, 'id');
+    expect(component.inputUser.get('id')).toBe('a');
+  });
+
+  it('onAdd should work', () => {
+    component.inputUser.set('id', 'a');
+    component.onAdd('id');
+    fixture.whenStable().then(() => {
+      expect(groupServiceSpy.addGroupMember).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('onAdd should return if inputUser is empty', () => {
+    component.onAdd('id');
+    fixture.whenStable().then(() => {
+      expect(groupServiceSpy.addGroupMember).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  it('onAdd should fail if api fail', () => {
+    groupServiceSpy.addGroupMember.and.rejectWith();
+    component.inputUser.set('id', 'a');
+    component.onAdd('id');
+    fixture.whenStable().then(() => {
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('onDelete should work', () => {
+    component.onDelete('groupId', 'userId');
+    fixture.whenStable().then(() => {
+      expect(groupServiceSpy.removeGroupMember).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('onDelete should fail if api fail', () => {
+    groupServiceSpy.removeGroupMember.and.rejectWith();
+    component.onDelete('groupId', 'userId');
+    fixture.whenStable().then(() => {
+      expect(matSnackBarSpy.open).toHaveBeenCalledTimes(1);
+    });
   });
 });

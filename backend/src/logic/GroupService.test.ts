@@ -189,10 +189,10 @@ describe('GroupService', () => {
     }));
     await expect(() =>
       groupService.updateGroupMembers('group-id', {
-        action: ACTION.REMOVE,
+        action: ACTION.ADD,
         userId: 'user-id-2',
       })
-    ).rejects.toThrowError('input group should be a star-group');
+    ).rejects.toThrowError('input group should be a star-group to add member');
   });
 
   it('updateGroupMembers should fail if action does not support', async () => {

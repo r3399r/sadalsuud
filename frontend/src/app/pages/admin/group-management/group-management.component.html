@@ -1,3 +1,18 @@
+<form class="form" [formGroup]="addGroupForm" (ngSubmit)="onSubmit()">
+  <mat-form-field class="input">
+    <mat-label>User ID</mat-label>
+    <input matInput formControlName="userId" />
+  </mat-form-field>
+  <mat-checkbox [checked]="hasStar" (change)="hasStar = !hasStar">是否為星兒群組</mat-checkbox>
+  <mat-form-field *ngIf="hasStar" class="input">
+    <mat-label>Star ID</mat-label>
+    <input matInput formControlName="starId" />
+  </mat-form-field>
+  <button type="submit" mat-raised-button [disabled]="isSubmitting">新增群組</button>
+</form>
+<button mat-icon-button (click)="onRefresh()">
+  <mat-icon>refresh</mat-icon>
+</button>
 <mat-accordion multi>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -7,6 +22,13 @@
     <div *ngFor="let partnerGroup of partnerGroups" class="flex">
       <div>{{ partnerGroup.user[0].name }}</div>
       <div>{{ partnerGroup.user[0].phone }}</div>
+      <button
+        mat-icon-button
+        (click)="onDelete(partnerGroup.id, partnerGroup.user[0].id)"
+        [disabled]="isSubmitting"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
     </div>
   </mat-expansion-panel>
   <mat-expansion-panel *ngFor="let starGroup of starGroups">
@@ -21,6 +43,18 @@
     <div *ngFor="let user of starGroup.user" class="flex">
       <div>{{ user.name }}</div>
       <div>{{ user.phone }}</div>
+      <button mat-icon-button (click)="onDelete(starGroup.id, user.id)" [disabled]="isSubmitting">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+    <div>
+      <mat-form-field class="input">
+        <mat-label>User ID</mat-label>
+        <input matInput (input)="onInput($event, starGroup.id)" />
+      </mat-form-field>
+      <button mat-icon-button (click)="onAdd(starGroup.id)" [disabled]="isSubmitting">
+        <mat-icon>add_circle</mat-icon>
+      </button>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

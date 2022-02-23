@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Star } from '@y-celestial/sadalsuud-service';
 import { GroupManagementComponent } from './group-management.component';
 import { GroupService } from 'src/app/services/group.service';
 
@@ -7,10 +6,18 @@ describe('GroupManagementComponent', () => {
   let component: GroupManagementComponent;
   let fixture: ComponentFixture<GroupManagementComponent>;
   let groupServiceSpy: jasmine.SpyObj<GroupService>;
+  let dummyGroup: any;
+
+  beforeAll(() => {
+    dummyGroup = [
+      { id: 'g1', user: [{ id: 'user1' }] },
+      { id: 'g2', user: [{ id: 'user2' }], star: { id: 'star1' } },
+    ];
+  });
 
   beforeEach(async () => {
     groupServiceSpy = jasmine.createSpyObj('GroupService', ['getAllGroups']);
-    groupServiceSpy.getAllGroups.and.resolveTo();
+    groupServiceSpy.getAllGroups.and.resolveTo(dummyGroup);
 
     await TestBed.configureTestingModule({
       declarations: [GroupManagementComponent],
@@ -26,10 +33,5 @@ describe('GroupManagementComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('getStar should work', () => {
-    expect(component.getStar({ name: 'hi' } as Star)).toBe('hi');
-    expect(component.getStar(undefined)).toBe('無');
   });
 });

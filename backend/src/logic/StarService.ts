@@ -1,7 +1,13 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { ROLE } from 'src/constant/user';
-import { PostStarRequest, Star, StarEntity } from 'src/model/Star';
+import { Group } from 'src/model/Group';
+import {
+  GetStarsResponse,
+  PostStarRequest,
+  Star,
+  StarEntity,
+} from 'src/model/Star';
 import { v4 as uuidv4 } from 'uuid';
 import { UserService } from './UserService';
 
@@ -43,7 +49,19 @@ export class StarService {
     return await this.dbService.getItem<Star>('star', id);
   }
 
-  public async getStars() {
-    return await this.dbService.getItems<Star>('star');
+  public async getStars(): Promise<GetStarsResponse> {
+    const stars = await this.dbService.getItems<Star>('star');
+
+    return await Promise.all(
+      stars.map(async (star: Star) => {
+        const groups = await this.dbService.getItemsByIndex<Group>(
+          'group',
+          'star',
+          star.id
+        );
+
+        return { ...star, nGroups: groups.length };
+      })
+    );
   }
 }

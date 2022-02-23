@@ -1,15 +1,26 @@
-<div>
-  <table mat-table [dataSource]="groups" class="mat-elevation-z8" matSort>
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>星兒</th>
-      <td mat-cell *matCellDef="let group">{{ getStar(group.star) }}</td>
-    </ng-container>
-    <ng-container matColumnDef="member">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>成員</th>
-      <td mat-cell *matCellDef="let group">{{ getMember(group.user) }}</td>
-    </ng-container>
+<mat-accordion multi>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>哥姐志工</mat-panel-title>
+    </mat-expansion-panel-header>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-</div>
+    <div *ngFor="let partnerGroup of partnerGroups" class="flex">
+      <div>{{ partnerGroup.user[0].name }}</div>
+      <div>{{ partnerGroup.user[0].phone }}</div>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel *ngFor="let starGroup of starGroups">
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ starGroup.star?.name }}</mat-panel-title>
+      <mat-panel-description class="flex">
+        <div>{{ starGroup.star?.nickname }}</div>
+        <div>{{ starGroup.star?.birthday }}</div>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div *ngFor="let user of starGroup.user" class="flex">
+      <div>{{ user.name }}</div>
+      <div>{{ user.phone }}</div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

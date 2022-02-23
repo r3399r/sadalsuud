@@ -11,6 +11,11 @@ describe('StarService', () => {
   let starService: StarService;
   let mockDbService: any;
   let mockUserService: any;
+  let dummyStar: any;
+
+  beforeAll(() => {
+    dummyStar = { id: 'aaa', name: 'abc' };
+  });
 
   beforeEach(() => {
     mockDbService = {};
@@ -21,8 +26,9 @@ describe('StarService', () => {
     mockDbService.createItem = jest.fn();
     mockDbService.deleteItem = jest.fn();
     mockDbService.getItem = jest.fn();
-    mockDbService.getItems = jest.fn();
+    mockDbService.getItems = jest.fn(() => [dummyStar]);
     mockUserService.validateRole = jest.fn();
+    mockDbService.getItemsByIndex = jest.fn(() => [dummyStar]);
 
     starService = bindings.get<StarService>(StarService);
   });
@@ -54,5 +60,6 @@ describe('StarService', () => {
   it('getStars should work', async () => {
     await starService.getStars();
     expect(mockDbService.getItems).toBeCalledTimes(1);
+    expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
   });
 });

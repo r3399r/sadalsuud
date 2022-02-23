@@ -73,7 +73,7 @@ describe('UserService', () => {
     expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
   });
 
-  it('getUsers should work', async () => {
+  it('getUserById should work', async () => {
     await userService.getUserById('id');
     expect(mockDbService.getItem).toBeCalledTimes(1);
   });

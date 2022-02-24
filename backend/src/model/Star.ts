@@ -39,3 +39,5 @@ export type PostStarRequest = {
 };
 
 export type PostStarResponse = Star;
+
+export type GetStarsResponse = (Star & { nGroups: number })[];

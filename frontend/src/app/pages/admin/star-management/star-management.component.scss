@@ -1,0 +1,34 @@
+@import '/src/style/variables';
+
+.form {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: $pale-yellow;
+
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+table {
+  width: 100%;
+}
+.mat-row .mat-cell {
+  cursor: pointer;
+}
+.mat-row:hover .mat-cell {
+  background-color: $pale-yellow;
+}
+.mat-column-name {
+  white-space: nowrap;
+  padding: 0 5px;
+}
+.mat-column-nickname {
+  white-space: nowrap;
+  padding: 0 5px;
+}
+.mat-column-birthday {
+  white-space: nowrap;
+  padding: 0 5px;
+}

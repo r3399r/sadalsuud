@@ -87,6 +87,11 @@ describe('UserService', () => {
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
   });
 
+  it('refreshAllUsers should work', async () => {
+    await service.refreshAllUsers();
+    expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
+  });
+
   it('updateUserStatus should work', async () => {
     await service.updateUserStatus('id', {});
     expect(httpClientSpy.put).toHaveBeenCalledTimes(1);

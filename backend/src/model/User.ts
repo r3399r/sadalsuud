@@ -57,7 +57,7 @@ export type PutUserResponse = User;
 
 export type GetUserResponse = User;
 
-export type GetUsersResponse = User[];
+export type GetUsersResponse = (User & { nGroups: number })[];
 
 export type PutUserRoleRequest = { role?: ROLE; status?: STATUS };
 

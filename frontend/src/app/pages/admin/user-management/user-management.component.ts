@@ -1,12 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
-import {
-  GetUsersResponse,
-  ROLE,
-  User,
-  STATUS,
-  PutUserRoleRequest,
-} from '@y-celestial/sadalsuud-service';
+import { GetUsersResponse, ROLE, STATUS, PutUserRoleRequest } from '@y-celestial/sadalsuud-service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,10 +14,19 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements AfterViewInit {
-  users: MatTableDataSource<User> = new MatTableDataSource<User>([]);
+  users: MatTableDataSource<GetUsersResponse[0]> = new MatTableDataSource<GetUsersResponse[0]>([]);
   roles = Object.values(ROLE);
   statuses = Object.values(STATUS);
-  displayedColumns = ['name', 'phone', 'birthday', 'role', 'status', 'dateUpdated', 'edit'];
+  displayedColumns = [
+    'name',
+    'phone',
+    'birthday',
+    'nGroups',
+    'role',
+    'status',
+    'dateUpdated',
+    'edit',
+  ];
   isEdit: Map<string, PutUserRoleRequest> = new Map();
 
   constructor(private userService: UserService, private snackBar: MatSnackBar) {}
@@ -32,6 +35,13 @@ export class UserManagementComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.userService.getAllUsers().then((res: GetUsersResponse) => {
+      this.users = new MatTableDataSource(res);
+      this.users.sort = this.sort;
+    });
+  }
+
+  onRefresh() {
+    this.userService.refreshAllUsers().then((res: GetUsersResponse) => {
       this.users = new MatTableDataSource(res);
       this.users.sort = this.sort;
     });
@@ -73,5 +83,9 @@ export class UserManagementComponent implements AfterViewInit {
       .finally(() => {
         this.isEdit.delete(id);
       });
+  }
+
+  copyId() {
+    this.snackBar.open('user id is copied.', undefined, { duration: 4000 });
   }
 }

@@ -74,4 +74,14 @@ export class HttpClientService {
   ) {
     return await this.request<T, R>('put', url, body, params);
   }
+
+  public async patch<T, R>(
+    url: string,
+    body: R,
+    params?: {
+      [param: string]: string | number | boolean;
+    },
+  ) {
+    return await this.request<T, R>('patch', url, body, params);
+  }
 }

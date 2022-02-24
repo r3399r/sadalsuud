@@ -16,6 +16,7 @@ import { HttpClientService } from './http-client.service';
 })
 export class UserService {
   private user: GetMeResponse | undefined;
+  private users: GetUsersResponse | undefined;
 
   constructor(private http: HttpClientService) {}
 
@@ -38,7 +39,13 @@ export class UserService {
   }
 
   public async getAllUsers(): Promise<GetUsersResponse> {
-    return await this.http.get<GetUsersResponse>('users');
+    if (this.users === undefined) this.users = await this.http.get<GetUsersResponse>('users');
+    return this.users;
+  }
+
+  public async refreshAllUsers(): Promise<GetUsersResponse> {
+    this.users = await this.http.get<GetUsersResponse>('users');
+    return this.users;
   }
 
   public async updateUserStatus(id: string, data: PutUserRoleRequest): Promise<PutUserRoleRequest> {

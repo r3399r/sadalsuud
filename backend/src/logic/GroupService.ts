@@ -99,11 +99,13 @@ export class GroupService {
 
   public async updateGroupMembers(id: string, body: PatchGroupRequest) {
     const group = await this.dbService.getItem<Group>('group', id);
-    if (group.star === undefined)
-      throw new BadRequestError('input group should be a star-group');
 
     switch (body.action) {
       case ACTION.ADD:
+        if (group.star === undefined)
+          throw new BadRequestError(
+            'input group should be a star-group to add member'
+          );
         if (group.user.findIndex((v: User) => v.id === body.userId) >= 0)
           throw new ConflictError('user already exists');
         const user = await this.userService.getUserById(body.userId);

@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MomentDateModule } from '@angular/material-moment-adapter';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +22,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AppComponent } from './app.component';
@@ -89,6 +91,8 @@ import { StarManagementComponent } from './pages/admin/star-management/star-mana
     MatSelectModule,
     MatTableModule,
     MatSortModule,
+    MatExpansionModule,
+    ClipboardModule,
   ],
   providers: [
     { provide: MAT_DATE_FORMATS, useValue: MY_NATIVE_DATE_FORMATS },

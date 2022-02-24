@@ -1,12 +1,16 @@
 <form class="form" [formGroup]="addGroupForm" (ngSubmit)="onSubmit()">
   <mat-form-field class="input">
-    <mat-label>User ID</mat-label>
-    <input matInput formControlName="userId" />
+    <mat-label>使用者 ID</mat-label>
+    <input matInput formControlName="userId" autocomplete="off" />
   </mat-form-field>
   <mat-checkbox [checked]="hasStar" (change)="hasStar = !hasStar">是否為星兒群組</mat-checkbox>
   <mat-form-field *ngIf="hasStar" class="input">
-    <mat-label>Star ID</mat-label>
-    <input matInput formControlName="starId" />
+    <mat-label>星兒</mat-label>
+    <mat-select formControlName="starId">
+      <mat-option *ngFor="let star of stars" [value]="star.id"
+        >{{ star.name }} ({{ star.nickname }})</mat-option
+      >
+    </mat-select>
   </mat-form-field>
   <button type="submit" mat-raised-button [disabled]="isSubmitting">新增群組</button>
 </form>

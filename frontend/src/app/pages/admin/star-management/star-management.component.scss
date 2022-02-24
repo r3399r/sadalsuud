@@ -1,7 +1,15 @@
 @import '/src/style/variables';
 
-.addBtn {
+.form {
   margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: $pale-yellow;
+
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 table {
   width: 100%;
@@ -10,7 +18,7 @@ table {
   cursor: pointer;
 }
 .mat-row:hover .mat-cell {
-  background-color: $pale-orange;
+  background-color: $pale-yellow;
 }
 .mat-column-name {
   white-space: nowrap;

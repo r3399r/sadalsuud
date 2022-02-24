@@ -3,11 +3,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GroupManagementComponent } from './group-management.component';
 import { GroupService } from 'src/app/services/group.service';
+import { StarService } from 'src/app/services/star.service';
 
 describe('GroupManagementComponent', () => {
   let component: GroupManagementComponent;
   let fixture: ComponentFixture<GroupManagementComponent>;
   let groupServiceSpy: jasmine.SpyObj<GroupService>;
+  let starServiceSpy: jasmine.SpyObj<StarService>;
   let matSnackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let dummyGroup: any;
 
@@ -24,17 +26,22 @@ describe('GroupManagementComponent', () => {
       'addGroup',
       'addGroupMember',
       'removeGroupMember',
+      'refreshAllGroups',
     ]);
+    starServiceSpy = jasmine.createSpyObj('StarService', ['getAllStars']);
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     groupServiceSpy.getAllGroups.and.resolveTo(dummyGroup);
+    groupServiceSpy.refreshAllGroups.and.resolveTo(dummyGroup);
     groupServiceSpy.addGroupMember.and.resolveTo();
     groupServiceSpy.removeGroupMember.and.resolveTo();
+    starServiceSpy.getAllStars.and.resolveTo();
 
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
       declarations: [GroupManagementComponent],
       providers: [
         { provide: GroupService, useValue: groupServiceSpy },
+        { provide: StarService, useValue: starServiceSpy },
         { provide: MatSnackBar, useValue: matSnackBarSpy },
       ],
     }).compileComponents();

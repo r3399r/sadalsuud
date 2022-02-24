@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { GetGroupsResponse, Group } from '@y-celestial/sadalsuud-service';
+import { GetGroupsResponse, GetStarsResponse, Group } from '@y-celestial/sadalsuud-service';
 import { GroupService } from 'src/app/services/group.service';
+import { StarService } from 'src/app/services/star.service';
 
 @Component({
   selector: 'app-group-management',
@@ -15,6 +16,7 @@ export class GroupManagementComponent implements OnInit {
   starGroups: Group[] = [];
   displayedColumns = ['name', 'member'];
   hasStar = false;
+  stars: GetStarsResponse = [];
   inputUser: Map<string, string> = new Map();
   addGroupForm = this.fb.group({
     userId: ['', Validators.required],
@@ -23,6 +25,7 @@ export class GroupManagementComponent implements OnInit {
 
   constructor(
     private groupService: GroupService,
+    private starService: StarService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
   ) {}
@@ -34,12 +37,15 @@ export class GroupManagementComponent implements OnInit {
         else this.starGroups.push(g);
       });
     });
+    this.starService.getAllStars().then((res: GetStarsResponse) => {
+      this.stars = res.filter((s: GetStarsResponse[0]) => s.nGroups === 0);
+    });
   }
 
   onRefresh() {
     this.starGroups = [];
     this.partnerGroups = [];
-    this.groupService.getAllGroups().then((res: GetGroupsResponse) => {
+    this.groupService.refreshAllGroups().then((res: GetGroupsResponse) => {
       res.forEach((g: Group) => {
         if (g.star === undefined) this.partnerGroups.push(g);
         else this.starGroups.push(g);

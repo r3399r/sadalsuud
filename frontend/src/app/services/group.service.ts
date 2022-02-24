@@ -12,10 +12,18 @@ import { HttpClientService } from './http-client.service';
   providedIn: 'root',
 })
 export class GroupService {
+  private groups: GetGroupsResponse | undefined;
+
   constructor(private http: HttpClientService) {}
 
   public async getAllGroups(): Promise<GetGroupsResponse> {
-    return await this.http.get<GetGroupsResponse>('groups');
+    if (this.groups === undefined) this.groups = await this.http.get<GetGroupsResponse>('groups');
+    return this.groups;
+  }
+
+  public async refreshAllGroups(): Promise<GetGroupsResponse> {
+    this.groups = await this.http.get<GetGroupsResponse>('groups');
+    return this.groups;
   }
 
   public async addGroup(data: PostGroupRequest): Promise<PostGroupResponse> {

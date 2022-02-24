@@ -1,12 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
-import {
-  GetUsersResponse,
-  ROLE,
-  User,
-  STATUS,
-  PutUserRoleRequest,
-} from '@y-celestial/sadalsuud-service';
+import { GetUsersResponse, ROLE, STATUS, PutUserRoleRequest } from '@y-celestial/sadalsuud-service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -41,6 +35,13 @@ export class UserManagementComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.userService.getAllUsers().then((res: GetUsersResponse) => {
+      this.users = new MatTableDataSource(res);
+      this.users.sort = this.sort;
+    });
+  }
+
+  onRefresh() {
+    this.userService.refreshAllUsers().then((res: GetUsersResponse) => {
       this.users = new MatTableDataSource(res);
       this.users.sort = this.sort;
     });
@@ -82,5 +83,9 @@ export class UserManagementComponent implements AfterViewInit {
       .finally(() => {
         this.isEdit.delete(id);
       });
+  }
+
+  copyId() {
+    this.snackBar.open('user id is copied.', undefined, { duration: 4000 });
   }
 }

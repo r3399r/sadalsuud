@@ -1,4 +1,5 @@
 import { entity, primaryAttribute } from '@y-celestial/service';
+import { Record } from './Record';
 
 export type Star = {
   id: string;
@@ -39,5 +40,7 @@ export type PostStarRequest = {
 };
 
 export type PostStarResponse = Star;
+
+export type GetStarResponse = Star & { records: Record[] };
 
 export type GetStarsResponse = (Star & { nGroups: number })[];

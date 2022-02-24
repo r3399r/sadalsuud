@@ -32,11 +32,15 @@ describe('stars', () => {
     mockStarService.validateRole = jest.fn();
     mockStarService.addStar = jest.fn(() => dummyStar);
     mockStarService.getStars = jest.fn(() => [dummyStar]);
+    mockStarService.getStarDetail = jest.fn(() => dummyStar);
     mockStarService.removeStar = jest.fn();
+    mockStarService.addRecord = jest.fn(() => dummyStar);
+    mockStarService.editRecord = jest.fn(() => dummyStar);
   });
 
   it('GET /stars should work', async () => {
     event = {
+      resource: '/api/stars',
       httpMethod: 'GET',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -48,8 +52,23 @@ describe('stars', () => {
     expect(mockStarService.getStars).toBeCalledTimes(1);
   });
 
-  it('POST should work', async () => {
+  it('GET /stars/{id} should work', async () => {
     event = {
+      resource: '/api/stars',
+      httpMethod: 'GET',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: { id: 'abc' },
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyStar)
+    );
+    expect(mockStarService.getStarDetail).toBeCalledTimes(1);
+  });
+
+  it('POST /stars should work', async () => {
+    event = {
+      resource: '/api/stars',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: JSON.stringify({ a: '1' }),
@@ -61,8 +80,23 @@ describe('stars', () => {
     expect(mockStarService.addStar).toBeCalledTimes(1);
   });
 
+  it('POST /stars/record should work', async () => {
+    event = {
+      resource: '/api/stars/record',
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyStar)
+    );
+    expect(mockStarService.addRecord).toBeCalledTimes(1);
+  });
+
   it('POST should fail if null body', async () => {
     event = {
+      resource: '/api/stars',
       httpMethod: 'POST',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -71,11 +105,64 @@ describe('stars', () => {
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new BadRequestError('body should not be empty'))
     );
-    expect(mockStarService.addStar).toBeCalledTimes(0);
+  });
+
+  it('POST should fail if non-support resource', async () => {
+    event = {
+      resource: '/api/stars/xxx',
+      httpMethod: 'POST',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new InternalServerError('non-support resource'))
+    );
+  });
+
+  it('PUT /stars/record should work', async () => {
+    event = {
+      resource: '/api/stars/record',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      successOutput(dummyStar)
+    );
+    expect(mockStarService.editRecord).toBeCalledTimes(1);
+  });
+
+  it('PUT should fail if null body', async () => {
+    event = {
+      resource: '/api/stars',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: null,
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new BadRequestError('body should not be empty'))
+    );
+  });
+
+  it('PUT should fail if non-support resource', async () => {
+    event = {
+      resource: '/api/stars/xxx',
+      httpMethod: 'PUT',
+      headers: { 'x-api-token': 'test-token' },
+      body: JSON.stringify({ a: '1' }),
+      pathParameters: null,
+    };
+    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+      errorOutput(new InternalServerError('non-support resource'))
+    );
   });
 
   it('DELETE should work', async () => {
     event = {
+      resource: '/api/stars',
       httpMethod: 'DELETE',
       headers: { 'x-api-token': 'test-token' },
       body: null,
@@ -89,6 +176,7 @@ describe('stars', () => {
 
   it('POST should fail if null body', async () => {
     event = {
+      resource: '/api/stars',
       httpMethod: 'DELETE',
       headers: { 'x-api-token': 'test-token' },
       body: null,

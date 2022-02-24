@@ -3,12 +3,20 @@ import { inject, injectable } from 'inversify';
 import { ROLE } from 'src/constant/user';
 import { Group } from 'src/model/Group';
 import {
+  EditRecordData,
+  PostRecordRequest,
+  PutRecordRequest,
+  Record,
+} from 'src/model/Record';
+import {
+  GetStarResponse,
   GetStarsResponse,
   PostStarRequest,
   Star,
   StarEntity,
 } from 'src/model/Star';
 import { v4 as uuidv4 } from 'uuid';
+import { RecordService } from './RecordService';
 import { UserService } from './UserService';
 
 /**
@@ -21,6 +29,9 @@ export class StarService {
 
   @inject(UserService)
   private readonly userService!: UserService;
+
+  @inject(RecordService)
+  private readonly recordService!: RecordService;
 
   public async validateRole(token: string, specificRole: ROLE[]) {
     await this.userService.validateRole(token, specificRole);
@@ -49,6 +60,17 @@ export class StarService {
     return await this.dbService.getItem<Star>('star', id);
   }
 
+  public async getStarDetail(id: string): Promise<GetStarResponse> {
+    const records = await this.dbService.getItemsByIndex<Record>(
+      'record',
+      'star',
+      id
+    );
+    const star = await this.getStar(id);
+
+    return { ...star, records };
+  }
+
   public async getStars(): Promise<GetStarsResponse> {
     const stars = await this.dbService.getItems<Star>('star');
 
@@ -63,5 +85,29 @@ export class StarService {
         return { ...star, nGroups: groups.length };
       })
     );
+  }
+
+  public async addRecord(body: PostRecordRequest) {
+    const reporter = await this.userService.getUserById(body.reporterId);
+    const target = await this.getStar(body.targetId);
+
+    return await this.recordService.addRecord(reporter, target, body.content);
+  }
+
+  public async editRecord(body: PutRecordRequest) {
+    const data: EditRecordData = {
+      recordId: body.recordId,
+      reporter:
+        body.reporterId === undefined
+          ? undefined
+          : await this.userService.getUserById(body.recordId),
+      target:
+        body.targetId === undefined
+          ? undefined
+          : await this.getStar(body.targetId),
+      content: body.content,
+    };
+
+    return await this.recordService.editRecord(data);
   }
 }

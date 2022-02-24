@@ -6,6 +6,7 @@ import { VariablesService } from 'src/logic/VariablesService';
 import { GroupService } from './logic/GroupService';
 import { LineService } from './logic/LineService';
 import { MeService } from './logic/MeService';
+import { RecordService } from './logic/RecordService';
 import { StarService } from './logic/StarService';
 import { TripService } from './logic/TripService';
 import { UserService } from './logic/UserService';
@@ -20,6 +21,7 @@ container.bind<VariablesService>(VariablesService).toSelf();
 container.bind<LineService>(LineService).toSelf();
 container.bind<TripService>(TripService).toSelf();
 container.bind<MeService>(MeService).toSelf();
+container.bind<RecordService>(RecordService).toSelf();
 
 const mergedContainer: interfaces.Container = Container.merge(
   container,

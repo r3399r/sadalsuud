@@ -2,7 +2,8 @@ export enum PAGES {
   LANDING = 'landing',
   TRIPS = 'trips',
   QUESTIONS = 'questions',
-  USER = 'user',
+  USERS = 'users',
   LOGIN = 'login',
   ADMIN = 'admin',
+  STARS = 'stars',
 }

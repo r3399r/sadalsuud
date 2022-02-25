@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterTestingModule } from '@angular/router/testing';
 import { StarManagementComponent } from './star-management.component';
 import { StarService } from 'src/app/services/star.service';
 
@@ -17,7 +18,7 @@ describe('StarManagementComponent', () => {
     starServiceSpy.refreshAllStars.and.resolveTo();
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
+      imports: [ReactiveFormsModule, RouterTestingModule],
       declarations: [StarManagementComponent],
       providers: [
         { provide: StarService, useValue: starServiceSpy },

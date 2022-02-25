@@ -3,7 +3,6 @@ import {
   GetStarsResponse,
   PostStarRequest,
   PostStarResponse,
-  Star,
 } from '@y-celestial/sadalsuud-service';
 import { HttpClientService } from './http-client.service';
 
@@ -23,6 +22,10 @@ export class StarService {
   public async refreshAllStars(): Promise<GetStarsResponse> {
     this.stars = await this.http.get<GetStarsResponse>('stars');
     return this.stars;
+  }
+
+  public async getStar(id: string): Promise<GetStarsResponse> {
+    return await this.http.get<any>(`stars/${id}`);
   }
 
   public async addStar(data: PostStarRequest): Promise<PostStarResponse> {

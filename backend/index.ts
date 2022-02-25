@@ -4,6 +4,7 @@ export {
   PostStarRequest,
   Star,
   GetStarsResponse,
+  GetStarResponse,
 } from 'src/model/Star';
 export {
   PostUserRequest,
@@ -41,3 +42,8 @@ export {
   PostGroupResponse,
   GetGroupsResponse,
 } from 'src/model/Group';
+export {
+  Record,
+  PostRecordRequest,
+  PostRecordResponse,
+} from 'src/model/Record';

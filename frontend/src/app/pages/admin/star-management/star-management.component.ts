@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { GetStarsResponse } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
 import { StarService } from 'src/app/services/star.service';
@@ -27,6 +28,7 @@ export class StarManagementComponent implements AfterViewInit {
     private starService: StarService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private router: Router,
   ) {}
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -64,5 +66,9 @@ export class StarManagementComponent implements AfterViewInit {
       .finally(() => {
         this.isSubmitting = false;
       });
+  }
+
+  onRowClick(row: GetStarsResponse[0]) {
+    this.router.navigate([`stars/${row.id}`]);
   }
 }

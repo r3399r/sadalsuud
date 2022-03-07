@@ -1,0 +1,68 @@
+<app-loader *ngIf="!star"></app-loader>
+<div class="self" *ngIf="star">
+  <div class="item">
+    <div><b>姓名</b></div>
+    <div>{{ star.name }}</div>
+  </div>
+  <div class="item">
+    <div><b>暱稱</b></div>
+    <div>{{ star.nickname }}</div>
+  </div>
+  <div class="item">
+    <div><b>生日</b></div>
+    <div>{{ star.birthday }}</div>
+  </div>
+  <hr />
+  <div *ngFor="let record of star.records" class="record">
+    <div class="item">
+      <div><b>紀錄者</b></div>
+      <div>{{ record.reporter }}</div>
+    </div>
+    <div class="item">
+      <div><b>建立於</b></div>
+      <div>{{ getDate(record.dateCreated) }}</div>
+    </div>
+    <div class="item" *ngIf="record.dateCreated !== record.dateUpdated">
+      <div><b>修改於</b></div>
+      <div>{{ getDate(record.dateUpdated) }}</div>
+    </div>
+    <mat-form-field class="text-area" appearance="fill">
+      <mat-label>內容</mat-label>
+      <textarea
+        matInput
+        value="{{ record.content }}"
+        readonly="{{ !isEdit.has(record.id) }}"
+        cdkTextareaAutosize
+        (keyup)="onInput(record.id, $event)"
+      ></textarea>
+    </mat-form-field>
+    <button
+      mat-icon-button
+      (click)="onEdit(record.id, record.content)"
+      *ngIf="!isEdit.has(record.id) && isAdmin()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onSubmit(record.id)" *ngIf="isEdit.has(record.id)">
+      <mat-icon>check</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onCancel(record.id)" *ngIf="isEdit.has(record.id)">
+      <mat-icon>close</mat-icon>
+    </button>
+    <hr />
+  </div>
+  <div *ngIf="isAdmin()" class="create">
+    <div><b>新增紀錄</b></div>
+    <mat-form-field class="input">
+      <mat-label>使用者 ID</mat-label>
+      <input matInput autocomplete="off" (keyup)="onInputReporter($event)" />
+    </mat-form-field>
+    <mat-form-field class="text-area" appearance="fill">
+      <mat-label>內容</mat-label>
+      <textarea matInput cdkTextareaAutosize (keyup)="onInputNewRecord($event)"></textarea>
+    </mat-form-field>
+    <button mat-icon-button (click)="onSubmitNewRecord()" *ngIf="isSubmittable">
+      <mat-icon>check</mat-icon>
+    </button>
+  </div>
+</div>

@@ -28,13 +28,13 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { QuestionsComponent } from './pages/questions/questions.component';
-import { UserComponent } from './pages/user/user.component';
+import { UserComponent } from './pages/users/user.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { LoginComponent } from './pages/login/login.component';
 import { LoaderComponent } from './components/loader/loader.component';
-import { UserFormComponent } from './pages/user/user-form/user-form.component';
+import { UserFormComponent } from './pages/users/user-form/user-form.component';
 import { MY_NATIVE_DATE_FORMATS } from './constants/dateFormats';
-import { DialogComponent as UserDialogComponent } from './pages/user/dialog/dialog.component';
+import { DialogComponent as UserDialogComponent } from './pages/users/dialog/dialog.component';
 import { DialogComponent as TripDialogComponent } from './pages/trips/dialog/dialog.component';
 import { TripListComponent } from './pages/trips/trip-list/trip-list.component';
 import { TripDetailComponent } from './pages/trips/trip-detail/trip-detail.component';
@@ -44,6 +44,7 @@ import { UserManagementComponent } from './pages/admin/user-management/user-mana
 import { GroupManagementComponent } from './pages/admin/group-management/group-management.component';
 import { TripManagementComponent } from './pages/admin/trip-management/trip-management.component';
 import { StarManagementComponent } from './pages/admin/star-management/star-management.component';
+import { StarsComponent } from './pages/stars/stars.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { StarManagementComponent } from './pages/admin/star-management/star-mana
     GroupManagementComponent,
     TripManagementComponent,
     StarManagementComponent,
+    StarsComponent,
   ],
   imports: [
     MatSidenavModule,

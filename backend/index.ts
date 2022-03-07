@@ -46,4 +46,6 @@ export {
   Record,
   PostRecordRequest,
   PostRecordResponse,
+  PutRecordRequest,
+  PutRecordResponse,
 } from 'src/model/Record';

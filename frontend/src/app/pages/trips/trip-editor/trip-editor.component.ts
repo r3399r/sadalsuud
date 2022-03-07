@@ -152,10 +152,4 @@ export class TripEditorComponent implements OnInit {
   removeFee(i: number) {
     this.fees.removeAt(i);
   }
-
-  autoGrowTextZone(e: KeyboardEvent) {
-    const target = e.target as HTMLInputElement;
-    target.style.height = '0px';
-    target.style.height = target.scrollHeight + 25 + 'px';
-  }
 }

@@ -41,6 +41,10 @@ export type PostStarRequest = {
 
 export type PostStarResponse = Star;
 
-export type GetStarResponse = Star & { records: Record[] };
+export type GetStarResponse = Star & {
+  records: (Pick<Record, 'id' | 'content' | 'dateCreated' | 'dateUpdated'> & {
+    reporter: string;
+  })[];
+};
 
 export type GetStarsResponse = (Star & { nGroups: number })[];

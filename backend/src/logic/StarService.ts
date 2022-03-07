@@ -66,9 +66,16 @@ export class StarService {
       'star',
       id
     );
+    const modifiedRecords = records.map((r: Record) => ({
+      id: r.id,
+      content: r.content,
+      dateCreated: r.dateCreated,
+      dateUpdated: r.dateUpdated,
+      reporter: r.reporter.name,
+    }));
     const star = await this.getStar(id);
 
-    return { ...star, records };
+    return { ...star, records: modifiedRecords };
   }
 
   public async getStars(): Promise<GetStarsResponse> {

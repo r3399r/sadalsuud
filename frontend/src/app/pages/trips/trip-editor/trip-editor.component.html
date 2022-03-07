@@ -94,7 +94,7 @@
         <textarea
           matInput
           formControlName="detailDesc"
-          (keyup)="autoGrowTextZone($event)"
+          cdkTextareaAutosize
           [attr.disabled]="isLoading ?? false"
         ></textarea>
       </mat-form-field>

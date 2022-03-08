@@ -1,12 +1,16 @@
 <div class="self">
-  <mat-tab-group animationDuration="0ms">
+  <mat-tab-group
+    animationDuration="0ms"
+    selectedIndex="{{ selectedIndex }}"
+    (selectedTabChange)="tabChanged($event)"
+  >
     <mat-tab label="使用者"
       ><ng-template matTabContent><app-user-management></app-user-management></ng-template
     ></mat-tab>
     <mat-tab label="群組"
       ><ng-template matTabContent><app-group-management></app-group-management></ng-template
     ></mat-tab>
-    <mat-tab label="出遊"
+    <mat-tab label="出遊審核"
       ><ng-template matTabContent><app-trip-management></app-trip-management></ng-template
     ></mat-tab>
     <mat-tab label="星兒"

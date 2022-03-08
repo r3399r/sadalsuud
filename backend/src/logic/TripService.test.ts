@@ -238,8 +238,10 @@ describe('TripService', () => {
     ]);
   });
 
-  it('getTrips should work with rookie', async () => {
-    mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
+  it('getTrips should work with planner', async () => {
+    mockUserService.getUserByToken = jest.fn(() => ({
+      role: ROLE.SOFT_PLANNER,
+    }));
     expect(await tripService.getTrips('token')).toStrictEqual([
       {
         ...dummyTrips[0],

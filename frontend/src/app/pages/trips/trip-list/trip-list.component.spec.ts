@@ -14,10 +14,10 @@ describe('TripListComponent', () => {
   let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
-    tripServiceSpy = jasmine.createSpyObj('TripService', ['getTrips']);
+    tripServiceSpy = jasmine.createSpyObj('TripService', ['getVerfiedTrips']);
     matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     routerSpy = spyOn(Router.prototype, 'navigate');
-    tripServiceSpy.getTrips.and.resolveTo();
+    tripServiceSpy.getVerfiedTrips.and.resolveTo();
 
     await TestBed.configureTestingModule({
       declarations: [TripListComponent],

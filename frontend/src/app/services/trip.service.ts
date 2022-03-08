@@ -16,10 +16,21 @@ import { UserService } from './user.service';
   providedIn: 'root',
 })
 export class TripService {
+  private trips: GetTripsResponse | undefined;
+
   constructor(private http: HttpClientService, private userService: UserService) {}
 
-  public async getTrips() {
-    return await this.http.get<GetTripsResponse>('trips');
+  private async getTrips() {
+    if (this.trips === undefined) this.trips = await this.http.get<GetTripsResponse>('trips');
+    return this.trips;
+  }
+
+  public async getVerfiedTrips(): Promise<GetTripsResponse> {
+    return (await this.getTrips()).filter((trip: GetTripsResponse[0]) => trip.verified === true);
+  }
+
+  public async getUnverifiedTrips(): Promise<GetTripsResponse> {
+    return (await this.getTrips()).filter((trip: GetTripsResponse[0]) => trip.verified === false);
   }
 
   public async createTrip(data: PostTripRequest) {

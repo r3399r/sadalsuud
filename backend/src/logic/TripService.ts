@@ -124,7 +124,6 @@ export class TripService {
       [
         ROLE.GOOD_PARTNER,
         ROLE.GOOD_PLANNER,
-        ROLE.ROOKIE,
         ROLE.SOFT_PARTNER,
         ROLE.SOFT_PLANNER,
       ].includes(user.role)

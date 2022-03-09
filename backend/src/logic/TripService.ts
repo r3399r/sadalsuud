@@ -237,8 +237,19 @@ export class TripService {
     return newTrip;
   }
 
-  public async getSignByTrip(tripId: string) {
+  private async getSignByTrip(tripId: string) {
     return await this.dbService.getItemsByIndex<Sign>('sign', 'trip', tripId);
+  }
+
+  public async getSignedList(tripId: string, token: string) {
+    const [user, trip] = await Promise.all([
+      this.userService.getUserByToken(token),
+      this.dbService.getItem<Trip>('trip', tripId),
+    ]);
+    if (user.role !== ROLE.ADMIN && trip.owner.id !== user.id)
+      throw new UnauthorizedError('permission denied');
+
+    return await this.getSignByTrip(trip.id);
   }
 
   public async signTrip(tripId: string, body: SignTripRequest, token: string) {

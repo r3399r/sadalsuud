@@ -39,7 +39,7 @@ describe('trips', () => {
     mockTripService.reviseTrip = jest.fn(() => dummyTrip);
     mockTripService.setTripMember = jest.fn(() => dummyTrip);
     mockTripService.signTrip = jest.fn(() => dummyTrip);
-    mockTripService.getSignByTrip = jest.fn(() => [dummySign]);
+    mockTripService.getSignedList = jest.fn(() => [dummySign]);
   });
 
   it('POST /api/trips should work', async () => {
@@ -163,7 +163,7 @@ describe('trips', () => {
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
       successOutput([dummySign])
     );
-    expect(mockTripService.getSignByTrip).toBeCalledTimes(1);
+    expect(mockTripService.getSignedList).toBeCalledTimes(1);
   });
 
   it('GET /trips/{id}/sign should fail if id is missing', async () => {

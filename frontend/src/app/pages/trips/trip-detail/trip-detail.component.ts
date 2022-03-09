@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { GetMeResponse, GetTripResponse, ROLE } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
+import { Sign } from 'src/app/model/Sign';
 import { TripService } from 'src/app/services/trip.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -14,6 +18,11 @@ import { UserService } from 'src/app/services/user.service';
 export class TripDetailComponent implements OnInit {
   trip: GetTripResponse | undefined;
   user: GetMeResponse | undefined;
+  minDate = new Date();
+  expiredDate: Date | undefined;
+
+  signedList: MatTableDataSource<Sign> = new MatTableDataSource<Sign>();
+  displayedColumns = ['type', 'name', 'birthday', 'phone', 'edit'];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -23,21 +32,21 @@ export class TripDetailComponent implements OnInit {
     private snackBar: MatSnackBar,
   ) {}
 
+  @ViewChild(MatSort) sort!: MatSort;
+
   ngOnInit(): void {
-    this.userService
-      .getUser()
-      .then((res: GetMeResponse) => {
-        this.user = res;
-      })
-      .catch((e) => {
-        this.snackBar.open(e.message, undefined, { duration: 4000 });
-      });
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const id = params.get('id');
-      this.tripService
-        .getTrip(id ?? 'xxx')
-        .then((res: GetTripResponse) => {
-          this.trip = res;
+      Promise.all([this.userService.getUser(), this.tripService.getTrip(id ?? 'xxx')])
+        .then(async ([user, trip]: [GetMeResponse, GetTripResponse]) => {
+          this.user = user;
+          this.trip = trip;
+
+          if (user.role === ROLE.ADMIN || user.id === trip.owner.id) {
+            const signedList = await this.tripService.getSignedList(trip.id);
+            this.signedList = new MatTableDataSource(signedList);
+            this.signedList.sort = this.sort;
+          }
         })
         .catch(() => {
           this.router.navigate(['trips']);
@@ -70,11 +79,37 @@ export class TripDetailComponent implements OnInit {
     this.router.navigate(['trips/editor'], { state: { data: this.trip } });
   }
 
-  getDate(datetime: number) {
+  getDate(datetime: number | null) {
+    if (datetime === null) return 'no date';
     return moment.unix(datetime).format('YYYY/MM/DD');
   }
 
   getTime(datetime: number) {
     return moment.unix(datetime).format('HH:mm');
+  }
+
+  dateChange(e: MatDatepickerInputEvent<Date>) {
+    this.expiredDate = e.target.value ?? undefined;
+  }
+
+  onVerify() {
+    this.tripService
+      .verifyTrip(this.trip!.id, { expiredDatetime: moment(this.expiredDate).unix() })
+      .then(() => {
+        this.snackBar.open('success', undefined, { duration: 4000 });
+      })
+      .catch(() => {
+        this.snackBar.open('failed', undefined, { duration: 4000 });
+      });
+  }
+
+  copyId() {
+    this.snackBar.open('id is copied.', undefined, { duration: 4000 });
+  }
+
+  canViewSigned() {
+    if (this.user === undefined || this.trip === undefined) return false;
+    if (this.user.role === ROLE.ADMIN || this.trip.owner.id === this.user.id) return true;
+    return false;
   }
 }

@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { GetMeResponse, GetTripResponse, ROLE } from '@y-celestial/sadalsuud-service';
 import moment from 'moment';
@@ -21,6 +22,11 @@ export class TripDetailComponent implements OnInit {
   minDate = new Date();
   expiredDate: Date | undefined;
 
+  isSubmitting = false;
+  setMemberForm = this.fb.group({
+    groupId: ['', Validators.required],
+  });
+
   signedList: MatTableDataSource<Sign> = new MatTableDataSource<Sign>();
   displayedColumns = ['type', 'name', 'birthday', 'phone', 'edit'];
 
@@ -30,6 +36,7 @@ export class TripDetailComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private snackBar: MatSnackBar,
+    private fb: FormBuilder,
   ) {}
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -93,6 +100,7 @@ export class TripDetailComponent implements OnInit {
   }
 
   onVerify() {
+    if (this.expiredDate === undefined) return;
     this.tripService
       .verifyTrip(this.trip!.id, { expiredDatetime: moment(this.expiredDate).unix() })
       .then(() => {
@@ -104,12 +112,30 @@ export class TripDetailComponent implements OnInit {
   }
 
   copyId() {
-    this.snackBar.open('id is copied.', undefined, { duration: 4000 });
+    this.snackBar.open('Group ID is copied.', undefined, { duration: 4000 });
   }
 
   canViewSigned() {
     if (this.user === undefined || this.trip === undefined) return false;
     if (this.user.role === ROLE.ADMIN || this.trip.owner.id === this.user.id) return true;
     return false;
+  }
+
+  onSubmit() {
+    if (!this.setMemberForm.valid) return;
+    this.isSubmitting = true;
+    const groupIds = this.setMemberForm.value.groupId;
+
+    this.tripService
+      .setMember(this.trip!.id, groupIds)
+      .then(() => {
+        this.snackBar.open('success', undefined, { duration: 4000 });
+      })
+      .catch((e) => {
+        this.snackBar.open(e.message, undefined, { duration: 4000 });
+      })
+      .finally(() => {
+        this.isSubmitting = false;
+      });
   }
 }

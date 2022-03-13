@@ -7,6 +7,8 @@ import {
   PostTripResponse,
   ReviseTripRequest,
   ReviseTripResponse,
+  SetTripMemberRequest,
+  SetTripMemberResponse,
   SignTripRequest,
   SignTripResponse,
   User,
@@ -82,5 +84,12 @@ export class TripService {
 
   public async verifyTrip(id: string, data: VerifyTripRequest) {
     return await this.http.put<VerifyTripResponse, VerifyTripRequest>(`trips/${id}/verify`, data);
+  }
+
+  public async setMember(id: string, groupIds: string) {
+    const groupId = groupIds.split(',');
+    return await this.http.put<SetTripMemberResponse, SetTripMemberRequest>(`trips/${id}/member`, {
+      groupId,
+    });
   }
 }

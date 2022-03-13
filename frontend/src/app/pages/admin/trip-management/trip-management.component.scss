@@ -1,0 +1,11 @@
+@import '/src/style/variables';
+
+table {
+  width: 100%;
+}
+.mat-row .mat-cell {
+  cursor: pointer;
+}
+.mat-row:hover .mat-cell {
+  background-color: $pale-yellow;
+}

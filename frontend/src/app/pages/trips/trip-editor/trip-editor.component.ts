@@ -46,8 +46,10 @@ export class TripEditorComponent implements OnInit {
     if (trip !== undefined) {
       this.editId = trip.id;
       this.tripForm.controls['date'].setValue(moment(trip.startDatetime * 1000));
-      this.tripForm.controls['startTime'].setValue(moment(trip.startDatetime).format('HHmm'));
-      this.tripForm.controls['endTime'].setValue(moment(trip.endDatetime).format('HHmm'));
+      this.tripForm.controls['startTime'].setValue(
+        moment(trip.startDatetime * 1000).format('HHmm'),
+      );
+      this.tripForm.controls['endTime'].setValue(moment(trip.endDatetime * 1000).format('HHmm'));
       this.tripForm.controls['place'].setValue(trip.place);
       this.tripForm.controls['meetPlace'].setValue(trip.meetPlace);
       this.tripForm.controls['dismissPlace'].setValue(trip.dismissPlace);

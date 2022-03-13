@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GetMeResponse, GetTripResponse, ROLE } from '@y-celestial/sadalsuud-service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TripDetailComponent } from './trip-detail.component';
 import { TripService } from 'src/app/services/trip.service';
 import { UserService } from 'src/app/services/user.service';
@@ -24,7 +25,7 @@ describe('TripDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [TripDetailComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, ReactiveFormsModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: TripService, useValue: tripServiceSpy },

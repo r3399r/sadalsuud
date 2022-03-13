@@ -37,4 +37,16 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
+}
+table {
+  width: 100%;
+}
+.mat-column-edit {
+  text-align: right;
+}
+.form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

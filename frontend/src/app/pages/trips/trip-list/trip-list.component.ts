@@ -22,7 +22,7 @@ export class TripListComponent implements OnInit {
 
   ngOnInit() {
     this.tripService
-      .getTrips()
+      .getVerfiedTrips()
       .then((res: GetTripsResponse) => {
         this.trips = res;
       })

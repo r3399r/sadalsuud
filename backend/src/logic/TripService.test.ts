@@ -1,4 +1,4 @@
-import { DbService } from '@y-celestial/service';
+import { DbService, UnauthorizedError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/user';
 import {
@@ -24,6 +24,7 @@ describe('TripService', () => {
   beforeAll(() => {
     dummyUser = {
       id: 'user-id',
+      role: ROLE.ADMIN,
     };
     dummyGroups = [
       {
@@ -238,8 +239,10 @@ describe('TripService', () => {
     ]);
   });
 
-  it('getTrips should work with rookie', async () => {
-    mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
+  it('getTrips should work with planner', async () => {
+    mockUserService.getUserByToken = jest.fn(() => ({
+      role: ROLE.SOFT_PLANNER,
+    }));
     expect(await tripService.getTrips('token')).toStrictEqual([
       {
         ...dummyTrips[0],
@@ -347,6 +350,27 @@ describe('TripService', () => {
     ).rejects.toThrowError('some of input groups did not sign this trip');
     expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
     expect(mockDbService.putItem).toBeCalledTimes(0);
+  });
+
+  it('getSignedList should work', async () => {
+    mockUserService.getUserByToken = jest.fn(() => dummyUser);
+    mockDbService.getItem = jest.fn(() => dummyTrips[0]);
+    mockDbService.getItemsByIndex = jest.fn(() => dummySigns);
+    expect(await tripService.getSignedList('trip-id', 'token')).toBe(
+      dummySigns
+    );
+  });
+
+  it('getSignedList should throw error', async () => {
+    mockUserService.getUserByToken = jest.fn(() => ({
+      ...dummyUser,
+      role: ROLE.PASSERBY,
+    }));
+    mockDbService.getItem = jest.fn(() => dummyTrips[0]);
+    mockDbService.getItemsByIndex = jest.fn(() => dummySigns);
+    await expect(() =>
+      tripService.getSignedList('trip-id', 'token')
+    ).rejects.toThrow(UnauthorizedError);
   });
 
   it('signTrip should work', async () => {

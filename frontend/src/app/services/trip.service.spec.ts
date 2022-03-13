@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { PostTripRequest, SignTripRequest } from '@y-celestial/sadalsuud-service';
+import { GetTripsResponse, PostTripRequest, SignTripRequest } from '@y-celestial/sadalsuud-service';
 import { HttpClientService } from './http-client.service';
 
 import { TripService } from './trip.service';
@@ -27,8 +27,25 @@ describe('TripService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('getTrips should work', async () => {
-    await service.getTrips();
+  it('getVerfiedTrips should work', async () => {
+    httpClientSpy.get.and.resolveTo([
+      { id: '1', verified: true },
+      { id: '2', verified: false },
+    ]);
+    expect(await service.getVerfiedTrips()).toEqual([
+      { id: '1', verified: true },
+    ] as GetTripsResponse);
+    expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('getUnverifiedTrips should work', async () => {
+    httpClientSpy.get.and.resolveTo([
+      { id: 1, verified: true },
+      { id: '2', verified: false },
+    ]);
+    expect(await service.getUnverifiedTrips()).toEqual([
+      { id: '2', verified: false },
+    ] as GetTripsResponse);
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
   });
 

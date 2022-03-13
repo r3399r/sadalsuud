@@ -74,12 +74,12 @@ export async function trips(
             event.pathParameters.id
           );
         } else if (event.resource === '/api/trips/{id}/sign') {
-          await tripService.validateRole(event.headers['x-api-token'], [
-            ROLE.ADMIN,
-          ]);
           if (event.pathParameters === null)
             throw new BadRequestError('trip id is missing');
-          res = await tripService.getSignByTrip(event.pathParameters.id);
+          res = await tripService.getSignedList(
+            event.pathParameters.id,
+            event.headers['x-api-token']
+          );
         } else throw new InternalServerError('unsupported resource');
         break;
       case 'PUT':

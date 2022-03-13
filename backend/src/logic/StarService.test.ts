@@ -70,7 +70,15 @@ describe('StarService', () => {
   });
 
   it('getStarDetail should work', async () => {
-    mockDbService.getItemsByIndex = jest.fn(() => []);
+    mockDbService.getItemsByIndex = jest.fn(() => [
+      {
+        id: 'a',
+        content: 'b',
+        dateCreated: 1,
+        dateUpdated: 2,
+        reporter: { name: 'c' },
+      },
+    ]);
     await starService.getStarDetail('test-id');
     expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
     expect(mockDbService.getItem).toBeCalledTimes(1);

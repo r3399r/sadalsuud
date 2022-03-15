@@ -67,11 +67,12 @@ export class TripService {
   ): Promise<GetTripResponse> {
     const user = await this.userService.getUserByToken(token);
     const trip = await this.dbService.getItem<Trip>('trip', tripId);
+    const { joinedGroup, ...restTrip } = trip;
 
     if (user.role === ROLE.ADMIN)
       return {
-        ...trip,
-        ...GroupService.convertGroup(trip.joinedGroup ?? []),
+        ...restTrip,
+        ...GroupService.convertGroup(joinedGroup ?? []),
       };
     else if (
       [
@@ -82,23 +83,19 @@ export class TripService {
         ROLE.SOFT_PLANNER,
       ].includes(user.role)
     ) {
-      const { volunteer, star } = GroupService.convertGroup(
-        trip.joinedGroup ?? []
-      );
+      const { volunteer, star } = GroupService.convertGroup(joinedGroup ?? []);
 
       return {
-        ...trip,
+        ...restTrip,
         owner: { id: trip.owner.id, name: trip.owner.name },
         volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
         star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
       };
     } else {
-      const { volunteer, star } = GroupService.convertGroup(
-        trip.joinedGroup ?? []
-      );
+      const { volunteer, star } = GroupService.convertGroup(joinedGroup ?? []);
 
       return {
-        ...trip,
+        ...restTrip,
         startDatetime: moment(trip.startDatetime).startOf('day').valueOf(),
         endDatetime: moment(trip.endDatetime).endOf('day').valueOf(),
         meetPlace: '********',

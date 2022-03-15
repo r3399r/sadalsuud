@@ -150,9 +150,10 @@ describe('TripService', () => {
   });
 
   it('getTrip should work with admin', async () => {
+    const { joinedGroup, ...restTrip } = dummyTrips[0];
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ADMIN }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      ...dummyTrips[0],
+      ...restTrip,
       volunteer: [{ id: 'user-id-2', name: 'user-name-2', phone: 'xoxox' }],
       star: [
         { id: 'star-id-1', name: 'star-name-1', nickname: 'star-nickname-1' },
@@ -169,9 +170,10 @@ describe('TripService', () => {
   });
 
   it('getTrip should work with rookie', async () => {
+    const { joinedGroup, ...restTrip } = dummyTrips[0];
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      ...dummyTrips[0],
+      ...restTrip,
       owner: { id: 'owner-id', name: 'owner-name' },
       volunteer: [{ id: 'user-id-2', name: 'user-name-2' }],
       star: [{ id: 'star-id-1', nickname: 'star-nickname-1' }],
@@ -187,9 +189,10 @@ describe('TripService', () => {
   });
 
   it('getTrip should work with passerby', async () => {
+    const { joinedGroup, ...restTrip } = dummyTrips[0];
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.PASSERBY }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
-      ...dummyTrips[0],
+      ...restTrip,
       startDatetime: 1641312000000,
       endDatetime: 1641398399999,
       meetPlace: '********',

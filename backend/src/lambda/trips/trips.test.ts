@@ -3,18 +3,18 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { TripService } from 'src/logic/TripService';
 import { trips } from './trips';
-import { TripsEvent } from './TripsEvent';
 
 /**
  * Tests of trips lambda function
  */
 describe('trips', () => {
-  let event: TripsEvent;
+  let event: LambdaEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockTripService: any;
   let dummyTrip: any;
@@ -42,243 +42,350 @@ describe('trips', () => {
     mockTripService.getSignedList = jest.fn(() => [dummySign]);
   });
 
-  it('POST /api/trips should work', async () => {
-    event = {
-      resource: '/api/trips',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyTrip)
-    );
-    expect(mockTripService.registerTrip).toBeCalledTimes(1);
+  describe('/api/trips', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/trips',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummyTrip])
+      );
+      expect(mockTripService.getTrips).toBeCalledTimes(1);
+    });
+
+    it('POST should work', async () => {
+      event = {
+        resource: '/api/trips',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.registerTrip).toBeCalledTimes(1);
+    });
+
+    it('POST should fail without body', async () => {
+      event = {
+        resource: '/api/trips',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST /api/trips/{id}/sign should work', async () => {
-    event = {
-      resource: '/api/trips/{id}/sign',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: '123' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyTrip)
-    );
-    expect(mockTripService.signTrip).toBeCalledTimes(1);
+  describe('/api/trips/{id}', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.getTrip).toBeCalledTimes(1);
+    });
+
+    it('GET should fail if id is missing', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('trip id is missing'))
+      );
+    });
+
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.reviseTrip).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail without body', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST /api/trips/{id}/sign should fail if trip id is missing', async () => {
-    event = {
-      resource: '/api/trips/{id}/sign',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('trip id is missing'))
-    );
-    expect(mockTripService.signTrip).toBeCalledTimes(0);
+  describe('/api/trips/{id}/member', () => {
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.setTripMember).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail if id is missing', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('trip id is missing'))
+      );
+    });
+
+    it('PUT should fail without body', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST should fail if null body', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-    expect(mockTripService.registerTrip).toBeCalledTimes(0);
+  describe('/api/trips/{id}/sign', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummySign])
+      );
+      expect(mockTripService.getSignedList).toBeCalledTimes(1);
+    });
+
+    it('GET should fail if id is missing', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('trip id is missing'))
+      );
+    });
+
+    it('POST should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: '123' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.signTrip).toBeCalledTimes(1);
+    });
+
+    it('POST should fail if trip id is missing', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('trip id is missing'))
+      );
+    });
+
+    it('POST should fail without body', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: '123' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST should fail if unsupported resource', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unsupported resource'))
-    );
+  describe('/api/trips/{id}/verify', () => {
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.verifyTrip).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail if trip id is missing', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('trip id is missing'))
+      );
+    });
+
+    it('PUT should fail without body', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: '123' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('GET /trips should work', async () => {
-    event = {
-      resource: '/api/trips',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
+  it('unknown resource should fail', async () => {
+    event.resource = 'resource';
     await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput([dummyTrip])
-    );
-    expect(mockTripService.getTrips).toBeCalledTimes(1);
-  });
-
-  it('GET /trips/{id} should work', async () => {
-    event = {
-      resource: '/api/trips/{id}',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyTrip)
-    );
-    expect(mockTripService.getTrip).toBeCalledTimes(1);
-  });
-
-  it('GET /trips/{id} should fail if id is missing', async () => {
-    event = {
-      resource: '/api/trips/{id}',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('trip id is missing'))
-    );
-  });
-
-  it('GET /trips/{id}/sign should work', async () => {
-    event = {
-      resource: '/api/trips/{id}/sign',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput([dummySign])
-    );
-    expect(mockTripService.getSignedList).toBeCalledTimes(1);
-  });
-
-  it('GET /trips/{id}/sign should fail if id is missing', async () => {
-    event = {
-      resource: '/api/trips/{id}/sign',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('trip id is missing'))
-    );
-  });
-
-  it('GET should fail if unsupported resource', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unsupported resource'))
-    );
-  });
-
-  it('PUT /trips/{id} should work', async () => {
-    event = {
-      resource: '/api/trips/{id}',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyTrip)
-    );
-    expect(mockTripService.reviseTrip).toBeCalledTimes(1);
-  });
-
-  it('PUT /trips/{id}/verify should work', async () => {
-    event = {
-      resource: '/api/trips/{id}/verify',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyTrip)
-    );
-    expect(mockTripService.verifyTrip).toBeCalledTimes(1);
-  });
-
-  it('PUT /trips/{id}/member should work', async () => {
-    event = {
-      resource: '/api/trips/{id}/member',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyTrip)
-    );
-    expect(mockTripService.setTripMember).toBeCalledTimes(1);
-  });
-
-  it('PUT should fail if null body', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-    expect(mockTripService.verifyTrip).toBeCalledTimes(0);
-  });
-
-  it('PUT should fail if id was missing', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('trip id is missing'))
-    );
-    expect(mockTripService.verifyTrip).toBeCalledTimes(0);
-  });
-
-  it('PUT should fail if unsupported resource', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unsupported resource'))
-    );
-  });
-
-  it('should fail with unknown method', async () => {
-    event.httpMethod = 'unknown';
-    await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unknown http method'))
+      errorOutput(new InternalServerError('unknown resource'))
     );
   });
 });

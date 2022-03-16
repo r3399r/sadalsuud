@@ -3,19 +3,19 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/user';
 import { UserService } from 'src/logic/UserService';
 import { users } from './users';
-import { UsersEvent } from './UsersEvent';
 
 /**
  * Tests of the users lambda function.
  */
 describe('users', () => {
-  let event: UsersEvent;
+  let event: LambdaEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockUserService: any;
   let dummyUser: any;
@@ -40,121 +40,205 @@ describe('users', () => {
     mockUserService.validateRole = jest.fn();
   });
 
-  it('POST should work', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyUser)
-    );
-    expect(mockUserService.addUser).toBeCalledTimes(1);
+  describe('/api/users', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/users',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummyUser])
+      );
+      expect(mockUserService.getUsers).toBeCalledTimes(1);
+    });
+
+    it('POST should work', async () => {
+      event = {
+        resource: '/api/users',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyUser)
+      );
+      expect(mockUserService.addUser).toBeCalledTimes(1);
+    });
+
+    it('POST should fail if null body', async () => {
+      event = {
+        resource: '/api/users',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+      expect(mockUserService.addUser).toBeCalledTimes(0);
+    });
+
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/users',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyUser)
+      );
+      expect(mockUserService.updateUser).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail if null body', async () => {
+      event = {
+        resource: '/api/users',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+      expect(mockUserService.updateUser).toBeCalledTimes(0);
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/users',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST should fail if null body', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-    expect(mockUserService.addUser).toBeCalledTimes(0);
+  describe('/api/users/{id}', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/users/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'test-id' },
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyUser)
+      );
+      expect(mockUserService.getUserById).toBeCalledTimes(1);
+    });
+
+    it('GET should fail if null pathparameter', async () => {
+      event = {
+        resource: '/api/users/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('user id is required'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/users/{id}',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'test-id' },
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('PUT should work', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyUser)
-    );
-    expect(mockUserService.updateUser).toBeCalledTimes(1);
+  describe('/api/users/{id}/status', () => {
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/users/{id}/status',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyUser)
+      );
+      expect(mockUserService.updateUserStatus).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail if null body', async () => {
+      event = {
+        resource: '/api/users/{id}/status',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('PUT should fail if null pathparameter', async () => {
+      event = {
+        resource: '/api/users/{id}/status',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('user id is required'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/users/{id}/status',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(users(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('PUT should fail if null body', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
+  it('unknown resource should fail', async () => {
+    event.resource = 'resource';
     await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-    expect(mockUserService.updateUser).toBeCalledTimes(0);
-  });
-
-  it('PUT /users/{id}/status should work', async () => {
-    event = {
-      resource: '/api/users/{id}/status',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyUser)
-    );
-    expect(mockUserService.updateUserStatus).toBeCalledTimes(1);
-  });
-
-  it('PUT /users/{id}/status should fail if resource is wrong', async () => {
-    event = {
-      resource: '/api/users/{id}/xxx',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'aa' },
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('non-support resource'))
-    );
-  });
-
-  it('GET should work with all users', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput([dummyUser])
-    );
-    expect(mockUserService.getUsers).toBeCalledTimes(1);
-  });
-
-  it('GET should work with id', async () => {
-    event = {
-      resource: 'resource',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'test-id' },
-    };
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyUser)
-    );
-    expect(mockUserService.getUserById).toBeCalledTimes(1);
-  });
-
-  it('should fail with unknown method', async () => {
-    event.httpMethod = 'unknown';
-    await expect(users(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unknown http method'))
+      errorOutput(new InternalServerError('unknown resource'))
     );
   });
 });

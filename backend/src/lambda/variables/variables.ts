@@ -3,34 +3,43 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { VariablesService } from 'src/logic/VariablesService';
-import { VariablesEvent } from './VariablesEvent';
 
-export async function variables(
-  event: VariablesEvent,
+function apiVariables(event: LambdaEvent, service: VariablesService) {
+  switch (event.httpMethod) {
+    case 'GET':
+      if (event.queryStringParameters === null)
+        throw new BadRequestError('null query string parameters');
+      if (event.queryStringParameters.name === undefined)
+        throw new BadRequestError('missing parameter name');
+
+      return service.getParameters(event.queryStringParameters.name);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+export function variables(
+  event: LambdaEvent,
   _context?: LambdaContext
-): Promise<LambdaOutput> {
+): LambdaOutput {
   try {
-    const variablesService: VariablesService =
+    const service: VariablesService =
       bindings.get<VariablesService>(VariablesService);
 
     let res: { [key: string]: string };
 
-    switch (event.httpMethod) {
-      case 'GET':
-        if (event.queryStringParameters === null)
-          throw new BadRequestError('null query string parameters');
-        if (event.queryStringParameters.name === undefined)
-          throw new BadRequestError('missing parameter name');
-
-        res = variablesService.getParameters(event.queryStringParameters.name);
+    switch (event.resource) {
+      case '/api/variables':
+        res = apiVariables(event, service);
         break;
       default:
-        throw new InternalServerError('unknown http method');
+        throw new InternalServerError('unknown resource');
     }
 
     return successOutput(res);

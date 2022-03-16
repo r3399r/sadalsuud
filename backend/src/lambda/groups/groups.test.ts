@@ -3,18 +3,18 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { GroupService } from 'src/logic/GroupService';
 import { groups } from './groups';
-import { GroupsEvent } from './GroupsEvent';
 
 /**
  * Tests of groups lambda function
  */
 describe('groups', () => {
-  let event: GroupsEvent;
+  let event: LambdaEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockGroupService: any;
   let dummyGroup: any;
@@ -37,88 +37,132 @@ describe('groups', () => {
     mockGroupService.updateGroupMembers = jest.fn();
   });
 
-  it('POST should work', async () => {
-    event = {
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyGroup)
-    );
-    expect(mockGroupService.createGroup).toBeCalledTimes(1);
+  describe('/api/groups', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/groups',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummyGroup])
+      );
+      expect(mockGroupService.getGroups).toBeCalledTimes(1);
+    });
+
+    it('POST should work', async () => {
+      event = {
+        resource: '/api/groups',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyGroup)
+      );
+      expect(mockGroupService.createGroup).toBeCalledTimes(1);
+    });
+
+    it('POST should fail if null body', async () => {
+      event = {
+        resource: '/api/groups',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+      expect(mockGroupService.createGroup).toBeCalledTimes(0);
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/groups',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST should fail if null body', async () => {
-    event = {
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-    expect(mockGroupService.createGroup).toBeCalledTimes(0);
+  describe('/api/groups/{id}', () => {
+    it('PATCH should work', async () => {
+      event = {
+        resource: '/api/groups/{id}',
+        httpMethod: 'PATCH',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'test-id' },
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(undefined)
+      );
+      expect(mockGroupService.updateGroupMembers).toBeCalledTimes(1);
+    });
+
+    it('PATCH should fail if null body', async () => {
+      event = {
+        resource: '/api/groups/{id}',
+        httpMethod: 'PATCH',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'test-id' },
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+      expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
+    });
+
+    it('PATCH should fail if null pathparameter', async () => {
+      event = {
+        resource: '/api/groups/{id}',
+        httpMethod: 'PATCH',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        queryStringParameters: null,
+        pathParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('group id is required'))
+      );
+      expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/groups/{id}',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'aa' },
+        queryStringParameters: null,
+      };
+      await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('GET should work', async () => {
-    event = {
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
+  it('unknown resource should fail', async () => {
+    event.resource = 'resource';
     await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput([dummyGroup])
-    );
-    expect(mockGroupService.getGroups).toBeCalledTimes(1);
-  });
-
-  it('PATCH should work', async () => {
-    event = {
-      httpMethod: 'PATCH',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: { id: 'test-id' },
-    };
-    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(undefined)
-    );
-    expect(mockGroupService.updateGroupMembers).toBeCalledTimes(1);
-  });
-
-  it('PATCH should fail if null body', async () => {
-    event = {
-      httpMethod: 'PATCH',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'test-id' },
-    };
-    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-    expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
-  });
-
-  it('PATCH should fail if null pathparameter', async () => {
-    event = {
-      httpMethod: 'PATCH',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('group id is required'))
-    );
-    expect(mockGroupService.updateGroupMembers).toBeCalledTimes(0);
-  });
-
-  it('should fail with unknown method', async () => {
-    event.httpMethod = 'unknown';
-    await expect(groups(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unknown http method'))
+      errorOutput(new InternalServerError('unknown resource'))
     );
   });
 });

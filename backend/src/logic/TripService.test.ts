@@ -337,7 +337,7 @@ describe('TripService', () => {
       joinedGroup: [{ id: 'group-id-1' }, { id: 'group-id-2' }],
     });
     expect(mockDbService.getItemsByIndex).toBeCalledTimes(1);
-    expect(mockDbService.putItem).toBeCalledTimes(3);
+    expect(mockDbService.putItem).toBeCalledTimes(5);
   });
 
   it('setTripMember should fail if input group did not sign', async () => {

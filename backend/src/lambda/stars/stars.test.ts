@@ -3,18 +3,18 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { StarService } from 'src/logic/StarService';
 import { stars } from './stars';
-import { StarsEvent } from './StarsEvent';
 
 /**
  * Tests of the stars lambda function.
  */
 describe('stars', () => {
-  let event: StarsEvent;
+  let event: LambdaEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockStarService: any;
   let dummyStar: any;
@@ -38,160 +38,190 @@ describe('stars', () => {
     mockStarService.editRecord = jest.fn(() => dummyStar);
   });
 
-  it('GET /stars should work', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput([dummyStar])
-    );
-    expect(mockStarService.getStars).toBeCalledTimes(1);
+  describe('/api/stars', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/stars',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummyStar])
+      );
+      expect(mockStarService.getStars).toBeCalledTimes(1);
+    });
+
+    it('POST should work', async () => {
+      event = {
+        resource: '/api/stars',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyStar)
+      );
+      expect(mockStarService.addStar).toBeCalledTimes(1);
+    });
+
+    it('POST should fail if null body', async () => {
+      event = {
+        resource: '/api/stars',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/stars',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('GET /stars/{id} should work', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'abc' },
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyStar)
-    );
-    expect(mockStarService.getStarDetail).toBeCalledTimes(1);
+  describe('/api/stars/record', () => {
+    it('POST should work', async () => {
+      event = {
+        resource: '/api/stars/record',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyStar)
+      );
+      expect(mockStarService.addRecord).toBeCalledTimes(1);
+    });
+
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/stars/record',
+        httpMethod: 'PUT',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyStar)
+      );
+      expect(mockStarService.editRecord).toBeCalledTimes(1);
+    });
+
+    it('POST should fail if null body', async () => {
+      event = {
+        resource: '/api/stars/record',
+        httpMethod: 'POST',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/stars/record',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST /stars should work', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyStar)
-    );
-    expect(mockStarService.addStar).toBeCalledTimes(1);
+  describe('/api/stars/{id}', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/stars/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'abc' },
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyStar)
+      );
+      expect(mockStarService.getStarDetail).toBeCalledTimes(1);
+    });
+
+    it('DELETE should work', async () => {
+      event = {
+        resource: '/api/stars/{id}',
+        httpMethod: 'DELETE',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'test-id' },
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(undefined)
+      );
+      expect(mockStarService.removeStar).toBeCalledTimes(1);
+    });
+
+    it('GET should fail if null pathparameter', async () => {
+      event = {
+        resource: '/api/stars/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('star id is required'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/stars/{id}',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'abc' },
+        queryStringParameters: null,
+      };
+      await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('POST /stars/record should work', async () => {
-    event = {
-      resource: '/api/stars/record',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
+  it('unknown resource should fail', async () => {
+    event.resource = 'resource';
     await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyStar)
-    );
-    expect(mockStarService.addRecord).toBeCalledTimes(1);
-  });
-
-  it('POST should fail if null body', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-  });
-
-  it('POST should fail if non-support resource', async () => {
-    event = {
-      resource: '/api/stars/xxx',
-      httpMethod: 'POST',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('non-support resource'))
-    );
-  });
-
-  it('PUT /stars/record should work', async () => {
-    event = {
-      resource: '/api/stars/record',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyStar)
-    );
-    expect(mockStarService.editRecord).toBeCalledTimes(1);
-  });
-
-  it('PUT should fail if null body', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('body should not be empty'))
-    );
-  });
-
-  it('PUT should fail if non-support resource', async () => {
-    event = {
-      resource: '/api/stars/xxx',
-      httpMethod: 'PUT',
-      headers: { 'x-api-token': 'test-token' },
-      body: JSON.stringify({ a: '1' }),
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('non-support resource'))
-    );
-  });
-
-  it('DELETE should work', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'DELETE',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: { id: 'test-id' },
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(undefined)
-    );
-    expect(mockStarService.removeStar).toBeCalledTimes(1);
-  });
-
-  it('POST should fail if null body', async () => {
-    event = {
-      resource: '/api/stars',
-      httpMethod: 'DELETE',
-      headers: { 'x-api-token': 'test-token' },
-      body: null,
-      pathParameters: null,
-    };
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new BadRequestError('star id is required'))
-    );
-    expect(mockStarService.removeStar).toBeCalledTimes(0);
-  });
-
-  it('should fail with unknown method', async () => {
-    event.httpMethod = 'unknown';
-    await expect(stars(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unknown http method'))
+      errorOutput(new InternalServerError('unknown resource'))
     );
   });
 });

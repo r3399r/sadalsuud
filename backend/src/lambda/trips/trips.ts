@@ -3,6 +3,7 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
@@ -24,14 +25,112 @@ import {
   VerifyTripRequest,
   VerifyTripResponse,
 } from 'src/model/Trip';
-import { TripsEvent } from './TripsEvent';
+
+async function apiTrips(event: LambdaEvent, service: TripService) {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getTrips(event.headers['x-api-token']);
+    case 'POST':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.registerTrip(
+        JSON.parse(event.body) as PostTripRequest,
+        event.headers['x-api-token']
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsId(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('trip id is missing');
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getTrip(
+        event.headers['x-api-token'],
+        event.pathParameters.id
+      );
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.reviseTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as ReviseTripRequest,
+        event.headers['x-api-token']
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdMember(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('trip id is missing');
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+      await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+
+      return await service.setTripMember(
+        event.pathParameters.id,
+        JSON.parse(event.body) as SetTripMemberRequest
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdSign(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('trip id is missing');
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getSignedList(
+        event.pathParameters.id,
+        event.headers['x-api-token']
+      );
+    case 'POST':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.signTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as SignTripRequest,
+        event.headers['x-api-token']
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdVerify(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('trip id is missing');
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+      await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+
+      return await service.verifyTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as VerifyTripRequest
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
 
 export async function trips(
-  event: TripsEvent,
+  event: LambdaEvent,
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
   try {
-    const tripService: TripService = bindings.get<TripService>(TripService);
+    const service: TripService = bindings.get<TripService>(TripService);
 
     let res:
       | PostTripResponse
@@ -43,78 +142,24 @@ export async function trips(
       | SignTripResponse
       | GetSignResponse;
 
-    switch (event.httpMethod) {
-      case 'POST':
-        if (event.body === null)
-          throw new BadRequestError('body should not be empty');
-
-        if (event.resource === '/api/trips')
-          res = await tripService.registerTrip(
-            JSON.parse(event.body) as PostTripRequest,
-            event.headers['x-api-token']
-          );
-        else if (event.resource === '/api/trips/{id}/sign') {
-          if (event.pathParameters === null)
-            throw new BadRequestError('trip id is missing');
-          res = await tripService.signTrip(
-            event.pathParameters.id,
-            JSON.parse(event.body) as SignTripRequest,
-            event.headers['x-api-token']
-          );
-        } else throw new InternalServerError('unsupported resource');
+    switch (event.resource) {
+      case '/api/trips':
+        res = await apiTrips(event, service);
         break;
-      case 'GET':
-        if (event.resource === '/api/trips')
-          res = await tripService.getTrips(event.headers['x-api-token']);
-        else if (event.resource === '/api/trips/{id}') {
-          if (event.pathParameters === null)
-            throw new BadRequestError('trip id is missing');
-          res = await tripService.getTrip(
-            event.headers['x-api-token'],
-            event.pathParameters.id
-          );
-        } else if (event.resource === '/api/trips/{id}/sign') {
-          if (event.pathParameters === null)
-            throw new BadRequestError('trip id is missing');
-          res = await tripService.getSignedList(
-            event.pathParameters.id,
-            event.headers['x-api-token']
-          );
-        } else throw new InternalServerError('unsupported resource');
+      case '/api/trips/{id}':
+        res = await apiTripsId(event, service);
         break;
-      case 'PUT':
-        if (event.body === null)
-          throw new BadRequestError('body should not be empty');
-        if (event.pathParameters === null)
-          throw new BadRequestError('trip id is missing');
-        if (event.resource === '/api/trips/{id}')
-          res = await tripService.reviseTrip(
-            event.pathParameters.id,
-            JSON.parse(event.body) as ReviseTripRequest,
-            event.headers['x-api-token']
-          );
-        else if (event.resource === '/api/trips/{id}/verify') {
-          await tripService.validateRole(event.headers['x-api-token'], [
-            ROLE.ADMIN,
-          ]);
-
-          res = await tripService.verifyTrip(
-            event.pathParameters.id,
-            JSON.parse(event.body) as VerifyTripRequest
-          );
-        } else if (event.resource === '/api/trips/{id}/member') {
-          await tripService.validateRole(event.headers['x-api-token'], [
-            ROLE.ADMIN,
-          ]);
-
-          res = await tripService.setTripMember(
-            event.pathParameters.id,
-            JSON.parse(event.body) as SetTripMemberRequest
-          );
-        } else throw new InternalServerError('unsupported resource');
+      case '/api/trips/{id}/member':
+        res = await apiTripsIdMember(event, service);
+        break;
+      case '/api/trips/{id}/sign':
+        res = await apiTripsIdSign(event, service);
+        break;
+      case '/api/trips/{id}/verify':
+        res = await apiTripsIdVerify(event, service);
         break;
       default:
-        throw new InternalServerError('unknown http method');
+        throw new InternalServerError('unknown resource');
     }
 
     return successOutput(res);

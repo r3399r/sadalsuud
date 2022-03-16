@@ -2,18 +2,18 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { MeService } from 'src/logic/MeService';
 import { me } from './me';
-import { MeEvent } from './MeEvent';
 
 /**
  * Tests of the me lambda function.
  */
 describe('me', () => {
-  let event: MeEvent;
+  let event: LambdaEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockMeService: any;
   let dummyResult: { [key: string]: string };
@@ -34,20 +34,40 @@ describe('me', () => {
     mockMeService.getMe = jest.fn(() => dummyResult);
   });
 
-  it('GET should work', async () => {
-    event = {
-      httpMethod: 'GET',
-      headers: { 'x-api-token': 'test-token' },
-    };
-    await expect(me(event, lambdaContext)).resolves.toStrictEqual(
-      successOutput(dummyResult)
-    );
+  describe('/api/me', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/me',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(me(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyResult)
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/me',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(me(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
   });
 
-  it('should fail with unknown method', async () => {
-    event.httpMethod = 'unknown';
+  it('unknown resource should fail', async () => {
+    event.resource = 'resource';
     await expect(me(event, lambdaContext)).resolves.toStrictEqual(
-      errorOutput(new InternalServerError('unknown http method'))
+      errorOutput(new InternalServerError('unknown resource'))
     );
   });
 });

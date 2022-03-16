@@ -3,6 +3,7 @@ import {
   errorOutput,
   InternalServerError,
   LambdaContext,
+  LambdaEvent,
   LambdaOutput,
   successOutput,
 } from '@y-celestial/service';
@@ -21,14 +22,72 @@ import {
   PostStarRequest,
   PostStarResponse,
 } from 'src/model/Star';
-import { StarsEvent } from './StarsEvent';
+
+async function apiStars(event: LambdaEvent, service: StarService) {
+  await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getStars();
+    case 'POST':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.addStar(JSON.parse(event.body) as PostStarRequest);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiStarsRecord(event: LambdaEvent, service: StarService) {
+  if (event.body === null)
+    throw new BadRequestError('body should not be empty');
+
+  await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+
+  switch (event.httpMethod) {
+    case 'POST':
+      return await service.addRecord(
+        JSON.parse(event.body) as PostRecordRequest
+      );
+    case 'PUT':
+      return await service.editRecord(
+        JSON.parse(event.body) as PutRecordRequest
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiStarsId(event: LambdaEvent, service: StarService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('star id is required');
+
+  switch (event.httpMethod) {
+    case 'DELETE':
+      await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
+      await service.removeStar(event.pathParameters.id);
+
+      return;
+    case 'GET':
+      await service.validateRole(event.headers['x-api-token'], [
+        ROLE.ADMIN,
+        ROLE.SOFT_PARTNER,
+        ROLE.SOFT_PLANNER,
+      ]);
+
+      return await service.getStarDetail(event.pathParameters.id);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
 
 export async function stars(
-  event: StarsEvent,
+  event: LambdaEvent,
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
   try {
-    const starService: StarService = bindings.get<StarService>(StarService);
+    const service: StarService = bindings.get<StarService>(StarService);
 
     let res:
       | PostStarResponse
@@ -38,63 +97,18 @@ export async function stars(
       | PostRecordResponse
       | PutRecordResponse;
 
-    switch (event.httpMethod) {
-      case 'GET':
-        if (event.pathParameters === null) {
-          await starService.validateRole(event.headers['x-api-token'], [
-            ROLE.ADMIN,
-          ]);
-          res = await starService.getStars();
-        } else {
-          await starService.validateRole(event.headers['x-api-token'], [
-            ROLE.ADMIN,
-            ROLE.SOFT_PARTNER,
-            ROLE.SOFT_PLANNER,
-          ]);
-          res = await starService.getStarDetail(event.pathParameters.id);
-        }
+    switch (event.resource) {
+      case '/api/stars':
+        res = await apiStars(event, service);
         break;
-      case 'POST':
-        if (event.body === null)
-          throw new BadRequestError('body should not be empty');
-
-        await starService.validateRole(event.headers['x-api-token'], [
-          ROLE.ADMIN,
-        ]);
-        if (event.resource === '/api/stars')
-          res = await starService.addStar(
-            JSON.parse(event.body) as PostStarRequest
-          );
-        else if (event.resource === '/api/stars/record')
-          res = await starService.addRecord(
-            JSON.parse(event.body) as PostRecordRequest
-          );
-        else throw new InternalServerError('non-support resource');
+      case '/api/stars/record':
+        res = await apiStarsRecord(event, service);
         break;
-      case 'PUT':
-        if (event.body === null)
-          throw new BadRequestError('body should not be empty');
-
-        await starService.validateRole(event.headers['x-api-token'], [
-          ROLE.ADMIN,
-        ]);
-        if (event.resource === '/api/stars/record')
-          res = await starService.editRecord(
-            JSON.parse(event.body) as PutRecordRequest
-          );
-        else throw new InternalServerError('non-support resource');
-        break;
-      case 'DELETE':
-        if (event.pathParameters === null)
-          throw new BadRequestError('star id is required');
-
-        await starService.validateRole(event.headers['x-api-token'], [
-          ROLE.ADMIN,
-        ]);
-        res = await starService.removeStar(event.pathParameters.id);
+      case '/api/stars/{id}':
+        res = await apiStarsId(event, service);
         break;
       default:
-        throw new InternalServerError('unknown http method');
+        throw new InternalServerError('unknown resource');
     }
 
     return successOutput(res);

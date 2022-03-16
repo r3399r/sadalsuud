@@ -222,13 +222,18 @@ export class TripService {
       ...trip,
       joinedGroup: group,
     });
-    const newSign = sign
+    const passedSign = sign
       .filter((s: Sign) => body.groupId.includes(s.group.id))
       .map((v: Sign) => new SignEntity({ ...v, result: true }));
+    const unpassedSign = sign
+      .filter((s: Sign) => !body.groupId.includes(s.group.id))
+      .map((v: Sign) => new SignEntity({ ...v, result: false }));
 
     await Promise.all([
       this.dbService.putItem(newTrip),
-      ...newSign.map((v: Sign) => this.dbService.putItem(v)),
+      ...[...passedSign, ...unpassedSign].map((v: Sign) =>
+        this.dbService.putItem(v)
+      ),
     ]);
 
     return newTrip;

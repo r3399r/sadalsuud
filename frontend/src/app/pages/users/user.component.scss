@@ -43,3 +43,22 @@
   align-items: center;
   gap: 20px;
 }
+.card {
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid $orange;
+  border-radius: 5px;
+  background-color: $pale-orange;
+  cursor: pointer;
+}
+.group {
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid $line-green;
+  border-radius: 5px;
+  background-color: $pale-green;
+  .member {
+    display: flex;
+    gap: 10px;
+  }
+}

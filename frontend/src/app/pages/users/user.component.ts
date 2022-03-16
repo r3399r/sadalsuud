@@ -10,6 +10,7 @@ import {
   Trip,
 } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
+import moment from 'moment';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { getRole, getUserStatus } from 'src/app/util/ui';
@@ -117,5 +118,18 @@ export class UserComponent implements OnInit {
 
   onClickAdmin() {
     this.router.navigate(['/admin']);
+  }
+
+  getDate(datetime: number | null) {
+    if (datetime === null) return 'no date';
+    return moment.unix(datetime).format('YYYY/MM/DD');
+  }
+
+  getTime(datetime: number) {
+    return moment.unix(datetime).format('HH:mm');
+  }
+
+  onTripClick(id: string) {
+    this.router.navigate([`/trips/${id}`]);
   }
 }

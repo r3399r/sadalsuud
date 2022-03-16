@@ -7,6 +7,7 @@ import {
   PutUserResponse,
   ROLE,
   STATUS,
+  Trip,
 } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
@@ -20,6 +21,9 @@ import { getRole, getUserStatus } from 'src/app/util/ui';
 })
 export class UserComponent implements OnInit {
   user: GetMeResponse | undefined;
+  myTrips: Omit<Trip, 'owner'>[] = [];
+  joinedTrips: any[] = [];
+  myGroup: GetMeResponse['myGroup'] = [];
   isLoading = true;
   isEdit = false;
 
@@ -35,6 +39,13 @@ export class UserComponent implements OnInit {
       .getUser()
       .then((res: GetMeResponse) => {
         this.user = res;
+        this.myTrips = res.myTrip;
+        this.myGroup = res.myGroup;
+        res.myGroup.forEach((v: GetMeResponse['myGroup'][0]) => {
+          v.signedTrip.forEach((o: any) => {
+            this.joinedTrips.push({ ...o, group: v.group });
+          });
+        });
       })
       .catch((e) => {
         this.snackBar.open(e.message, undefined, { duration: 4000 });

@@ -5,6 +5,7 @@ import {
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import moment from 'moment';
+import { v4 as uuidv4 } from 'uuid';
 import { ROLE } from 'src/constant/user';
 import { Group } from 'src/model/Group';
 import { Sign, SignEntity, SignResult } from 'src/model/Sign';
@@ -21,7 +22,6 @@ import {
   VerifyTripRequest,
 } from 'src/model/Trip';
 import { User } from 'src/model/User';
-import { v4 as uuidv4 } from 'uuid';
 import { GroupService } from './GroupService';
 import { UserService } from './UserService';
 

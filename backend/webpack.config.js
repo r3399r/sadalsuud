@@ -24,9 +24,9 @@ module.exports = {
   // https://hackernoon.com/the-100-correct-way-to-split-your-chunks-with-webpack-f8a9df5b7758
   // https://github.com/webpack/webpack/issues/8161
   optimization: {
+    minimize: true,
     minimizer: [
       new TerserPlugin({
-        sourceMap: true,
         terserOptions: {
           // keeping class and function names intact enables more precise logging
           keep_classnames: true,

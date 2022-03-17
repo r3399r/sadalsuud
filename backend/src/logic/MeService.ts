@@ -25,7 +25,7 @@ export class MeService {
     ]);
 
     const myTrip = trip.map((v: Trip) => {
-      const { owner, ...rest } = v;
+      const { owner: ownerIgnored, ...rest } = v;
 
       return rest;
     });
@@ -41,7 +41,11 @@ export class MeService {
         return {
           group: v,
           signedTrip: sign.map((s: Sign) => {
-            const { owner, joinedGroup, ...rest } = s.trip;
+            const {
+              owner: ownerIgnored,
+              joinedGroup: joinedGroupIgnored,
+              ...rest
+            } = s.trip;
 
             return {
               ...rest,

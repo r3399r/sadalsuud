@@ -1,9 +1,9 @@
 import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
+import { v4 as uuidv4 } from 'uuid';
 import { EditRecordData, Record, RecordEntity } from 'src/model/Record';
 import { Star } from 'src/model/Star';
 import { User } from 'src/model/User';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Service class for CRUD records

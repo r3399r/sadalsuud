@@ -5,6 +5,7 @@ import {
   InternalServerError,
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
+import { v4 as uuidv4 } from 'uuid';
 import { ACTION } from 'src/constant/group';
 import { ROLE } from 'src/constant/user';
 import {
@@ -15,7 +16,6 @@ import {
 } from 'src/model/Group';
 import { Star } from 'src/model/Star';
 import { User } from 'src/model/User';
-import { v4 as uuidv4 } from 'uuid';
 import { StarService } from './StarService';
 import { UserService } from './UserService';
 
@@ -78,7 +78,7 @@ export class GroupService {
 
   private async userHasIndividualGroup(userId: string) {
     const groups = await this.getGroups();
-    let res: boolean = false;
+    let res = false;
     groups.forEach((o: Group) => {
       const user = o.user.find((v: User) => v.id === userId);
       if (user !== undefined && o.star === undefined) res = true;
@@ -89,7 +89,7 @@ export class GroupService {
 
   private async starExistsInSomeGroup(starId: string) {
     const groups = await this.getGroups();
-    let res: boolean = false;
+    let res = false;
     groups.find((o: Group) => {
       if (o.star !== undefined && o.star.id === starId) res = true;
     });
@@ -101,7 +101,7 @@ export class GroupService {
     const group = await this.dbService.getItem<Group>('group', id);
 
     switch (body.action) {
-      case ACTION.ADD:
+      case ACTION.ADD: {
         if (group.star === undefined)
           throw new BadRequestError(
             'input group should be a star-group to add member'
@@ -119,6 +119,7 @@ export class GroupService {
         });
         await this.dbService.putItem(newGroup);
         break;
+      }
       case ACTION.REMOVE:
         if (group.user.findIndex((v: User) => v.id === body.userId) < 0)
           throw new ConflictError('user does not exist in this group');

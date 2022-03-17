@@ -151,7 +151,7 @@ describe('TripService', () => {
   });
 
   it('getTrip should work with admin', async () => {
-    const { joinedGroup, ...restTrip } = dummyTrips[0];
+    const { joinedGroup: joinedGroupIgnored, ...restTrip } = dummyTrips[0];
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ADMIN }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
       ...restTrip,
@@ -171,7 +171,7 @@ describe('TripService', () => {
   });
 
   it('getTrip should work with rookie', async () => {
-    const { joinedGroup, ...restTrip } = dummyTrips[0];
+    const { joinedGroup: joinedGroupIgnored, ...restTrip } = dummyTrips[0];
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.ROOKIE }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
       ...restTrip,
@@ -190,7 +190,7 @@ describe('TripService', () => {
   });
 
   it('getTrip should work with passerby', async () => {
-    const { joinedGroup, ...restTrip } = dummyTrips[0];
+    const { joinedGroup: joinedGroupIgnored, ...restTrip } = dummyTrips[0];
     mockUserService.getUserByToken = jest.fn(() => ({ role: ROLE.PASSERBY }));
     expect(await tripService.getTrip('token', 'tripId')).toStrictEqual({
       ...restTrip,

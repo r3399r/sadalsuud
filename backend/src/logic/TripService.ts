@@ -7,7 +7,7 @@ import { inject, injectable } from 'inversify';
 import moment from 'moment';
 import { ROLE } from 'src/constant/user';
 import { Group } from 'src/model/Group';
-import { Sign, SignEntity } from 'src/model/Sign';
+import { Sign, SignEntity, SignResult } from 'src/model/Sign';
 import { Star } from 'src/model/Star';
 import {
   GetTripResponse,
@@ -224,10 +224,10 @@ export class TripService {
     });
     const passedSign = sign
       .filter((s: Sign) => body.groupId.includes(s.group.id))
-      .map((v: Sign) => new SignEntity({ ...v, result: true }));
+      .map((v: Sign) => new SignEntity({ ...v, result: SignResult.YES }));
     const unpassedSign = sign
       .filter((s: Sign) => !body.groupId.includes(s.group.id))
-      .map((v: Sign) => new SignEntity({ ...v, result: false }));
+      .map((v: Sign) => new SignEntity({ ...v, result: SignResult.NO }));
 
     await Promise.all([
       this.dbService.putItem(newTrip),
@@ -281,7 +281,7 @@ export class TripService {
       id: uuidv4(),
       trip,
       group,
-      result: false,
+      result: SignResult.PENDING,
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
     });

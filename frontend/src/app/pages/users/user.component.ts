@@ -8,6 +8,7 @@ import {
   ROLE,
   STATUS,
   Trip,
+  SignResult,
 } from '@y-celestial/sadalsuud-service';
 import { Router } from '@angular/router';
 import moment from 'moment';
@@ -27,6 +28,7 @@ export class UserComponent implements OnInit {
   myGroup: GetMeResponse['myGroup'] = [];
   isLoading = true;
   isEdit = false;
+  selectedIndex: number | undefined;
 
   constructor(
     private userService: UserService,
@@ -131,5 +133,11 @@ export class UserComponent implements OnInit {
 
   onTripClick(id: string) {
     this.router.navigate([`/trips/${id}`]);
+  }
+
+  getResult(result: SignResult) {
+    if (result === SignResult.NO) return '未中籤';
+    if (result === SignResult.YES) return '中籤';
+    return '尚未抽籤';
   }
 }

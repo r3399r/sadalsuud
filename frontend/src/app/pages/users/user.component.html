@@ -32,29 +32,37 @@
     <button mat-stroked-button color="primary" type="button" (click)="onLogout()">登出</button>
   </div>
   <hr />
-  <div class="header">我的群組</div>
-  <div *ngFor="let group of myGroup" class="group">
-    <div>報名單位: {{ group.group.star ? group.group.star.name : '志工' }}</div>
-    <div class="member">
-      <div>成員:</div>
-      <div *ngFor="let member of group.group.user">{{ member.name }}</div>
-    </div>
-  </div>
-  <hr />
-  <div class="header">我報名的出遊</div>
-  <div *ngFor="let trip of joinedTrips" class="card" (click)="onTripClick(trip.id)">
-    <div>日期: {{ getDate(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
-    <div>地點: {{ trip.place }}</div>
-    <div>報名單位: {{ trip.group.star ? trip.group.star.name : '志工' }}</div>
-  </div>
-  <hr />
-  <div>
-    <div class="header">我主辦的出遊</div>
-    <div *ngFor="let trip of myTrips" class="card" (click)="onTripClick(trip.id)">
-      <div>日期: {{ getDate(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
-      <div>地點: {{ trip.place }}</div>
-    </div>
-  </div>
+  <mat-tab-group animationDuration="0ms" selectedIndex="{{ selectedIndex }}">
+    <mat-tab label="群組"
+      ><ng-template matTabContent>
+        <div *ngFor="let group of myGroup" class="group">
+          <div>報名單位: {{ group.group.star ? group.group.star.name : '志工' }}</div>
+          <div class="member">
+            <div>成員:</div>
+            <div *ngFor="let member of group.group.user">{{ member.name }}</div>
+          </div>
+        </div></ng-template
+      ></mat-tab
+    >
+    <mat-tab label="報名的出遊"
+      ><ng-template matTabContent>
+        <div *ngFor="let trip of joinedTrips" class="card" (click)="onTripClick(trip.id)">
+          <div>日期: {{ getDate(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
+          <div>地點: {{ trip.place }}</div>
+          <div>報名單位: {{ trip.group.star ? trip.group.star.name : '志工' }}</div>
+          <div>抽籤結果: {{ getResult(trip.result) }}</div>
+        </div></ng-template
+      ></mat-tab
+    >
+    <mat-tab label="主辦的出遊"
+      ><ng-template matTabContent>
+        <div *ngFor="let trip of myTrips" class="card" (click)="onTripClick(trip.id)">
+          <div>日期: {{ getDate(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
+          <div>地點: {{ trip.place }}</div>
+        </div></ng-template
+      ></mat-tab
+    >
+  </mat-tab-group>
 </div>
 <app-user-form
   (formSubmit)="onFormSubmit($event)"

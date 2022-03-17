@@ -1,6 +1,7 @@
 import { DbService, UnauthorizedError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { ROLE } from 'src/constant/user';
+import { SignResult } from 'src/model/Sign';
 import {
   PostTripRequest,
   ReviseTripRequest,
@@ -389,7 +390,7 @@ describe('TripService', () => {
     expect(
       await tripService.signTrip('trip-id', {} as SignTripRequest, 'token')
     ).toMatchObject({
-      result: false,
+      result: SignResult.PENDING,
       group: {
         id: 'group-id-5',
         user: [{ id: 'user-id-5' }],

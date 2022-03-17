@@ -6,11 +6,17 @@ import {
 import { Group, GroupEntity } from './Group';
 import { Trip, TripEntity } from './Trip';
 
+export enum SignResult {
+  PENDING = 'pending',
+  YES = 'yes',
+  NO = 'no',
+}
+
 export type Sign = {
   id: string;
   trip: Trip;
   group: Group;
-  result: boolean;
+  result: SignResult;
   dateCreated: number;
   dateUpdated: number;
 };
@@ -26,7 +32,7 @@ export class SignEntity implements Sign {
   public trip: Trip;
   @relatedAttributeOne()
   public group: Group;
-  public result: boolean;
+  public result: SignResult;
   public dateCreated: number;
   public dateUpdated: number;
 

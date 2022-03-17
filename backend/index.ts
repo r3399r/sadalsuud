@@ -33,6 +33,7 @@ export {
   GetSignResponse,
   Trip,
 } from 'src/model/Trip';
+export { SignResult } from 'src/model/Sign';
 export { GetMeResponse } from 'src/model/Me';
 export { ROLE, STATUS } from 'src/constant/user';
 export { ACTION } from 'src/constant/group';

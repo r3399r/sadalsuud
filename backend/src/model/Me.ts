@@ -1,4 +1,5 @@
 import { Group } from './Group';
+import { SignResult } from './Sign';
 import { Trip } from './Trip';
 import { User } from './User';
 
@@ -7,7 +8,7 @@ export type GetMeResponse = User & {
   myGroup: {
     group: Group;
     signedTrip: (Omit<Trip, 'owner' | 'joinedGroup'> & {
-      result: boolean;
+      result: SignResult;
     })[];
   }[];
 };

@@ -49,7 +49,7 @@ describe('variables', () => {
         pathParameters: null,
         queryStringParameters: { name: 'test' },
       };
-      expect(variables(event, lambdaContext)).toStrictEqual(
+      await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
         successOutput(dummyResult)
       );
       expect(mockVariablesService.getParameters).toBeCalledTimes(1);
@@ -64,7 +64,7 @@ describe('variables', () => {
         pathParameters: null,
         queryStringParameters: null,
       };
-      expect(variables(event, lambdaContext)).toStrictEqual(
+      await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
         errorOutput(new BadRequestError('null query string parameters'))
       );
     });
@@ -78,7 +78,7 @@ describe('variables', () => {
         pathParameters: null,
         queryStringParameters: {} as any as VariablesParams,
       };
-      expect(variables(event, lambdaContext)).toStrictEqual(
+      await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
         errorOutput(new BadRequestError('missing parameter name'))
       );
     });
@@ -92,7 +92,7 @@ describe('variables', () => {
         pathParameters: null,
         queryStringParameters: { name: 'test' },
       };
-      expect(variables(event, lambdaContext)).toStrictEqual(
+      await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
         errorOutput(new InternalServerError('unknown http method'))
       );
     });
@@ -100,7 +100,7 @@ describe('variables', () => {
 
   it('unknown resource should fail', async () => {
     event.resource = 'resource';
-    expect(variables(event, lambdaContext)).toStrictEqual(
+    await expect(variables(event, lambdaContext)).resolves.toStrictEqual(
       errorOutput(new InternalServerError('unknown resource'))
     );
   });

@@ -24,10 +24,10 @@ function apiVariables(event: LambdaEvent, service: VariablesService) {
   }
 }
 
-export function variables(
+export async function variables(
   event: LambdaEvent,
   _context?: LambdaContext
-): LambdaOutput {
+): Promise<LambdaOutput> {
   try {
     const service: VariablesService =
       bindings.get<VariablesService>(VariablesService);

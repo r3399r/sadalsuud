@@ -34,18 +34,21 @@
   <hr />
   <mat-tab-group animationDuration="0ms" selectedIndex="{{ selectedIndex }}">
     <mat-tab label="群組"
-      ><ng-template matTabContent>
+      ><ng-template matTabContent
+        ><div *ngIf="myGroup.length === 0">無資料</div>
         <div *ngFor="let group of myGroup" class="group">
           <div>報名單位: {{ group.group.star ? group.group.star.name : '志工' }}</div>
           <div class="member">
             <div>成員:</div>
             <div *ngFor="let member of group.group.user">{{ member.name }}</div>
           </div>
-        </div></ng-template
+        </div>
+        <div>如群組資料有誤，請聯絡我們</div></ng-template
       ></mat-tab
     >
     <mat-tab label="報名的出遊"
-      ><ng-template matTabContent>
+      ><ng-template matTabContent
+        ><div *ngIf="joinedTrips.length === 0">無資料</div>
         <div *ngFor="let trip of joinedTrips" class="card" (click)="onTripClick(trip.id)">
           <div>日期: {{ getDate(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
           <div>地點: {{ trip.place }}</div>
@@ -56,6 +59,7 @@
     >
     <mat-tab label="主辦的出遊"
       ><ng-template matTabContent>
+        <div *ngIf="myTrips.length === 0">無資料</div>
         <div *ngFor="let trip of myTrips" class="card" (click)="onTripClick(trip.id)">
           <div>日期: {{ getDate(trip.startDatetime) }} ~ {{ getTime(trip.endDatetime) }}</div>
           <div>地點: {{ trip.place }}</div>

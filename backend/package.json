@@ -23,7 +23,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@y-celestial/service": "^2.1.5",
+    "@y-celestial/service": "^2.1.7",
     "axios": "^0.26.1",
     "inversify": "^6.0.1",
     "moment": "^2.29.1",

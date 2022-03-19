@@ -1986,7 +1986,7 @@ Resources:
     DependsOn: [ServerlessApi, S3Bucket]
     Properties:
       DistributionConfig:
-        Aliases: [!If [IsProd, !Sub 'www.${HostName}', !Sub '${TargetEnvr}.${HostName}']]
+        Aliases: [!If [IsProd, !Sub 'aqua.${HostName}', !Sub 'aqua-${TargetEnvr}.${HostName}']]
         Origins:
         - DomainName: !Sub ${Project}-${TargetEnvr}.s3.ap-northeast-1.amazonaws.com
           Id: S3-hosted-website-ID

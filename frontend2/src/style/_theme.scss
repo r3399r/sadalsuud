@@ -1,0 +1,8 @@
+@import './color';
+
+html[data-theme='light'] {
+  color: $green;
+  --navbar-background: #{$yellow};
+  --fruit-background: #{$pale-grey};
+  --counter: #{$grey};
+}

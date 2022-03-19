@@ -1974,7 +1974,7 @@ Resources:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneName: !Sub '${HostName}.'
-      Name: !If [IsProd, !Sub 'www.${HostName}.', !Sub '${TargetEnvr}.${HostName}.']
+      Name: !If [IsProd, !Sub 'aqua.${HostName}.', !Sub 'aqua-${TargetEnvr}.${HostName}.']
       Type: A
       AliasTarget:
         HostedZoneId: Z2FDTNDATAQYW2

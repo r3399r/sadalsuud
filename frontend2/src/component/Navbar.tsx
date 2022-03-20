@@ -13,6 +13,10 @@ const Navbar = () => {
   const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  const onClick = (page: Page) => () => {
+    navigate(page);
+    toggleDrawer();
+  };
   const toggleDrawer = () => setOpen(!open);
 
   return (
@@ -27,15 +31,15 @@ const Navbar = () => {
       <Drawer anchor="left" open={open} onClose={toggleDrawer}>
         <div className={style.drawer}>
           <div className={style.list}>
-            <div onClick={() => navigate(Page.LANDING)}>
+            <div onClick={onClick(Page.LANDING)}>
               <HomeIcon />
               首頁
             </div>
-            <div>
+            <div onClick={onClick(Page.TRIPS)}>
               <EventIcon />
               出遊清單
             </div>
-            <div>
+            <div onClick={onClick(Page.FAQ)}>
               <ContactSupportIcon />
               常見問題
             </div>

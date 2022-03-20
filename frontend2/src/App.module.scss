@@ -1,0 +1,7 @@
+@import 'src/style/scrollbar';
+
+.body {
+  height: calc(100vh - 44px);
+  overflow-y: auto;
+  @include scrollbar;
+}

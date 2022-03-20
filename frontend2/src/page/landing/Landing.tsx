@@ -2,7 +2,6 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import FaceIcon from '@mui/icons-material/Face';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import classNames from 'classnames';
-import packageJson from '../../../package.json'; // eslint-disable-line
 import style from './Landing.module.scss';
 
 const Landing = () => (
@@ -47,7 +46,6 @@ const Landing = () => (
         <a href="https://lin.ee/gk8ydMG">星遊客服</a>: 若您有任何問題，歡迎透過 LINE 官方帳號詢問。
       </p>
     </div>
-    <div className={style.ver}>當前版本: {packageJson.version}</div>
   </div>
 );
 

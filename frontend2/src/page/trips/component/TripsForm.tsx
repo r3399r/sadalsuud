@@ -20,6 +20,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
   } = useForm<Form>();
 
   const onSubmit: SubmitHandler<Form> = (data) => {
+    onClose();
     registerTrip({
       ...data,
       ownerLine: data.ownerLine === '' ? undefined : data.ownerLine,

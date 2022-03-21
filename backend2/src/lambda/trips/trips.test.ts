@@ -17,6 +17,11 @@ describe('trips', () => {
   let event: LambdaEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockTripService: any;
+  let dummyTrip: any;
+
+  beforeAll(() => {
+    dummyTrip = { id: 'test' };
+  });
 
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
@@ -25,9 +30,25 @@ describe('trips', () => {
     bindings.rebind<TripService>(TripService).toConstantValue(mockTripService);
 
     mockTripService.registerTrip = jest.fn();
+    mockTripService.getSimplifiedTrips = jest.fn(() => [dummyTrip]);
   });
 
   describe('/api/trips', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/trips',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummyTrip])
+      );
+      expect(mockTripService.getSimplifiedTrips).toBeCalledTimes(1);
+    });
+
     it('POST should work', async () => {
       event = {
         resource: '/api/trips',

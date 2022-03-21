@@ -1,4 +1,5 @@
 import { PostTripsRequest } from '@y-celestial/sadalsuud-service';
+import { format } from 'date-fns';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
@@ -24,6 +25,9 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
     registerTrip({
       ...data,
       ownerLine: data.ownerLine === '' ? undefined : data.ownerLine,
+      date: format(new Date(data.date), 'yyyy/MM/dd'),
+      meetTime: format(new Date(data.meetTime), 'HH:mm'),
+      dismissTime: format(new Date(data.dismissTime), 'HH:mm'),
       fee: parseInt(String(data.fee)),
       other: data.other === '' ? undefined : data.other,
     })

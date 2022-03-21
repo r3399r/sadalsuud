@@ -9,7 +9,7 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { TripService } from 'src/logic/TripService';
-import { PostTripsRequest } from 'src/model/api/Trip';
+import { GetTripsResponse, PostTripsRequest } from 'src/model/api/Trip';
 
 export async function trips(
   event: LambdaEvent,
@@ -18,7 +18,7 @@ export async function trips(
   try {
     const service: TripService = bindings.get<TripService>(TripService);
 
-    let res: void;
+    let res: void | GetTripsResponse;
 
     switch (event.resource) {
       case '/api/trips':
@@ -36,6 +36,8 @@ export async function trips(
 
 async function apiTrips(event: LambdaEvent, service: TripService) {
   switch (event.httpMethod) {
+    case 'GET':
+      return await service.getSimplifiedTrips();
     case 'POST':
       if (event.body === null)
         throw new BadRequestError('body should not be empty');

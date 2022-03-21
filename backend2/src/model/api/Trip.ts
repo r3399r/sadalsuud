@@ -14,3 +14,16 @@ export type PostTripsRequest = {
   fee: number;
   other?: string;
 };
+
+export type GetTripsResponse = {
+  id: string;
+  topic: string;
+  ad: string;
+  date: string;
+  period: 'morning' | 'afternoon' | 'daytime' | 'evening' | 'allday' | 'pm';
+  region: string;
+  fee: number;
+  other?: string;
+  dateCreated: number;
+  dateUpdated: number;
+}[];

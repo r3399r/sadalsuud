@@ -1,0 +1,21 @@
+.self {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.head {
+  font-weight: bold;
+  font-size: 20px;
+}
+.flex {
+  display: flex;
+  gap: 10px;
+  > * {
+    flex: 1;
+  }
+}
+.hint {
+  width: 100%;
+  text-align: right;
+  font-size: 14px;
+}

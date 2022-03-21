@@ -92,7 +92,7 @@ Resources:
             },
             "postTrips" : {
               "type" : "object",
-              "required": [ "ownerName", "ownerPhone", "date", "region", "meetTime", "meetPlace", "dismissTime", "dismissPlace", "topic", "ad", "content", "fee", "other"],
+              "required": [ "ownerName", "ownerPhone", "date", "region", "meetTime", "meetPlace", "dismissTime", "dismissPlace", "topic", "ad", "content", "fee"],
               "properties": {
                 "ownerName": {"type": "string"},
                 "ownerPhone": {"type": "string"},

@@ -3,5 +3,4 @@ export enum Page {
   TRIPS = '/trips',
   FAQ = '/faq',
   ADMIN = '/admin',
-  MEETING = '/meeting',
 }

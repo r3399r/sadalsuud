@@ -12,5 +12,5 @@ export type PostTripsRequest = {
   ad: string;
   content: string;
   fee: number;
-  other: string;
+  other?: string;
 };

@@ -2,7 +2,7 @@ import { DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import { PostTripsRequest } from 'src/model/api/Trip';
-import { TripEntity } from 'src/model/Trip';
+import { TripEntity } from 'src/model/entity/Trip';
 
 /**
  * Service class for Trips

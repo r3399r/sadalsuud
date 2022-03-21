@@ -12,7 +12,7 @@ export type Trip = {
   dismissTime: string;
   dismissPlace: string;
   fee: number;
-  other: string;
+  other?: string;
 
   ownerName: string;
   ownerPhone: string;
@@ -39,7 +39,7 @@ export class TripEntity implements Trip {
   public dismissTime: string;
   public dismissPlace: string;
   public fee: number;
-  public other: string;
+  public other?: string;
 
   public ownerName: string;
   public ownerPhone: string;

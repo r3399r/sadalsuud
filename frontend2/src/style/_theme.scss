@@ -10,4 +10,8 @@ html[data-theme='light'] {
   --navbar-background: #{$pale-yellow};
 
   --trips-card: #{$pale-orange};
+  --trips-card-ad: #{$grey};
+  --trips-card-ad-background: #{$white};
+
+  --modal-background: #{$white};
 }

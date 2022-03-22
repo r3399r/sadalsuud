@@ -35,9 +35,7 @@ const Trips = () => {
         </div>
       ))}
       <Modal open={open}>
-        <div className={style.modal}>
-          <TripsForm onClose={() => setOpen(false)} />
-        </div>
+        <TripsForm onClose={() => setOpen(false)} />
       </Modal>
     </>
   );

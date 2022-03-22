@@ -1,18 +1,53 @@
-.self {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.head {
-  font-weight: bold;
-  font-size: 20px;
-}
-.flex {
+@import 'src/style/scrollbar';
+@import 'src/style/variables';
+
+@mixin flex {
   display: flex;
   gap: 10px;
   > * {
     flex: 1;
   }
+}
+.self {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+  height: 80vh;
+  overflow-y: auto;
+  background-color: var(--modal-background);
+  border-radius: 8px;
+  @media (min-width: $md) {
+    width: 600px;
+  }
+  .fill {
+    box-sizing: border-box;
+    padding: 10px;
+    height: calc(80vh - 55px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    @include scrollbar;
+  }
+  .buttons {
+    box-sizing: border-box;
+    height: 55px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    padding: 10px;
+    align-items: center;
+    @include flex;
+  }
+}
+
+.head {
+  font-weight: bold;
+  font-size: 20px;
+}
+.flex {
+  @include flex;
 }
 .hint {
   width: 100%;

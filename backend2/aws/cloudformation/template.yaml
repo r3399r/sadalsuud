@@ -114,6 +114,48 @@ Resources:
                   "contentHandling": "CONVERT_TO_TEXT"
                 }
               }
+            },
+            "/api/trips/{id}/sign": {
+              "put": {
+                "produces": ["application/json"],
+                "parameters" : [ {
+                  "in" : "body",
+                  "name" : "putTripsIdSign",
+                  "required" : true,
+                  "schema" : {
+                    "$ref" : "#/definitions/putTripsIdSign"
+                  }
+                } ],
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "schema": {
+                      "$ref": "#/definitions/Empty"
+                    },
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate body",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-trips/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
             }
           },
           "definitions": {
@@ -121,7 +163,7 @@ Resources:
               "type": "object",
               "title": "Empty Schema"
             },
-            "postTrips" : {
+            "postTrips": {
               "type" : "object",
               "required": [ "ownerName", "ownerPhone", "date", "region", "meetTime", "meetPlace", "dismissTime", "dismissPlace", "topic", "ad", "content", "fee"],
               "properties": {
@@ -139,6 +181,18 @@ Resources:
                 "content": {"type": "string"},
                 "fee": {"type": "number"},
                 "other": {"type": "string"}
+              }
+            },
+            "putTripsIdSign": {
+              "type" : "object",
+              "required": [ "forWho", "phone", "date", "name", "yearOfBirth"],
+              "properties": {
+                "forWho": { "type": "string", "enum": ["self", "kid"] },
+                "phone": {"type": "string"},
+                "line": {"type": "string"},
+                "name": {"type": "string"},
+                "yearOfBirth": {"type": "string"},
+                "accompany": {"type": "boolean"}
               }
             }
           },

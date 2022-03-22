@@ -19,3 +19,11 @@ export const post = async <T, D>(url: string, data: D) =>
     data,
     method: 'post',
   });
+
+export const put = async <T, D>(url: string, data: D) =>
+  axios.request<T>({
+    ...config,
+    url,
+    data,
+    method: 'put',
+  });

@@ -1,5 +1,4 @@
-@import 'src/style/scrollbar';
-@import 'src/style/variables';
+@import 'src/style/mixins';
 
 @mixin flex {
   display: flex;
@@ -8,19 +7,10 @@
     flex: 1;
   }
 }
+
 .self {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 95vw;
+  @include modal;
   height: 80vh;
-  overflow-y: auto;
-  background-color: var(--modal-background);
-  border-radius: 8px;
-  @media (min-width: $md) {
-    width: 600px;
-  }
   .fill {
     box-sizing: border-box;
     padding: 10px;

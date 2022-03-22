@@ -9,12 +9,12 @@ type FormInputProps<T> = TextFieldProps & {
   name: Path<T>;
   control: Control<T>;
   rules?: RegisterOptions;
-  formType?: 'text' | 'datePicker' | 'timePicker';
+  formType?: 'text' | 'datePicker' | 'timePicker' | 'yearPicker';
 };
 
 const FormInput = <T extends FieldValues>({
-  control,
   name,
+  control,
   rules,
   formType = 'text',
   ...props
@@ -44,9 +44,20 @@ const FormInput = <T extends FieldValues>({
             />
           </LocalizationProvider>
         );
+      else if (formType === 'yearPicker')
+        return (
+          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhLocale}>
+            <DatePicker
+              value={value}
+              onChange={onChange}
+              views={['year']}
+              renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+            />
+          </LocalizationProvider>
+        );
       else return <TextField onChange={onChange} value={value} autoComplete="off" {...props} />;
     },
-    [props.error],
+    [props.error, props.label],
   );
 
   return (

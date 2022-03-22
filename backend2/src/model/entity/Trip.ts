@@ -1,5 +1,14 @@
 import { entity, primaryAttribute } from '@y-celestial/service';
 
+export type Sign = {
+  name: string;
+  phone: string;
+  line?: string;
+  yearOfBirth: string;
+  isSelf: boolean;
+  accompany?: boolean;
+};
+
 export type Trip = {
   id: string;
   topic: string;
@@ -17,6 +26,8 @@ export type Trip = {
   ownerName: string;
   ownerPhone: string;
   ownerLine?: string;
+
+  sign: Sign[];
 
   dateCreated: number;
   dateUpdated: number;
@@ -45,6 +56,8 @@ export class TripEntity implements Trip {
   public ownerPhone: string;
   public ownerLine?: string;
 
+  public sign: Sign[];
+
   public dateCreated: number;
   public dateUpdated: number;
 
@@ -64,6 +77,7 @@ export class TripEntity implements Trip {
     this.ownerName = input.ownerName;
     this.ownerPhone = input.ownerPhone;
     this.ownerLine = input.ownerLine;
+    this.sign = input.sign;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }

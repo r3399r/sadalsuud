@@ -1,4 +1,4 @@
-import { DbService } from '@y-celestial/service';
+import { BadRequestError, DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { PostTripsRequest } from 'src/model/api/Trip';
 import { TripService } from './TripService';
@@ -22,6 +22,7 @@ describe('TripService', () => {
       region: 'test-region',
       fee: 1,
       other: 'test-other',
+      sign: [],
       dateCreated: 2,
       dateUpdated: 3,
     };
@@ -32,6 +33,8 @@ describe('TripService', () => {
     bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
 
     mockDbService.createItem = jest.fn();
+    mockDbService.putItem = jest.fn();
+    mockDbService.getItem = jest.fn(() => dummyTrip);
 
     tripService = bindings.get<TripService>(TripService);
   });
@@ -86,5 +89,30 @@ describe('TripService', () => {
     expect(await tripService.getSimplifiedTrips()).toStrictEqual([
       { ...result, period: 'evening' },
     ]);
+  });
+
+  it('signTrip should work', async () => {
+    await tripService.signTrip('id', {
+      name: 'a',
+      phone: 'b',
+      line: 'c',
+      yearOfBirth: 'd',
+      forWho: 'kid',
+      accompany: true,
+    });
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+  });
+
+  it('signTrip should fail confitionally', async () => {
+    await expect(
+      tripService.signTrip('id', {
+        name: 'a',
+        phone: 'b',
+        line: 'c',
+        yearOfBirth: 'd',
+        forWho: 'kid',
+      })
+    ).rejects.toThrow(BadRequestError);
   });
 });

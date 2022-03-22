@@ -1,1 +1,5 @@
-export { PostTripsRequest, GetTripsResponse } from 'src/model/api/Trip';
+export {
+  PostTripsRequest,
+  GetTripsResponse,
+  PutTripsSignRequest,
+} from 'src/model/api/Trip';

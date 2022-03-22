@@ -1,7 +1,11 @@
-import { DbService } from '@y-celestial/service';
+import { BadRequestError, DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
-import { GetTripsResponse, PostTripsRequest } from 'src/model/api/Trip';
+import {
+  GetTripsResponse,
+  PostTripsRequest,
+  PutTripsSignRequest,
+} from 'src/model/api/Trip';
 import { Trip, TripEntity } from 'src/model/entity/Trip';
 import { compareKey } from 'src/util/compare';
 
@@ -17,6 +21,7 @@ export class TripService {
     const trip = new TripEntity({
       ...body,
       id: uuidv4(),
+      sign: [],
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
     });
@@ -57,5 +62,28 @@ export class TripService {
     if (start >= 12 && end >= 18) return 'pm';
 
     return 'daytime';
+  }
+
+  public async signTrip(id: string, body: PutTripsSignRequest) {
+    if (body.forWho === 'kid' && body.accompany === undefined)
+      throw new BadRequestError('accompany should not be empty');
+
+    const trip = await this.dbService.getItem<Trip>('trip', id);
+    await this.dbService.putItem<Trip>(
+      new TripEntity({
+        ...trip,
+        sign: [
+          ...trip.sign,
+          {
+            name: body.name,
+            phone: body.phone,
+            line: body.line,
+            yearOfBirth: body.yearOfBirth,
+            isSelf: body.forWho === 'self',
+            accompany: body.accompany,
+          },
+        ],
+      })
+    );
   }
 }

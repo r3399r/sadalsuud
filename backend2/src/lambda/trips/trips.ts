@@ -9,7 +9,11 @@ import {
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { TripService } from 'src/logic/TripService';
-import { GetTripsResponse, PostTripsRequest } from 'src/model/api/Trip';
+import {
+  GetTripsResponse,
+  PostTripsRequest,
+  PutTripsSignRequest,
+} from 'src/model/api/Trip';
 
 export async function trips(
   event: LambdaEvent,
@@ -23,6 +27,9 @@ export async function trips(
     switch (event.resource) {
       case '/api/trips':
         res = await apiTrips(event, service);
+        break;
+      case '/api/trips/{id}/sign':
+        res = await apiTripsIdSign(event, service);
         break;
       default:
         throw new InternalServerError('unknown resource');
@@ -43,6 +50,25 @@ async function apiTrips(event: LambdaEvent, service: TripService) {
         throw new BadRequestError('body should not be empty');
 
       await service.registerTrip(JSON.parse(event.body) as PostTripsRequest);
+
+      return;
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdSign(event: LambdaEvent, service: TripService) {
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.pathParameters === null)
+        throw new BadRequestError('pathParameters should not be empty');
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      await service.signTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsSignRequest
+      );
 
       return;
     default:

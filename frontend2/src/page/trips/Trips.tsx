@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react';
 import Button from 'src/component/Button';
 import Loader from 'src/component/Loader';
 import { getPeriodZh, getSimplifiedTrips } from 'src/service/TripService';
+import SignForm from './component/SignForm';
 import TripsForm from './component/TripsForm';
 import style from './Trips.module.scss';
 
 const Trips = () => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [openRegister, setOpenRegister] = useState<boolean>(false);
+  const [openSign, setOpenSign] = useState<boolean>(false);
+  const [signedTripId, setSignedTripId] = useState<string>();
   const [trips, setTrips] = useState<GetTripsResponse>();
 
   useEffect(() => {
@@ -17,25 +20,56 @@ const Trips = () => {
 
   return (
     <>
-      <div className={style.button}>
-        <Button variant="contained" onClick={() => setOpen(true)}>
+      <div className={style.registerBtn}>
+        <Button variant="contained" onClick={() => setOpenRegister(true)}>
           申請出遊活動
         </Button>
       </div>
       {trips === undefined && <Loader />}
       {trips?.map((v) => (
         <div key={v.id} className={style.card}>
-          <div>主題: {v.topic}</div>
-          <div>日期: {v.date}</div>
-          <div>時間: {getPeriodZh(v.period)}</div>
-          <div>地點: {v.region}</div>
+          <div>
+            <b>主題</b> {v.topic}
+          </div>
+          <div>
+            <b>日期</b> {v.date}
+          </div>
+          <div>
+            <b>時間</b> {getPeriodZh(v.period)}
+          </div>
+          <div>
+            <b>地點</b> {v.region}
+          </div>
           <div className={style.ad}>{v.ad}</div>
-          <div>大致費用: ${v.fee}</div>
-          <div>其他注意事項: {v.other}</div>
+          <div>
+            <b>大致費用</b> ${v.fee}
+          </div>
+          <div>
+            <b>其他注意事項</b> {v.other}
+          </div>
+          <div className={style.signButn}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => {
+                setOpenSign(true);
+                setSignedTripId(v.id);
+              }}
+            >
+              報名
+            </Button>
+          </div>
         </div>
       ))}
-      <Modal open={open}>
-        <TripsForm onClose={() => setOpen(false)} />
+      <Modal open={openRegister}>
+        <>
+          <TripsForm onClose={() => setOpenRegister(false)} />
+        </>
+      </Modal>
+      <Modal open={openSign}>
+        <>
+          <SignForm onClose={() => setOpenSign(false)} tripId={signedTripId} />
+        </>
       </Modal>
     </>
   );

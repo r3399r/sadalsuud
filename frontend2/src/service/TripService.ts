@@ -1,4 +1,8 @@
-import { GetTripsResponse, PostTripsRequest } from '@y-celestial/sadalsuud-service';
+import {
+  GetTripsResponse,
+  PostTripsRequest,
+  PutTripsSignRequest,
+} from '@y-celestial/sadalsuud-service';
 import * as http from 'src/util/http';
 
 export const registerTrip = async (data: PostTripsRequest) => {
@@ -19,4 +23,8 @@ export const getPeriodZh = (period: GetTripsResponse[0]['period']) => {
   if (period === 'morning') return '早上';
 
   return '下半天';
+};
+
+export const signTrip = async (id: string, data: PutTripsSignRequest) => {
+  await http.put<void, PutTripsSignRequest>(`trips/${id}/sign`, data);
 };

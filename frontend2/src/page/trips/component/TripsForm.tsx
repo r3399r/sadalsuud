@@ -35,7 +35,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
         dispatch(openSnackbar({ severity: 'success', message: '已成功申請，等待審核' }));
       })
       .catch(() => {
-        dispatch(openSnackbar({ severity: 'error', message: '申請失敗，請重試。' }));
+        dispatch(openSnackbar({ severity: 'error', message: '申請失敗，請重試' }));
       });
   };
 
@@ -105,7 +105,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
             control={control}
             name="region"
             rules={{ required: true }}
-            label="主要活動區域*"
+            label="地點*"
             size="small"
             error={errors.region !== undefined}
           />

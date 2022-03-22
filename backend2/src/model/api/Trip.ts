@@ -27,3 +27,12 @@ export type GetTripsResponse = {
   dateCreated: number;
   dateUpdated: number;
 }[];
+
+export type PutTripsSignRequest = {
+  forWho: 'self' | 'kid';
+  phone: string;
+  line?: string;
+  name: string;
+  yearOfBirth: string;
+  accompany?: boolean;
+};

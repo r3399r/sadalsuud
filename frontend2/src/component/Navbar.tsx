@@ -26,7 +26,7 @@ const Navbar = () => {
       </div>
       <div className={style.title}>
         <img className={style.logo} src="/logo400.png" />
-        <b>Lucky Star Trip。星遊</b>
+        星遊
       </div>
       <Drawer anchor="left" open={open} onClose={toggleDrawer}>
         <div className={style.drawer}>

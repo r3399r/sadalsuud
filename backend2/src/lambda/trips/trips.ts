@@ -10,6 +10,7 @@ import {
 import { bindings } from 'src/bindings';
 import { TripService } from 'src/logic/TripService';
 import {
+  GetTripsDetailResponse,
   GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
@@ -23,11 +24,18 @@ export async function trips(
   try {
     const service: TripService = bindings.get<TripService>(TripService);
 
-    let res: void | GetTripsResponse | GetTripsIdResponse;
+    let res:
+      | void
+      | GetTripsResponse
+      | GetTripsIdResponse
+      | GetTripsDetailResponse;
 
     switch (event.resource) {
       case '/api/trips':
         res = await apiTrips(event, service);
+        break;
+      case '/api/trips/detail':
+        res = await apiTripsDetail(event, service);
         break;
       case '/api/trips/{id}':
         res = await apiTripsId(event, service);
@@ -61,18 +69,22 @@ async function apiTrips(event: LambdaEvent, service: TripService) {
   }
 }
 
+async function apiTripsDetail(event: LambdaEvent, service: TripService) {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getDetailedTrips();
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
 async function apiTripsId(event: LambdaEvent, service: TripService) {
   switch (event.httpMethod) {
     case 'GET':
       if (event.pathParameters === null)
         throw new BadRequestError('pathParameters should not be empty');
-      if (event.queryStringParameters === null)
-        throw new BadRequestError('queryStringParameters should not be empty');
 
-      return await service.getTripForAttendee(
-        event.pathParameters.id,
-        event.queryStringParameters.code
-      );
+      return await service.getTripForAttendee(event.pathParameters.id);
     default:
       throw new InternalServerError('unknown http method');
   }

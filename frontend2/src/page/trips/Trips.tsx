@@ -22,7 +22,7 @@ const Trips = () => {
     <>
       <div className={style.registerBtn}>
         <Button variant="contained" onClick={() => setOpenRegister(true)}>
-          申請出遊活動
+          我要舉辦出遊
         </Button>
       </div>
       {trips === undefined && <Loader />}

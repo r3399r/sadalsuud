@@ -17,15 +17,34 @@ describe('AuthService', () => {
     authService = bindings.get<AuthService>(AuthService);
   });
 
-  it('login should work', async () => {
-    expect(
-      authService.login({ account: 'aaa', password: 'bbb' })
-    ).toHaveProperty('secret');
+  describe('login', () => {
+    it('should work', async () => {
+      expect(
+        authService.login({ account: 'aaa', password: 'bbb' })
+      ).toHaveProperty('secret');
+    });
+
+    it('should fail', async () => {
+      expect(() =>
+        authService.login({ account: 'xxx', password: 'xxx' })
+      ).toThrow(UnauthorizedError);
+    });
   });
 
-  it('login should fail', async () => {
-    expect(() =>
-      authService.login({ account: 'xxx', password: 'xxx' })
-    ).toThrow(UnauthorizedError);
+  describe('validate', () => {
+    it('should work', () => {
+      expect(authService.validate('jwOZs+PMI+liPxB6gz4amQ==')).toBe(false);
+    });
+  });
+
+  describe('authResponse', () => {
+    it('should work', () => {
+      expect(authService.authResponse(true, 'resource')).toHaveProperty(
+        'principalId'
+      );
+      expect(authService.authResponse(false, 'resource')).toHaveProperty(
+        'principalId'
+      );
+    });
   });
 });

@@ -37,7 +37,7 @@ describe('login', () => {
       event = {
         resource: '/api/login',
         httpMethod: 'POST',
-        headers: { 'x-api-token': 'test-token' },
+        headers: null,
         body: JSON.stringify({ a: '1' }),
         pathParameters: null,
         queryStringParameters: null,
@@ -52,7 +52,7 @@ describe('login', () => {
       event = {
         resource: '/api/login',
         httpMethod: 'POST',
-        headers: { 'x-api-token': 'test-token' },
+        headers: null,
         body: null,
         pathParameters: null,
         queryStringParameters: null,
@@ -66,7 +66,7 @@ describe('login', () => {
       event = {
         resource: '/api/login',
         httpMethod: 'XXX',
-        headers: { 'x-api-token': 'test-token' },
+        headers: null,
         body: JSON.stringify({ a: '1' }),
         pathParameters: null,
         queryStringParameters: null,

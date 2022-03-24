@@ -45,7 +45,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
-    "@y-celestial/sadalsuud-service": "^2.0.7",
+    "@y-celestial/sadalsuud-service": "^2.0.8",
     "cross-env": "^7.0.3",
     "del-cli": "^4.0.1",
     "eslint": "^8.11.0",

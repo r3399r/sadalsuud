@@ -1,18 +1,14 @@
-import {
-  BadRequestError,
-  DbService,
-  UnauthorizedError,
-} from '@y-celestial/service';
+import { BadRequestError, DbService } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  GetTripsDetailResponse,
   GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
 import { Trip, TripEntity } from 'src/model/entity/Trip';
-import { gen6DigitCode } from 'src/util/codeGenerator';
 import { compareKey } from 'src/util/compare';
 
 /**
@@ -27,7 +23,6 @@ export class TripService {
     const trip = new TripEntity({
       ...body,
       id: uuidv4(),
-      code: gen6DigitCode(),
       status: 'pending',
       sign: [],
       dateCreated: Date.now(),
@@ -54,6 +49,12 @@ export class TripService {
         dateUpdated: v.dateUpdated,
       }))
       .sort(compareKey('dateCreated', true));
+  }
+
+  public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
+    const trips = await this.dbService.getItems<Trip>('trip');
+
+    return trips.sort(compareKey('dateCreated', true));
   }
 
   private getPeriod(
@@ -99,14 +100,8 @@ export class TripService {
     );
   }
 
-  public async getTripForAttendee(
-    id: string,
-    code: string
-  ): Promise<GetTripsIdResponse> {
-    if (code.length !== 6) throw new UnauthorizedError('unauthorized');
-
+  public async getTripForAttendee(id: string): Promise<GetTripsIdResponse> {
     const trip = await this.dbService.getItem<Trip>('trip', id);
-    if (trip.code !== code) throw new UnauthorizedError('unauthorized');
 
     return {
       id: trip.id,

@@ -79,7 +79,7 @@ const SignForm = ({ onClose, tripId = 'xxx' }: TripsFormProps) => {
         name="yearOfBirth"
         label={forWho === 'kid' ? '小孩的出生年(西元)*' : '出生年(西元)*'}
         rules={{ required: true }}
-        helperText="此為避免同名同姓時識別用"
+        helperText="此為遇到同名同姓時識別用"
         size="small"
         error={errors.yearOfBirth !== undefined}
       />

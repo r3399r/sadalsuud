@@ -3,6 +3,7 @@ import { SyntheticEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux/store';
 import LoginForm from './component/LoginForm';
+import TripList from './component/TripList';
 
 const Admin = () => {
   const { isLogin } = useSelector((state: RootState) => state.auth);
@@ -26,7 +27,7 @@ const Admin = () => {
           <Tab label="使用者" />
           <Tab label="星兒" />
         </Tabs>
-        {value === 0 && <div>Item one</div>}
+        {value === 0 && <TripList />}
         {value === 1 && <div>Item two</div>}
         {value === 2 && <div>Item three</div>}
       </>

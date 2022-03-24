@@ -1,4 +1,5 @@
 import {
+  GetTripsDetailResponse,
   GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
@@ -12,6 +13,12 @@ export const registerTrip = async (data: PostTripsRequest) => {
 
 export const getSimplifiedTrips = async () => {
   const res = await http.get<GetTripsResponse>('trips');
+
+  return res.data;
+};
+
+export const getDetailedTrips = async () => {
+  const res = await http.authGet<GetTripsDetailResponse>('trips/detail');
 
   return res.data;
 };
@@ -30,8 +37,8 @@ export const signTrip = async (id: string, data: PutTripsSignRequest) => {
   await http.put<void, PutTripsSignRequest>(`trips/${id}/sign`, data);
 };
 
-export const getTripById = async (id: string, code: string) => {
-  const res = await http.get<GetTripsIdResponse>(`trips/${id}`, { code });
+export const getTripById = async (id: string) => {
+  const res = await http.get<GetTripsIdResponse>(`trips/${id}`);
 
   return res.data;
 };

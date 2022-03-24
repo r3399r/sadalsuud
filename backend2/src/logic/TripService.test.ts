@@ -1,4 +1,8 @@
-import { BadRequestError, DbService } from '@y-celestial/service';
+import {
+  BadRequestError,
+  DbService,
+  UnauthorizedError,
+} from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { PostTripsRequest } from 'src/model/api/Trip';
 import { TripService } from './TripService';
@@ -16,12 +20,20 @@ describe('TripService', () => {
       id: 'test-id',
       topic: 'test-topic',
       ad: 'test-ad',
+      content: 'test-content',
       date: 'test-date',
-      meetTime: '10:00',
-      dismissTime: '12:00',
       region: 'test-region',
+      meetTime: '10:00',
+      meetPlace: 'test-meet-place',
+      dismissTime: '12:00',
+      dismissPlace: 'test-dismiss-place',
       fee: 1,
       other: 'test-other',
+      ownerName: 'test-owner-name',
+      ownerPhone: 'test-owner-phone',
+      ownerLine: 'test-owner-line',
+      code: '123456',
+      status: 'pending',
       sign: [],
       dateCreated: 2,
       dateUpdated: 3,
@@ -91,20 +103,32 @@ describe('TripService', () => {
     ]);
   });
 
-  it('signTrip should work', async () => {
+  it('signTrip should work for parent', async () => {
     await tripService.signTrip('id', {
       name: 'a',
       phone: 'b',
       line: 'c',
       yearOfBirth: 'd',
       forWho: 'kid',
-      accompany: true,
+      accompany: 'yes',
     });
     expect(mockDbService.getItem).toBeCalledTimes(1);
     expect(mockDbService.putItem).toBeCalledTimes(1);
   });
 
-  it('signTrip should fail confitionally', async () => {
+  it('signTrip should work for participant', async () => {
+    await tripService.signTrip('id', {
+      name: 'a',
+      phone: 'b',
+      line: 'c',
+      yearOfBirth: 'd',
+      forWho: 'self',
+    });
+    expect(mockDbService.getItem).toBeCalledTimes(1);
+    expect(mockDbService.putItem).toBeCalledTimes(1);
+  });
+
+  it('signTrip should fail conditionally', async () => {
     await expect(
       tripService.signTrip('id', {
         name: 'a',
@@ -114,5 +138,34 @@ describe('TripService', () => {
         forWho: 'kid',
       })
     ).rejects.toThrow(BadRequestError);
+  });
+
+  it('getTripForAttendee should work', async () => {
+    expect(await tripService.getTripForAttendee('id', '123456')).toStrictEqual({
+      id: 'test-id',
+      topic: 'test-topic',
+      content: 'test-content',
+      date: 'test-date',
+      meetTime: '10:00',
+      meetPlace: 'test-meet-place',
+      dismissTime: '12:00',
+      dismissPlace: 'test-dismiss-place',
+      fee: 1,
+      other: 'test-other',
+      dateCreated: 2,
+      dateUpdated: 3,
+    });
+  });
+
+  it('getTripForAttendee should fail for code length', async () => {
+    await expect(tripService.getTripForAttendee('id', '1234')).rejects.toThrow(
+      UnauthorizedError
+    );
+  });
+
+  it('getTripForAttendee should fail for wrong code', async () => {
+    await expect(
+      tripService.getTripForAttendee('id', '123457')
+    ).rejects.toThrow(UnauthorizedError);
   });
 });

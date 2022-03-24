@@ -34,5 +34,20 @@ export type PutTripsSignRequest = {
   line?: string;
   name: string;
   yearOfBirth: string;
-  accompany?: boolean;
+  accompany?: 'yes' | 'no';
+};
+
+export type GetTripsIdResponse = {
+  id: string;
+  topic: string;
+  content: string;
+  date: string;
+  meetTime: string;
+  meetPlace: string;
+  dismissTime: string;
+  dismissPlace: string;
+  fee: number;
+  other?: string;
+  dateCreated: number;
+  dateUpdated: number;
 };

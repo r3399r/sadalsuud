@@ -3,7 +3,6 @@ import { format } from 'date-fns';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
-import FormCheckbox from 'src/component/FormCheckbox';
 import FormInput from 'src/component/FormInput';
 import FormRadio from 'src/component/FormRadio';
 import { openSnackbar } from 'src/redux/uiSlice';
@@ -62,11 +61,18 @@ const SignForm = ({ onClose, tripId = 'xxx' }: TripsFormProps) => {
         control={control}
         name="phone"
         rules={{ required: true, pattern: /^[0-9]+$/i }}
-        label="聯絡電話*"
+        label={forWho === 'kid' ? '家長的聯絡電話*' : '聯絡電話*'}
+        helperText="此為通知時使用，通知中籤或通知活動內容"
         size="small"
         error={errors.phone !== undefined}
       />
-      <FormInput control={control} name="line" label="LINE ID" size="small" />
+      <FormInput
+        control={control}
+        name="line"
+        label={forWho === 'kid' ? '家長的 LINE ID' : 'LINE ID'}
+        helperText="若有 LINE ID，通知更方便"
+        size="small"
+      />
       <FormInput
         formType="yearPicker"
         control={control}
@@ -78,7 +84,18 @@ const SignForm = ({ onClose, tripId = 'xxx' }: TripsFormProps) => {
         error={errors.yearOfBirth !== undefined}
       />
       {forWho === 'kid' && (
-        <FormCheckbox control={control} name="accompany" label="是否陪小孩同行" />
+        <div className={style.accompany}>
+          是否陪小孩同行:
+          <FormRadio
+            control={control}
+            name="accompany"
+            defaultValue="yes"
+            items={[
+              { value: 'yes', label: '是' },
+              { value: 'no', label: '否' },
+            ]}
+          />
+        </div>
       )}
       <div className={style.buttons}>
         <Button variant="outlined" color="error" type="button" onClick={onClose}>

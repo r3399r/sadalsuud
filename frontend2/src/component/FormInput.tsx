@@ -10,6 +10,7 @@ type FormInputProps<T> = TextFieldProps & {
   control: Control<T>;
   rules?: RegisterOptions;
   formType?: 'text' | 'datePicker' | 'timePicker' | 'yearPicker';
+  minDate?: Date;
 };
 
 const FormInput = <T extends FieldValues>({
@@ -17,6 +18,7 @@ const FormInput = <T extends FieldValues>({
   control,
   rules,
   formType = 'text',
+  minDate,
   ...props
 }: FormInputProps<T>) => {
   const render = useCallback(
@@ -40,6 +42,7 @@ const FormInput = <T extends FieldValues>({
               onChange={onChange}
               inputFormat="yyyy/MM/dd"
               mask="____/__/__"
+              minDate={minDate}
               renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
             />
           </LocalizationProvider>

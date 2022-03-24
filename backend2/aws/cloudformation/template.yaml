@@ -42,6 +42,48 @@ Resources:
             "title": !Sub "${Project}-${TargetEnvr}-api"
           },
           "paths": {
+            "/api/login": {
+              "post": {
+                "produces": ["application/json"],
+                "parameters" : [ {
+                  "in" : "body",
+                  "name" : "postLogin",
+                  "required" : true,
+                  "schema" : {
+                    "$ref" : "#/definitions/postLogin"
+                  }
+                } ],
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "schema": {
+                      "$ref": "#/definitions/Empty"
+                    },
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate body",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-login/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
             "/api/trips": {
               "get": {
                 "produces": ["application/json"],
@@ -115,6 +157,51 @@ Resources:
                 }
               }
             },
+            "/api/trips/{id}": {
+              "get": {
+                "produces": ["application/json"],
+                "parameters" : [ {
+                  "name" : "code",
+                  "in" : "query",
+                  "required" : true,
+                  "type" : "string"
+                }, {
+                  "name" : "id",
+                  "in" : "path",
+                  "required" : true,
+                  "type" : "string"
+                } ],
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "schema": {
+                      "$ref": "#/definitions/Empty"
+                    },
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-trips/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
             "/api/trips/{id}/sign": {
               "put": {
                 "produces": ["application/json"],
@@ -165,7 +252,7 @@ Resources:
             },
             "postTrips": {
               "type" : "object",
-              "required": [ "ownerName", "ownerPhone", "date", "region", "meetTime", "meetPlace", "dismissTime", "dismissPlace", "topic", "ad", "content", "fee"],
+              "required": ["ownerName", "ownerPhone", "date", "region", "meetTime", "meetPlace", "dismissTime", "dismissPlace", "topic", "ad", "content", "fee"],
               "properties": {
                 "ownerName": {"type": "string"},
                 "ownerPhone": {"type": "string"},
@@ -179,20 +266,28 @@ Resources:
                 "topic": {"type": "string"},
                 "ad": {"type": "string"},
                 "content": {"type": "string"},
-                "fee": {"type": "number"},
+                "fee": {"type": "number", "minimum": 0},
                 "other": {"type": "string"}
               }
             },
             "putTripsIdSign": {
               "type" : "object",
-              "required": [ "forWho", "phone", "date", "name", "yearOfBirth"],
+              "required": ["forWho", "phone", "date", "name", "yearOfBirth"],
               "properties": {
-                "forWho": { "type": "string", "enum": ["self", "kid"] },
+                "forWho": {"type": "string", "enum": ["self", "kid"]},
                 "phone": {"type": "string"},
                 "line": {"type": "string"},
                 "name": {"type": "string"},
                 "yearOfBirth": {"type": "string"},
                 "accompany": {"type": "boolean"}
+              }
+            },
+            "postLogin": {
+              "type" : "object",
+              "required": ["account", "password"],
+              "properties": {
+                "account": {"type": "string"},
+                "password": {"type": "string"}
               }
             }
           },
@@ -200,9 +295,35 @@ Resources:
             "Validate body": {
               "validateRequestParameters": false,
               "validateRequestBody": true
+            },
+            "Validate query string parameters and headers" : {
+              "validateRequestParameters" : true,
+              "validateRequestBody" : false
             }
           }
         }
+  LambdaLogin:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.login
+      Runtime: !Sub ${NodeJsVer}
+      FunctionName: !Sub ${Project}-${TargetEnvr}-login
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      Environment:
+        Variables:
+          adminAccount: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-admin-account:1}}'
+          adminPassword: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-admin-password:1}}'
+  InvokePermissionLogin:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaLogin]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-login
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
   LambdaTrips:
     Type: AWS::Serverless::Function
     Properties:

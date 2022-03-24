@@ -73,6 +73,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
             control={control}
             name="date"
             rules={{ required: true }}
+            minDate={new Date(Date.now() + 86400000)}
             label="日期*"
             size="small"
             error={errors.date !== undefined}
@@ -143,7 +144,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
           name="ad"
           rules={{ required: true }}
           label="簡短活動內容*"
-          helperText="此為宣傳用，大家都能看到，切勿提及太詳細的時間地點"
+          helperText="此內容將顯示於活動清單，所有人都能看到，盡量別提及太詳細的時間地點"
           size="small"
           multiline
           rows={2}
@@ -154,7 +155,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
           name="content"
           rules={{ required: true }}
           label="詳細活動內容*"
-          helperText="此區只有實際參與活動的人會看到，寫得愈詳細愈好"
+          helperText="此內容不會公開顯示，只有參與出遊的人會看到，寫得愈詳細愈好"
           size="small"
           multiline
           minRows={2}
@@ -164,7 +165,7 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
         <FormInput
           control={control}
           name="fee"
-          rules={{ required: true }}
+          rules={{ required: true, min: 0 }}
           type="number"
           label="大概花費*"
           helperText="若無花費請填 0"

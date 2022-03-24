@@ -1,4 +1,5 @@
 import {
+  GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
   PutTripsSignRequest,
@@ -27,4 +28,10 @@ export const getPeriodZh = (period: GetTripsResponse[0]['period']) => {
 
 export const signTrip = async (id: string, data: PutTripsSignRequest) => {
   await http.put<void, PutTripsSignRequest>(`trips/${id}/sign`, data);
+};
+
+export const getTripById = async (id: string, code: string) => {
+  const res = await http.get<GetTripsIdResponse>(`trips/${id}`, { code });
+
+  return res.data;
 };

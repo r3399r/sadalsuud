@@ -32,6 +32,7 @@ describe('trips', () => {
     mockTripService.registerTrip = jest.fn();
     mockTripService.signTrip = jest.fn();
     mockTripService.getSimplifiedTrips = jest.fn(() => [dummyTrip]);
+    mockTripService.getTripForAttendee = jest.fn(() => dummyTrip);
   });
 
   describe('/api/trips', () => {
@@ -146,6 +147,67 @@ describe('trips', () => {
         body: JSON.stringify({ a: '1' }),
         pathParameters: { id: 'id' },
         queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
+  });
+
+  describe('/api/trips/{id}', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: { code: 'code' },
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(dummyTrip)
+      );
+      expect(mockTripService.getTripForAttendee).toBeCalledTimes(1);
+    });
+
+    it('GET should fail if null pathParameters', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: null,
+        queryStringParameters: { code: 'code' },
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('pathParameters should not be empty'))
+      );
+    });
+
+    it('GET should fail if null queryStringParameters', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'GET',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(
+          new BadRequestError('queryStringParameters should not be empty')
+        )
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'XXX',
+        headers: { 'x-api-token': 'test-token' },
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: { code: 'code' },
       };
       await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
         errorOutput(new InternalServerError('unknown http method'))

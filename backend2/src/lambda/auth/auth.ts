@@ -9,7 +9,11 @@ export async function auth(
 ): Promise<any> {
   const authService: AuthService = bindings.get<AuthService>(AuthService);
 
-  const result = authService.validate(event.authorizationToken);
+  try {
+    authService.validate(event.authorizationToken);
 
-  return authService.authResponse(result, String(process.env.sourceArn));
+    return authService.authResponse(true, String(process.env.sourceArn));
+  } catch {
+    throw 'Unauthorized';
+  }
 }

@@ -33,7 +33,9 @@ describe('AuthService', () => {
 
   describe('validate', () => {
     it('should work', () => {
-      expect(authService.validate('jwOZs+PMI+liPxB6gz4amQ==')).toBe(false);
+      expect(() => authService.validate('jwOZs+PMI+liPxB6gz4amQ==')).toThrow(
+        UnauthorizedError
+      );
     });
   });
 

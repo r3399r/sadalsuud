@@ -1,6 +1,7 @@
 import { GetTripsDetailResponse } from '@y-celestial/sadalsuud-service';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { getDetailedTrips } from 'src/service/TripService';
 
@@ -18,9 +19,8 @@ const TripList = () => {
 
   return (
     <>
-      {trips?.map((v) => (
-        <div key={v.id}>{v.id}</div>
-      ))}
+      {trips === undefined && <Loader />}
+      {trips && trips.map((v) => <div key={v.id}>{v.id}</div>)}
     </>
   );
 };

@@ -25,7 +25,7 @@ export class AuthService {
     const answer = format(new Date(), 'yyyy/MM/dd');
     const input = decrypt(secret);
 
-    return answer === input;
+    if (answer !== input) throw new UnauthorizedError();
   }
 
   public authResponse(pass: boolean, resource: string) {

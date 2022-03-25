@@ -39,4 +39,16 @@ describe('auth', () => {
     expect(mockAuthService.validate).toBeCalledTimes(1);
     expect(mockAuthService.authResponse).toBeCalledTimes(1);
   });
+
+  it('should fail', async () => {
+    mockAuthService.validate = jest.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    event = {
+      type: 'TOKEN',
+      methodArn: 'methodArn',
+      authorizationToken: 'abcd',
+    };
+    await expect(auth(event, lambdaContext)).rejects.toBe('Unauthorized');
+  });
 });

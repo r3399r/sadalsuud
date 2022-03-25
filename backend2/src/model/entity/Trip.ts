@@ -1,13 +1,9 @@
-import { entity, primaryAttribute } from '@y-celestial/service';
-
-export type Sign = {
-  name: string;
-  phone: string;
-  line?: string;
-  yearOfBirth: string;
-  isSelf: boolean;
-  accompany?: boolean;
-};
+import {
+  entity,
+  primaryAttribute,
+  relatedAttributeMany,
+} from '@y-celestial/service';
+import { Sign, SignEntity } from './Sign';
 
 export type Trip = {
   id: string;
@@ -62,6 +58,7 @@ export class TripEntity implements Trip {
   public code: string;
   public status: 'pending' | 'pass' | 'reject';
 
+  @relatedAttributeMany()
   public sign: Sign[];
 
   public dateCreated: number;
@@ -85,7 +82,7 @@ export class TripEntity implements Trip {
     this.ownerLine = input.ownerLine;
     this.code = input.code;
     this.status = input.status;
-    this.sign = input.sign;
+    this.sign = input.sign.map((v) => new SignEntity(v));
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }

@@ -8,6 +8,7 @@ import {
   PostTripsRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
+import { Sign, SignEntity } from 'src/model/entity/Sign';
 import { Trip, TripEntity } from 'src/model/entity/Trip';
 import { gen6DigitCode } from 'src/util/codeGenerator';
 import { compareKey } from 'src/util/compare';
@@ -78,25 +79,24 @@ export class TripService {
   public async signTrip(id: string, body: PutTripsSignRequest) {
     if (body.forWho === 'kid' && body.accompany === undefined)
       throw new BadRequestError('accompany should not be empty');
-
+    const newSign = new SignEntity({
+      id: uuidv4(),
+      name: body.name,
+      phone: body.phone,
+      line: body.line,
+      yearOfBirth: body.yearOfBirth,
+      isSelf: body.forWho === 'self',
+      accompany:
+        body.accompany === undefined ? undefined : body.accompany === 'yes',
+      dateCreated: Date.now(),
+      dateUpdated: Date.now(),
+    });
     const trip = await this.dbService.getItem<Trip>('trip', id);
+    await this.dbService.createItem<Sign>(newSign);
     await this.dbService.putItem<Trip>(
       new TripEntity({
         ...trip,
-        sign: [
-          ...trip.sign,
-          {
-            name: body.name,
-            phone: body.phone,
-            line: body.line,
-            yearOfBirth: body.yearOfBirth,
-            isSelf: body.forWho === 'self',
-            accompany:
-              body.accompany === undefined
-                ? undefined
-                : body.accompany === 'yes',
-          },
-        ],
+        sign: [...(trip.sign ?? []), newSign],
         dateUpdated: Date.now(),
       })
     );

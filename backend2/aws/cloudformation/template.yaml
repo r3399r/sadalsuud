@@ -317,14 +317,14 @@ Resources:
             },
             "putTripsIdSign": {
               "type" : "object",
-              "required": ["forWho", "phone", "date", "name", "yearOfBirth"],
+              "required": ["forWho", "phone", "name", "yearOfBirth"],
               "properties": {
                 "forWho": {"type": "string", "enum": ["self", "kid"]},
                 "phone": {"type": "string"},
                 "line": {"type": "string"},
                 "name": {"type": "string"},
                 "yearOfBirth": {"type": "string"},
-                "accompany": {"type": "boolean"}
+                "accompany": {"type": "string", "enum": ["yes", "no"]}
               }
             },
             "postLogin": {

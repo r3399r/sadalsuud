@@ -27,6 +27,7 @@ export type Trip = {
   ownerPhone: string;
   ownerLine?: string;
 
+  code: string;
   status: 'pending' | 'pass' | 'reject';
 
   sign: Sign[];
@@ -58,6 +59,7 @@ export class TripEntity implements Trip {
   public ownerPhone: string;
   public ownerLine?: string;
 
+  public code: string;
   public status: 'pending' | 'pass' | 'reject';
 
   public sign: Sign[];
@@ -81,6 +83,7 @@ export class TripEntity implements Trip {
     this.ownerName = input.ownerName;
     this.ownerPhone = input.ownerPhone;
     this.ownerLine = input.ownerLine;
+    this.code = input.code;
     this.status = input.status;
     this.sign = input.sign;
     this.dateCreated = input.dateCreated;

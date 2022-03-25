@@ -1,6 +1,7 @@
 import { BadRequestError, DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { PostTripsRequest } from 'src/model/api/Trip';
+import { Trip } from 'src/model/entity/Trip';
 import { TripService } from './TripService';
 
 /**
@@ -9,7 +10,7 @@ import { TripService } from './TripService';
 describe('TripService', () => {
   let tripService: TripService;
   let mockDbService: any;
-  let dummyTrip: any;
+  let dummyTrip: Trip;
 
   beforeAll(() => {
     dummyTrip = {
@@ -28,6 +29,7 @@ describe('TripService', () => {
       ownerName: 'test-owner-name',
       ownerPhone: 'test-owner-phone',
       ownerLine: 'test-owner-line',
+      code: '123456',
       status: 'pending',
       sign: [],
       dateCreated: 2,

@@ -9,6 +9,7 @@ import {
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
 import { Trip, TripEntity } from 'src/model/entity/Trip';
+import { gen6DigitCode } from 'src/util/codeGenerator';
 import { compareKey } from 'src/util/compare';
 
 /**
@@ -23,6 +24,7 @@ export class TripService {
     const trip = new TripEntity({
       ...body,
       id: uuidv4(),
+      code: gen6DigitCode(),
       status: 'pending',
       sign: [],
       dateCreated: Date.now(),

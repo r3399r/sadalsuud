@@ -1,5 +1,3 @@
-import { Trip } from 'src/model/entity/Trip';
-
 export type PostTripsRequest = {
   ownerName: string;
   ownerPhone: string;
@@ -30,7 +28,19 @@ export type GetTripsResponse = {
   dateUpdated: number;
 }[];
 
-export type GetTripsDetailResponse = Trip[];
+export type GetTripsDetailResponse = {
+  id: string;
+  topic: string;
+  date: string;
+  ownerName: string;
+  ownerPhone: string;
+  ownerLine?: string;
+  code: string;
+  status: 'pending' | 'pass' | 'reject';
+  signs: number;
+  dateCreated: number;
+  dateUpdated: number;
+}[];
 
 export type PutTripsSignRequest = {
   forWho: 'self' | 'kid';

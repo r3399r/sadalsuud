@@ -165,7 +165,21 @@ describe('TripService', () => {
 
   describe('getDetailedTrips', () => {
     it('should work', async () => {
-      expect(await tripService.getDetailedTrips()).toStrictEqual([dummyTrip]);
+      expect(await tripService.getDetailedTrips()).toStrictEqual([
+        {
+          id: 'test-id',
+          topic: 'test-topic',
+          date: 'test-date',
+          ownerName: 'test-owner-name',
+          ownerPhone: 'test-owner-phone',
+          ownerLine: 'test-owner-line',
+          code: '123456',
+          status: 'pending',
+          signs: 0,
+          dateCreated: 2,
+          dateUpdated: 3,
+        },
+      ]);
     });
   });
 });

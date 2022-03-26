@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { reset } from 'src/redux/authSlice';
 import { dispatch } from 'src/redux/store';
 
@@ -26,10 +26,14 @@ export const authGet = async <T>(url: string, params?: any) => {
       params,
       headers: { 'x-api-secret': secret ?? 'zzz' },
     });
-  } catch {
-    localStorage.removeItem('secret');
-    dispatch(reset());
-    throw new Error('auth expired');
+  } catch (e) {
+    const error = (e as AxiosError).response;
+    if (error?.statusText === 'Unauthorized') {
+      localStorage.removeItem('secret');
+      dispatch(reset());
+      throw new Error('Unauthorized');
+    }
+    throw e;
   }
 };
 

@@ -79,12 +79,15 @@ async function apiTripsDetail(event: LambdaEvent, service: TripService) {
 }
 
 async function apiTripsId(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
   switch (event.httpMethod) {
     case 'GET':
-      if (event.pathParameters === null)
-        throw new BadRequestError('pathParameters should not be empty');
-
       return await service.getTripForAttendee(event.pathParameters.id);
+    case 'DELETE':
+      await service.deleteTripById(event.pathParameters.id);
+
+      return;
     default:
       throw new InternalServerError('unknown http method');
   }

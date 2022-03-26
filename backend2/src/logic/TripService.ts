@@ -1,4 +1,8 @@
-import { BadRequestError, DbService } from '@y-celestial/service';
+import {
+  BadRequestError,
+  DbService,
+  InternalServerError,
+} from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -57,7 +61,21 @@ export class TripService {
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
     const trips = await this.dbService.getItems<Trip>('trip');
 
-    return trips.sort(compareKey('dateCreated', true));
+    return trips
+      .map((v) => ({
+        id: v.id,
+        topic: v.topic,
+        date: v.date,
+        ownerName: v.ownerName,
+        ownerPhone: v.ownerPhone,
+        ownerLine: v.ownerLine,
+        code: v.code,
+        status: v.status,
+        signs: v.sign ? v.sign.length : 0,
+        dateCreated: v.dateCreated,
+        dateUpdated: v.dateUpdated,
+      }))
+      .sort(compareKey('dateCreated', true));
   }
 
   private getPeriod(
@@ -119,5 +137,17 @@ export class TripService {
       dateCreated: trip.dateCreated,
       dateUpdated: trip.dateUpdated,
     };
+  }
+
+  public async deleteTripById(id: string) {
+    try {
+      const trip = await this.dbService.getItem<Trip>('trip', id);
+      await this.dbService.deleteItem('trip', trip.id);
+      await Promise.all(
+        trip.sign.map((v) => this.dbService.deleteItem('sign', v.id))
+      );
+    } catch {
+      throw new InternalServerError(`delete trip ${id} fail`);
+    }
   }
 }

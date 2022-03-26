@@ -232,6 +232,48 @@ Resources:
                   "passthroughBehavior": "when_no_match",
                   "contentHandling": "CONVERT_TO_TEXT"
                 }
+              },
+              "delete": {
+                "produces": ["application/json"],
+                "parameters" : [ {
+                  "name" : "id",
+                  "in" : "path",
+                  "required" : true,
+                  "type" : "string"
+                } ],
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "schema": {
+                      "$ref": "#/definitions/Empty"
+                    },
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "security": [
+                  {
+                    "auth": []
+                  }
+                ],
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-trips/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
               }
             },
             "/api/trips/{id}/sign": {

@@ -42,3 +42,7 @@ export const getTripById = async (id: string) => {
 
   return res.data;
 };
+
+export const deleteTripById = async (id: string) => {
+  await http.authDelete(`trips/${id}`);
+};

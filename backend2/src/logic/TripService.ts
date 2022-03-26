@@ -31,7 +31,6 @@ export class TripService {
       id: uuidv4(),
       code: gen6DigitCode(),
       status: 'pending',
-      sign: [],
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
     });
@@ -144,7 +143,7 @@ export class TripService {
       const trip = await this.dbService.getItem<Trip>('trip', id);
       await this.dbService.deleteItem('trip', trip.id);
       await Promise.all(
-        trip.sign.map((v) => this.dbService.deleteItem('sign', v.id))
+        (trip.sign ?? []).map((v) => this.dbService.deleteItem('sign', v.id))
       );
     } catch {
       throw new InternalServerError(`delete trip ${id} fail`);

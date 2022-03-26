@@ -26,7 +26,7 @@ export type Trip = {
   code: string;
   status: 'pending' | 'pass' | 'reject';
 
-  sign: Sign[];
+  sign?: Sign[];
 
   dateCreated: number;
   dateUpdated: number;
@@ -59,7 +59,7 @@ export class TripEntity implements Trip {
   public status: 'pending' | 'pass' | 'reject';
 
   @relatedAttributeMany()
-  public sign: Sign[];
+  public sign?: Sign[];
 
   public dateCreated: number;
   public dateUpdated: number;
@@ -82,7 +82,7 @@ export class TripEntity implements Trip {
     this.ownerLine = input.ownerLine;
     this.code = input.code;
     this.status = input.status;
-    this.sign = input.sign.map((v) => new SignEntity(v));
+    this.sign = input.sign?.map((v) => new SignEntity(v));
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }

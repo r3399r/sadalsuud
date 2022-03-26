@@ -1,9 +1,15 @@
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import MoreIcon from '@mui/icons-material/More';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import FlightIcon from '@mui/icons-material/Flight';
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Paper,
   Table,
   TableBody,
@@ -16,21 +22,44 @@ import { GetTripsDetailResponse } from '@y-celestial/sadalsuud-service';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
-import { getDetailedTrips } from 'src/service/TripService';
+import { deleteTripById, getDetailedTrips } from 'src/service/TripService';
+import style from './TripList.module.scss';
 
 const TripList = () => {
   const dispatch = useDispatch();
   const [trips, setTrips] = useState<GetTripsDetailResponse>();
+  const [selected, setSelected] = useState<string>();
+
+  const handleClickOpen = (id: string) => () => setSelected(id);
+
+  const handleClose = () => setSelected(undefined);
+
+  const onDelete = () => {
+    setSelected(undefined);
+    deleteTripById(selected ?? 'xxx')
+      .then(() => {
+        getTrips();
+        dispatch(openSnackbar({ severity: 'success', message: '刪除成功' }));
+      })
+      .catch(() => {
+        dispatch(openSnackbar({ severity: 'error', message: '刪除失敗，請重試' }));
+      });
+  };
 
   useEffect(() => {
+    getTrips();
+  }, []);
+
+  const getTrips = () => {
     getDetailedTrips()
       .then((res) => setTrips(res))
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
       });
-  }, []);
+  };
 
   return (
     <>
@@ -67,17 +96,36 @@ const TripList = () => {
                     <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>{format(v.dateUpdated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>
-                      {v.status === 'pending' && <CheckIcon />}
-                      {v.status === 'pending' && <CloseIcon />}
-                      <MoreIcon />
-                      <MeetingRoomIcon />
-                      <DeleteForeverIcon />
+                      {v.status === 'pending' && <CheckIcon className={style.clickable} />}
+                      {v.status === 'pending' && <CloseIcon className={style.clickable} />}
+                      <Link to={`/trips/${v.id}`} target="_blank">
+                        <FlightIcon />
+                      </Link>
+                      <Link to={`/trips/${v.id}/discuss`} target="_blank">
+                        <FactCheckIcon />
+                      </Link>
+                      <DeleteForeverIcon
+                        className={style.clickable}
+                        onClick={handleClickOpen(v.id)}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={selected !== undefined} onClose={handleClose}>
+        <DialogTitle>刪除出遊</DialogTitle>
+        <DialogContent>
+          <DialogContentText>確定刪除此出遊? 此動作不可回復。</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>取消</Button>
+          <Button variant="contained" color="error" onClick={onDelete}>
+            確定
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

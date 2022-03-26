@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import FlightIcon from '@mui/icons-material/Flight';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
   Button,
   Dialog,
@@ -10,6 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -27,39 +29,38 @@ import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { deleteTripById, getDetailedTrips } from 'src/service/TripService';
 import style from './TripList.module.scss';
+import VerifyForm from './VerifyForm';
 
 const TripList = () => {
   const dispatch = useDispatch();
   const [trips, setTrips] = useState<GetTripsDetailResponse>();
-  const [selected, setSelected] = useState<string>();
+  const [deletedId, setDeletedId] = useState<string>();
+  const [verifiedId, setVerifiedId] = useState<string>();
 
-  const handleClickOpen = (id: string) => () => setSelected(id);
+  const handleClickOpen = (id: string) => () => setDeletedId(id);
 
-  const handleClose = () => setSelected(undefined);
+  const handleClose = () => setDeletedId(undefined);
 
   const onDelete = () => {
-    setSelected(undefined);
-    deleteTripById(selected ?? 'xxx')
+    deleteTripById(deletedId ?? 'xxx')
       .then(() => {
-        getTrips();
         dispatch(openSnackbar({ severity: 'success', message: '刪除成功' }));
       })
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '刪除失敗，請重試' }));
+      })
+      .finally(() => {
+        setDeletedId(undefined);
       });
   };
 
   useEffect(() => {
-    getTrips();
-  }, []);
-
-  const getTrips = () => {
     getDetailedTrips()
       .then((res) => setTrips(res))
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
       });
-  };
+  }, [deletedId, verifiedId]);
 
   return (
     <>
@@ -92,12 +93,29 @@ const TripList = () => {
                     <TableCell>
                       {v.ownerName} {v.ownerPhone} {v.ownerLine}
                     </TableCell>
-                    <TableCell>{v.status}</TableCell>
+                    <TableCell>
+                      {v.status === 'pending' && (
+                        <QuestionMarkIcon
+                          className={style.clickable}
+                          onClick={() => setVerifiedId(v.id)}
+                        />
+                      )}
+                      {v.status === 'pass' && (
+                        <CheckIcon
+                          className={style.clickable}
+                          onClick={() => setVerifiedId(v.id)}
+                        />
+                      )}
+                      {v.status === 'reject' && (
+                        <CloseIcon
+                          className={style.clickable}
+                          onClick={() => setVerifiedId(v.id)}
+                        />
+                      )}
+                    </TableCell>
                     <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>{format(v.dateUpdated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>
-                      {v.status === 'pending' && <CheckIcon className={style.clickable} />}
-                      {v.status === 'pending' && <CloseIcon className={style.clickable} />}
                       <Link to={`/trips/${v.id}`} target="_blank">
                         <FlightIcon />
                       </Link>
@@ -114,7 +132,12 @@ const TripList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Dialog open={selected !== undefined} onClose={handleClose}>
+      <Modal open={verifiedId !== undefined}>
+        <>
+          <VerifyForm id={verifiedId} onClose={() => setVerifiedId(undefined)} />
+        </>
+      </Modal>
+      <Dialog open={deletedId !== undefined} onClose={handleClose}>
         <DialogTitle>刪除出遊</DialogTitle>
         <DialogContent>
           <DialogContentText>確定刪除此出遊? 此動作不可回復。</DialogContentText>

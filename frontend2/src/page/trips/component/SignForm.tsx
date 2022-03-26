@@ -1,8 +1,8 @@
+import { Button } from '@mui/material';
 import { PutTripsSignRequest } from '@y-celestial/sadalsuud-service';
 import { format } from 'date-fns';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import Button from 'src/component/Button';
 import FormInput from 'src/component/FormInput';
 import FormRadio from 'src/component/FormRadio';
 import { openSnackbar } from 'src/redux/uiSlice';

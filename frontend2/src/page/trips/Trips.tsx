@@ -1,7 +1,6 @@
-import { Modal } from '@mui/material';
+import { Button, Modal } from '@mui/material';
 import { GetTripsResponse } from '@y-celestial/sadalsuud-service';
 import { useEffect, useState } from 'react';
-import Button from 'src/component/Button';
 import Loader from 'src/component/Loader';
 import { getPeriodZh, getSimplifiedTrips } from 'src/service/TripService';
 import SignForm from './component/SignForm';

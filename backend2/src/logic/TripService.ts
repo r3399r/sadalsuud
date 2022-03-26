@@ -1,8 +1,4 @@
-import {
-  BadRequestError,
-  DbService,
-  InternalServerError,
-} from '@y-celestial/service';
+import { DbService, InternalServerError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -10,6 +6,7 @@ import {
   GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
+  PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
 import { Sign, SignEntity } from 'src/model/entity/Sign';
@@ -94,8 +91,6 @@ export class TripService {
   }
 
   public async signTrip(id: string, body: PutTripsSignRequest) {
-    if (body.forWho === 'kid' && body.accompany === undefined)
-      throw new BadRequestError('accompany should not be empty');
     const newSign = new SignEntity({
       id: uuidv4(),
       name: body.name,
@@ -148,5 +143,25 @@ export class TripService {
     } catch {
       throw new InternalServerError(`delete trip ${id} fail`);
     }
+  }
+
+  public async verifyTrip(id: string, body: PutTripsIdVerifyRequest) {
+    const trip = await this.dbService.getItem<Trip>('trip', id);
+
+    let updatedTrip: Trip;
+    if (body.pass === 'yes')
+      updatedTrip = {
+        ...trip,
+        status: 'pass',
+        expiredDate: body.expiredDate,
+        notifyDate: body.notifyDate,
+      };
+    else
+      updatedTrip = {
+        ...trip,
+        status: 'reject',
+        reason: body.reason,
+      };
+    await this.dbService.putItem<Trip>(new TripEntity(updatedTrip));
   }
 }

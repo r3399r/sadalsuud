@@ -65,3 +65,14 @@ export type GetTripsIdResponse = {
   dateCreated: number;
   dateUpdated: number;
 };
+
+export type PutTripsIdVerifyRequest =
+  | {
+      pass: 'yes';
+      expiredDate: string;
+      notifyDate: string;
+    }
+  | {
+      pass: 'no';
+      reason: string;
+    };

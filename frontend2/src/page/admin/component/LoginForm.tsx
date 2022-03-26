@@ -1,7 +1,7 @@
+import { Button } from '@mui/material';
 import { PostLoginRequest } from '@y-celestial/sadalsuud-service';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import Button from 'src/component/Button';
 import FormInput from 'src/component/FormInput';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { login } from 'src/service/AuthService';

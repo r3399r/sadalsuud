@@ -1,4 +1,4 @@
-import { BadRequestError, DbService } from '@y-celestial/service';
+import { DbService, InternalServerError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { PostTripsRequest } from 'src/model/api/Trip';
 import { Trip } from 'src/model/entity/Trip';
@@ -11,6 +11,7 @@ describe('TripService', () => {
   let tripService: TripService;
   let mockDbService: any;
   let dummyTrip: Trip;
+  let dummyTripWithSign: Trip;
 
   beforeAll(() => {
     dummyTrip = {
@@ -31,9 +32,22 @@ describe('TripService', () => {
       ownerLine: 'test-owner-line',
       code: '123456',
       status: 'pending',
-      sign: [],
       dateCreated: 2,
       dateUpdated: 3,
+    };
+    dummyTripWithSign = {
+      ...dummyTrip,
+      sign: [
+        {
+          id: 'sign-id',
+          name: 'sign-name',
+          phone: 'sign-phone',
+          yearOfBirth: '1234',
+          isSelf: true,
+          dateCreated: 12,
+          dateUpdated: 34,
+        },
+      ],
     };
   });
 
@@ -44,7 +58,8 @@ describe('TripService', () => {
     mockDbService.createItem = jest.fn();
     mockDbService.putItem = jest.fn();
     mockDbService.getItem = jest.fn(() => dummyTrip);
-    mockDbService.getItems = jest.fn(() => [dummyTrip]);
+    mockDbService.getItems = jest.fn(() => [dummyTrip, dummyTripWithSign]);
+    mockDbService.deleteItem = jest.fn();
 
     tripService = bindings.get<TripService>(TripService);
   });
@@ -131,16 +146,17 @@ describe('TripService', () => {
       expect(mockDbService.putItem).toBeCalledTimes(1);
     });
 
-    it('should fail conditionally', async () => {
-      await expect(
-        tripService.signTrip('id', {
-          name: 'a',
-          phone: 'b',
-          line: 'c',
-          yearOfBirth: 'd',
-          forWho: 'kid',
-        })
-      ).rejects.toThrow(BadRequestError);
+    it('should work for second sign', async () => {
+      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      await tripService.signTrip('id', {
+        name: 'a',
+        phone: 'b',
+        line: 'c',
+        yearOfBirth: 'd',
+        forWho: 'self',
+      });
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockDbService.putItem).toBeCalledTimes(1);
     });
   });
 
@@ -179,7 +195,60 @@ describe('TripService', () => {
           dateCreated: 2,
           dateUpdated: 3,
         },
+        {
+          id: 'test-id',
+          topic: 'test-topic',
+          date: 'test-date',
+          ownerName: 'test-owner-name',
+          ownerPhone: 'test-owner-phone',
+          ownerLine: 'test-owner-line',
+          code: '123456',
+          status: 'pending',
+          signs: 1,
+          dateCreated: 2,
+          dateUpdated: 3,
+        },
       ]);
+    });
+  });
+
+  describe('deleteTripById', () => {
+    it('should work without sign', async () => {
+      await tripService.deleteTripById('id');
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockDbService.deleteItem).toBeCalledTimes(1);
+    });
+
+    it('should work with sign', async () => {
+      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      await tripService.deleteTripById('id');
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockDbService.deleteItem).toBeCalledTimes(2);
+    });
+
+    it('should fail', async () => {
+      mockDbService.deleteItem = jest.fn().mockRejectedValue('');
+      await expect(() => tripService.deleteTripById('id')).rejects.toThrow(
+        InternalServerError
+      );
+    });
+  });
+
+  describe('verifyTrip', () => {
+    it('should work for pass', async () => {
+      await tripService.verifyTrip('id', {
+        pass: 'yes',
+        expiredDate: '1234',
+        notifyDate: '2345',
+      });
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockDbService.putItem).toBeCalledTimes(1);
+    });
+
+    it('should work for reject', async () => {
+      await tripService.verifyTrip('id', { pass: 'no', reason: 'abc' });
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockDbService.putItem).toBeCalledTimes(1);
     });
   });
 });

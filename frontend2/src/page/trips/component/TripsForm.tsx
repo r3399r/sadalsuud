@@ -1,8 +1,8 @@
+import { Button } from '@mui/material';
 import { PostTripsRequest } from '@y-celestial/sadalsuud-service';
 import { format } from 'date-fns';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import Button from 'src/component/Button';
 import FormInput from 'src/component/FormInput';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { registerTrip } from 'src/service/TripService';

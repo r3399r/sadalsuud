@@ -3,6 +3,7 @@ import {
   GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
+  PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from '@y-celestial/sadalsuud-service';
 import * as http from 'src/util/http';
@@ -45,4 +46,8 @@ export const getTripById = async (id: string) => {
 
 export const deleteTripById = async (id: string) => {
   await http.authDelete(`trips/${id}`);
+};
+
+export const verifyTrip = async (id: string, data: PutTripsIdVerifyRequest) => {
+  await http.authPut<void, PutTripsIdVerifyRequest>(`trips/${id}/verify`, data);
 };

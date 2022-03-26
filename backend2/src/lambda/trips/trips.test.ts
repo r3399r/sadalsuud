@@ -34,6 +34,8 @@ describe('trips', () => {
     mockTripService.getSimplifiedTrips = jest.fn(() => [dummyTrip]);
     mockTripService.getTripForAttendee = jest.fn(() => dummyTrip);
     mockTripService.getDetailedTrips = jest.fn(() => [dummyTrip]);
+    mockTripService.deleteTripById = jest.fn();
+    mockTripService.verifyTrip = jest.fn();
   });
 
   describe('/api/trips', () => {
@@ -216,12 +218,86 @@ describe('trips', () => {
       );
     });
 
+    it('DELETE should work', async () => {
+      event = {
+        resource: '/api/trips/{id}',
+        httpMethod: 'DELETE',
+        headers: null,
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(undefined)
+      );
+      expect(mockTripService.deleteTripById).toBeCalledTimes(1);
+    });
+
     it('unknown http method should fail', async () => {
       event = {
         resource: '/api/trips/{id}',
         httpMethod: 'XXX',
         headers: null,
         body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
+  });
+
+  describe('/api/trips/{id}/verify', () => {
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'PUT',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(undefined)
+      );
+      expect(mockTripService.verifyTrip).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail if null pathParameters', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'PUT',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('pathParameters should not be empty'))
+      );
+    });
+
+    it('PUT should fail if null body', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'PUT',
+        headers: null,
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}/verify',
+        httpMethod: 'XXX',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
         pathParameters: { id: 'id' },
         queryStringParameters: null,
       };

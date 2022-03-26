@@ -25,6 +25,9 @@ export type Trip = {
 
   code: string;
   status: 'pending' | 'pass' | 'reject';
+  expiredDate?: string;
+  notifyDate?: string;
+  reason?: string;
 
   sign?: Sign[];
 
@@ -57,6 +60,9 @@ export class TripEntity implements Trip {
 
   public code: string;
   public status: 'pending' | 'pass' | 'reject';
+  public expiredDate?: string;
+  public notifyDate?: string;
+  public reason?: string;
 
   @relatedAttributeMany()
   public sign?: Sign[];
@@ -82,6 +88,9 @@ export class TripEntity implements Trip {
     this.ownerLine = input.ownerLine;
     this.code = input.code;
     this.status = input.status;
+    this.expiredDate = input.expiredDate;
+    this.notifyDate = input.notifyDate;
+    this.reason = input.reason;
     this.sign = input.sign?.map((v) => new SignEntity(v));
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;

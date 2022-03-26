@@ -54,4 +54,7 @@ export const authRequest = async <T>(config: AxiosRequestConfig) => {
 export const authGet = async <T>(url: string, params?: any) =>
   await authRequest<T>({ url, params, method: 'get' });
 
+export const authPut = async <T, D>(url: string, data: D) =>
+  await authRequest<T>({ url, method: 'put', data });
+
 export const authDelete = async <T>(url: string) => await authRequest<T>({ url, method: 'delete' });

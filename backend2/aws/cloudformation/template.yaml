@@ -36,7 +36,7 @@ Resources:
       StageName: !Sub ${TargetEnvr}
       EndpointConfiguration: REGIONAL
       DefinitionBody: {
-          "swagger": "2.0",
+          "openapi": "3.0.1",
           "info": {
             "version": "2020-01-06T07:45:41Z",
             "title": !Sub "${Project}-${TargetEnvr}-api"
@@ -44,29 +44,34 @@ Resources:
           "paths": {
             "/api/login": {
               "post": {
-                "produces": ["application/json"],
-                "parameters" : [ {
-                  "in" : "body",
-                  "name" : "postLogin",
-                  "required" : true,
-                  "schema" : {
-                    "$ref" : "#/definitions/postLogin"
-                  }
-                } ],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postLogin"
+                      }
+                    }
+                  },
+                  "required": true
+                },
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
                       "Access-Control-Allow-Origin": {
-                        "type": "string"
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
                 },
-                "x-amazon-apigateway-request-validator" : "Validate body",
+                "x-amazon-apigateway-request-validator": "Validate body",
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
@@ -86,16 +91,19 @@ Resources:
             },
             "/api/trips": {
               "get": {
-                "produces": ["application/json"],
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
                       "Access-Control-Allow-Origin": {
-                        "type": "string"
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
@@ -117,29 +125,34 @@ Resources:
                 }
               },
               "post": {
-                "produces": ["application/json"],
-                "parameters" : [ {
-                  "in" : "body",
-                  "name" : "postTrips",
-                  "required" : true,
-                  "schema" : {
-                    "$ref" : "#/definitions/postTrips"
-                  }
-                } ],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postTrips"
+                      }
+                    }
+                  },
+                  "required": true
+                },
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
-                      "Access-Control-Allow-Origin": {
-                        "type": "string"
+                      "Access-Control-Allow-Origin" : {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
                 },
-                "x-amazon-apigateway-request-validator" : "Validate body",
+                "x-amazon-apigateway-request-validator": "Validate body",
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
@@ -159,25 +172,24 @@ Resources:
             },
             "/api/trips/detail": {
               "get": {
-                "produces": ["application/json"],
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
                       "Access-Control-Allow-Origin": {
-                        "type": "string"
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
                 },
-                "security": [
-                  {
-                    "auth": []
-                  }
-                ],
+                "security": [{"auth": []}],
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
@@ -197,22 +209,25 @@ Resources:
             },
             "/api/trips/{id}": {
               "get": {
-                "produces": ["application/json"],
-                "parameters" : [ {
-                  "name" : "id",
-                  "in" : "path",
-                  "required" : true,
-                  "type" : "string"
-                } ],
+                "parameters": [{
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {"type": "string"}
+                }],
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
                       "Access-Control-Allow-Origin": {
-                        "type": "string"
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
@@ -234,31 +249,30 @@ Resources:
                 }
               },
               "delete": {
-                "produces": ["application/json"],
-                "parameters" : [ {
-                  "name" : "id",
-                  "in" : "path",
-                  "required" : true,
-                  "type" : "string"
-                } ],
+                "parameters": [{
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {"type" : "string"}
+                }],
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
                       "Access-Control-Allow-Origin": {
-                        "type": "string"
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
                 },
-                "security": [
-                  {
-                    "auth": []
-                  }
-                ],
+                "security": [{"auth": []}],
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
@@ -278,29 +292,94 @@ Resources:
             },
             "/api/trips/{id}/sign": {
               "put": {
-                "produces": ["application/json"],
-                "parameters" : [ {
-                  "in" : "body",
-                  "name" : "putTripsIdSign",
-                  "required" : true,
-                  "schema" : {
-                    "$ref" : "#/definitions/putTripsIdSign"
-                  }
-                } ],
+                "parameters": [{
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {"type": "string"}
+                }],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/putTripsIdSign"
+                      }
+                    }
+                  },
+                  "required": true
+                },
                 "responses": {
                   "200": {
                     "description": "200 response",
-                    "schema": {
-                      "$ref": "#/definitions/Empty"
-                    },
                     "headers": {
                       "Access-Control-Allow-Origin": {
-                        "type": "string"
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
                       }
                     }
                   }
                 },
-                "x-amazon-apigateway-request-validator" : "Validate body",
+                "x-amazon-apigateway-request-validator": "Validate body",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:278497686406:function:${Project}-${TargetEnvr}-trips/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
+            "/api/trips/{id}/verify": {
+              "put": {
+                "parameters": [{
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {"type" : "string"}
+                }],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/putTripsIdVerify"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type" : "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [{"auth": []}],
+                "x-amazon-apigateway-request-validator": "Validate body",
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
@@ -359,15 +438,49 @@ Resources:
             },
             "putTripsIdSign": {
               "type" : "object",
-              "required": ["forWho", "phone", "name", "yearOfBirth"],
-              "properties": {
-                "forWho": {"type": "string", "enum": ["self", "kid"]},
-                "phone": {"type": "string"},
-                "line": {"type": "string"},
-                "name": {"type": "string"},
-                "yearOfBirth": {"type": "string"},
-                "accompany": {"type": "string", "enum": ["yes", "no"]}
-              }
+              "oneOf": [
+                {
+                  "properties": {
+                    "forWho": {"type": "string", "enum": ["self"]},
+                    "phone": {"type": "string"},
+                    "line": {"type": "string"},
+                    "name": {"type": "string"},
+                    "yearOfBirth": {"type": "string"}
+                  },
+                  "required": ["forWho","phone","name","yearOfBirth"]
+                },
+                {
+                  "properties": {
+                    "forWho": {"type": "string", "enum": ["kid"]},
+                    "phone": {"type": "string"},
+                    "line": {"type": "string"},
+                    "name": {"type": "string"},
+                    "yearOfBirth": {"type": "string"},
+                    "accompany": {"type": "string", "enum": ["yes", "no"]}
+                  },
+                  "required": ["forWho","phone","name","yearOfBirth","accompany"]
+                }
+              ]
+            },
+            "putTripsIdVerify": {
+              "type" : "object",
+              "oneOf": [
+                {
+                  "properties": {
+                    "pass": {"type": "string", "enum": ["yes"]},
+                    "expiredDate": {"type": "string"},
+                    "notifyDate": {"type": "string"}
+                  },
+                  "required": ["pass","expiredDate","notifyDate"]
+                },
+                {
+                  "properties": {
+                    "pass": {"type": "string", "enum": ["no"]},
+                    "reason": {"type": "string"}
+                  },
+                  "required": ["pass","reason"]
+                }
+              ]
             },
             "postLogin": {
               "type" : "object",

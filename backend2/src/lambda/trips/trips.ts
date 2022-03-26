@@ -14,6 +14,7 @@ import {
   GetTripsIdResponse,
   GetTripsResponse,
   PostTripsRequest,
+  PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
 
@@ -42,6 +43,9 @@ export async function trips(
         break;
       case '/api/trips/{id}/sign':
         res = await apiTripsIdSign(event, service);
+        break;
+      case '/api/trips/{id}/verify':
+        res = await apiTripsIdVerify(event, service);
         break;
       default:
         throw new InternalServerError('unknown resource');
@@ -94,16 +98,35 @@ async function apiTripsId(event: LambdaEvent, service: TripService) {
 }
 
 async function apiTripsIdSign(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
   switch (event.httpMethod) {
     case 'PUT':
-      if (event.pathParameters === null)
-        throw new BadRequestError('pathParameters should not be empty');
       if (event.body === null)
         throw new BadRequestError('body should not be empty');
 
       await service.signTrip(
         event.pathParameters.id,
         JSON.parse(event.body) as PutTripsSignRequest
+      );
+
+      return;
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdVerify(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      await service.verifyTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsIdVerifyRequest
       );
 
       return;

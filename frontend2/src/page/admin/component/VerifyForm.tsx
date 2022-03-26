@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-import { PutTripsIdVerifyRequest } from '@y-celestial/sadalsuud-service';
 import { format } from 'date-fns';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -9,7 +8,12 @@ import { openSnackbar } from 'src/redux/uiSlice';
 import { verifyTrip } from 'src/service/TripService';
 import style from './VerifyForm.module.scss';
 
-type Form = PutTripsIdVerifyRequest;
+type Form = {
+  pass: 'yes' | 'no';
+  expiredDate: string;
+  notifyDate: string;
+  reason: string;
+};
 
 type VerifyFormProps = { id?: string; onClose: () => void };
 
@@ -63,7 +67,7 @@ const VerifyForm = ({ id = 'zzz', onClose }: VerifyFormProps) => {
           minDate={new Date()}
           label="報名截止日"
           size="small"
-          error={(errors as { expiredDate: string }).expiredDate !== undefined}
+          error={errors.expiredDate !== undefined}
         />
       )}
       {pass === 'yes' && (
@@ -75,7 +79,7 @@ const VerifyForm = ({ id = 'zzz', onClose }: VerifyFormProps) => {
           minDate={new Date()}
           label="通知日"
           size="small"
-          error={(errors as { notifyDate: string }).notifyDate !== undefined}
+          error={errors.notifyDate !== undefined}
         />
       )}
       {pass === 'no' && (
@@ -85,7 +89,7 @@ const VerifyForm = ({ id = 'zzz', onClose }: VerifyFormProps) => {
           rules={{ required: true }}
           label="原因"
           size="small"
-          error={(errors as { reason: string }).reason !== undefined}
+          error={errors.reason !== undefined}
         />
       )}
       <div className={style.buttons}>

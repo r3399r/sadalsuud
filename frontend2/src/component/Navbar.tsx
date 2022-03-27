@@ -44,7 +44,7 @@ const Navbar = () => {
               常見問題
             </div>
           </div>
-          <div className={style.ver} onClick={onClick(Page.ADMIN)}>
+          <div className={style.ver} onDoubleClick={onClick(Page.ADMIN)}>
             當前版本: {packageJson.version}
           </div>
         </div>

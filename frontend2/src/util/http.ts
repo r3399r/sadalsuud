@@ -31,7 +31,7 @@ export const put = async <T, D>(url: string, data: D) =>
     method: 'put',
   });
 
-export const authRequest = async <T>(config: AxiosRequestConfig) => {
+const authRequest = async <T>(config: AxiosRequestConfig) => {
   try {
     const secret = localStorage.getItem('secret');
 
@@ -42,7 +42,7 @@ export const authRequest = async <T>(config: AxiosRequestConfig) => {
     });
   } catch (e) {
     const error = (e as AxiosError).response;
-    if (error?.statusText === 'Unauthorized') {
+    if (error?.data.message === 'Unauthorized') {
       localStorage.removeItem('secret');
       dispatch(reset());
       throw new Error('Unauthorized');

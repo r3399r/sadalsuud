@@ -1,9 +1,14 @@
-import { DbService, InternalServerError } from '@y-celestial/service';
+import {
+  DbService,
+  InternalServerError,
+  UnauthorizedError,
+} from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import {
   GetTripsDetailResponse,
   GetTripsIdResponse,
+  GetTripsIdSign,
   GetTripsResponse,
   PostTripsRequest,
   PutTripsIdVerifyRequest,
@@ -163,5 +168,12 @@ export class TripService {
         reason: body.reason,
       };
     await this.dbService.putItem<Trip>(new TripEntity(updatedTrip));
+  }
+
+  public async getSigns(id: string, code: string): Promise<GetTripsIdSign> {
+    const trip = await this.dbService.getItem<Trip>('trip', id);
+    if (code !== trip.code) throw new UnauthorizedError('wrong code');
+
+    return trip.sign ?? [];
   }
 }

@@ -36,6 +36,7 @@ describe('trips', () => {
     mockTripService.getDetailedTrips = jest.fn(() => [dummyTrip]);
     mockTripService.deleteTripById = jest.fn();
     mockTripService.verifyTrip = jest.fn();
+    mockTripService.getSigns = jest.fn(() => [dummyTrip]);
   });
 
   describe('/api/trips', () => {
@@ -130,6 +131,37 @@ describe('trips', () => {
   });
 
   describe('/api/trips/{id}/sign', () => {
+    it('GET should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'GET',
+        headers: null,
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: { code: 'code' },
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput([dummyTrip])
+      );
+      expect(mockTripService.getSigns).toBeCalledTimes(1);
+    });
+
+    it('GET should fail if null queryStringParameters', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'GET',
+        headers: null,
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(
+          new BadRequestError('queryStringParameters should not be empty')
+        )
+      );
+    });
+
     it('PUT should work', async () => {
       event = {
         resource: '/api/trips/{id}/sign',
@@ -145,20 +177,6 @@ describe('trips', () => {
       expect(mockTripService.signTrip).toBeCalledTimes(1);
     });
 
-    it('PUT should fail if null pathParameters', async () => {
-      event = {
-        resource: '/api/trips/{id}/sign',
-        httpMethod: 'PUT',
-        headers: null,
-        body: JSON.stringify({ a: '1' }),
-        pathParameters: null,
-        queryStringParameters: null,
-      };
-      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
-        errorOutput(new BadRequestError('pathParameters should not be empty'))
-      );
-    });
-
     it('PUT should fail if null body', async () => {
       event = {
         resource: '/api/trips/{id}/sign',
@@ -170,6 +188,20 @@ describe('trips', () => {
       };
       await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
         errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('should fail if null pathParameters', async () => {
+      event = {
+        resource: '/api/trips/{id}/sign',
+        httpMethod: 'PUT',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('pathParameters should not be empty'))
       );
     });
 

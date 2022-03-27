@@ -1,6 +1,7 @@
 import {
   GetTripsDetailResponse,
   GetTripsIdResponse,
+  GetTripsIdSign,
   GetTripsResponse,
   PostTripsRequest,
   PutTripsIdVerifyRequest,
@@ -50,4 +51,10 @@ export const deleteTripById = async (id: string) => {
 
 export const verifyTrip = async (id: string, data: PutTripsIdVerifyRequest) => {
   await http.authPut<void, PutTripsIdVerifyRequest>(`trips/${id}/verify`, data);
+};
+
+export const getSign = async (id: string, code: string) => {
+  const res = await http.get<GetTripsIdSign>(`trips/${id}/sign`, { code });
+
+  return res.data;
 };

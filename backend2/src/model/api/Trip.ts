@@ -1,3 +1,5 @@
+import { Sign } from 'src/model/entity/Sign';
+
 export type PostTripsRequest = {
   ownerName: string;
   ownerPhone: string;
@@ -76,3 +78,5 @@ export type PutTripsIdVerifyRequest =
       pass: 'no';
       reason: string;
     };
+
+export type GetTripsIdSign = Sign[];

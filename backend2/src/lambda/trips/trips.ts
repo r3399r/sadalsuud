@@ -12,6 +12,7 @@ import { TripService } from 'src/logic/TripService';
 import {
   GetTripsDetailResponse,
   GetTripsIdResponse,
+  GetTripsIdSign,
   GetTripsResponse,
   PostTripsRequest,
   PutTripsIdVerifyRequest,
@@ -29,7 +30,8 @@ export async function trips(
       | void
       | GetTripsResponse
       | GetTripsIdResponse
-      | GetTripsDetailResponse;
+      | GetTripsDetailResponse
+      | GetTripsIdSign;
 
     switch (event.resource) {
       case '/api/trips':
@@ -101,6 +103,14 @@ async function apiTripsIdSign(event: LambdaEvent, service: TripService) {
   if (event.pathParameters === null)
     throw new BadRequestError('pathParameters should not be empty');
   switch (event.httpMethod) {
+    case 'GET':
+      if (event.queryStringParameters === null)
+        throw new BadRequestError('queryStringParameters should not be empty');
+
+      return await service.getSigns(
+        event.pathParameters.id,
+        event.queryStringParameters.code
+      );
     case 'PUT':
       if (event.body === null)
         throw new BadRequestError('body should not be empty');

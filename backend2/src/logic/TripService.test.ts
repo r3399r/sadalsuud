@@ -1,4 +1,8 @@
-import { DbService, InternalServerError } from '@y-celestial/service';
+import {
+  DbService,
+  InternalServerError,
+  UnauthorizedError,
+} from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { PostTripsRequest } from 'src/model/api/Trip';
 import { Trip } from 'src/model/entity/Trip';
@@ -249,6 +253,36 @@ describe('TripService', () => {
       await tripService.verifyTrip('id', { pass: 'no', reason: 'abc' });
       expect(mockDbService.getItem).toBeCalledTimes(1);
       expect(mockDbService.putItem).toBeCalledTimes(1);
+    });
+  });
+
+  describe('getSigns', () => {
+    it('should work with empty sign', async () => {
+      expect(await tripService.getSigns('id', '123456')).toStrictEqual([]);
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+    });
+
+    it('should work with sign', async () => {
+      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      expect(await tripService.getSigns('id', '123456')).toStrictEqual([
+        {
+          id: 'sign-id',
+          name: 'sign-name',
+          phone: 'sign-phone',
+          yearOfBirth: '1234',
+          isSelf: true,
+          dateCreated: 12,
+          dateUpdated: 34,
+        },
+      ]);
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+    });
+
+    it('should fail', async () => {
+      await expect(() => tripService.getSigns('id', 'xxxxx')).rejects.toThrow(
+        UnauthorizedError
+      );
+      expect(mockDbService.getItem).toBeCalledTimes(1);
     });
   });
 });

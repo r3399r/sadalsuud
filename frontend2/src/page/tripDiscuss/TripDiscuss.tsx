@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { getSign } from 'src/service/TripService';
 import CodeForm from './component/CodeForm';
+import CommentInput from './component/CommentInput';
 
 const TripDiscuss = () => {
   const dispatch = useDispatch();
@@ -72,7 +73,9 @@ const TripDiscuss = () => {
               <TableCell>{v.isSelf ? '志工' : '星兒'}</TableCell>
               <TableCell>{v.isSelf ? '-' : v.accompany ? '是' : '否'}</TableCell>
               <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
-              <TableCell>{v.comment}</TableCell>
+              <TableCell>
+                <CommentInput initialValue={v.comment} id={v.id} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

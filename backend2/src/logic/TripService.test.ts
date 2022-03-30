@@ -41,17 +41,7 @@ describe('TripService', () => {
     };
     dummyTripWithSign = {
       ...dummyTrip,
-      sign: [
-        {
-          id: 'sign-id',
-          name: 'sign-name',
-          phone: 'sign-phone',
-          yearOfBirth: '1234',
-          isSelf: true,
-          dateCreated: 12,
-          dateUpdated: 34,
-        },
-      ],
+      signId: ['sign-id'],
     };
   });
 
@@ -264,18 +254,8 @@ describe('TripService', () => {
 
     it('should work with sign', async () => {
       mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
-      expect(await tripService.getSigns('id', '123456')).toStrictEqual([
-        {
-          id: 'sign-id',
-          name: 'sign-name',
-          phone: 'sign-phone',
-          yearOfBirth: '1234',
-          isSelf: true,
-          dateCreated: 12,
-          dateUpdated: 34,
-        },
-      ]);
-      expect(mockDbService.getItem).toBeCalledTimes(1);
+      await tripService.getSigns('id', '123456');
+      expect(mockDbService.getItem).toBeCalledTimes(2);
     });
 
     it('should fail', async () => {

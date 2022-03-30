@@ -72,7 +72,7 @@ export class TripService {
         ownerLine: v.ownerLine,
         code: v.code,
         status: v.status,
-        signs: v.sign ? v.sign.length : 0,
+        signs: v.signId ? v.signId.length : 0,
         dateCreated: v.dateCreated,
         dateUpdated: v.dateUpdated,
       }))
@@ -113,7 +113,7 @@ export class TripService {
     await this.dbService.putItem<Trip>(
       new TripEntity({
         ...trip,
-        sign: [...(trip.sign ?? []), newSign],
+        signId: [...(trip.signId ?? []), newSign.id],
         dateUpdated: Date.now(),
       })
     );
@@ -143,7 +143,7 @@ export class TripService {
       const trip = await this.dbService.getItem<Trip>('trip', id);
       await this.dbService.deleteItem('trip', trip.id);
       await Promise.all(
-        (trip.sign ?? []).map((v) => this.dbService.deleteItem('sign', v.id))
+        (trip.signId ?? []).map((id) => this.dbService.deleteItem('sign', id))
       );
     } catch {
       throw new InternalServerError(`delete trip ${id} fail`);
@@ -173,7 +173,10 @@ export class TripService {
   public async getSigns(id: string, code: string): Promise<GetTripsIdSign> {
     const trip = await this.dbService.getItem<Trip>('trip', id);
     if (code !== trip.code) throw new UnauthorizedError('wrong code');
+    if (trip.signId === undefined) return [];
 
-    return trip.sign ?? [];
+    return await Promise.all(
+      trip.signId.map((id) => this.dbService.getItem<Sign>('sign', id))
+    );
   }
 }

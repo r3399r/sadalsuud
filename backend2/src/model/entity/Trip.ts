@@ -3,7 +3,6 @@ import {
   primaryAttribute,
   relatedAttributeMany,
 } from '@y-celestial/service';
-import { Sign, SignEntity } from './Sign';
 
 export type Trip = {
   id: string;
@@ -29,7 +28,7 @@ export type Trip = {
   notifyDate?: string;
   reason?: string;
 
-  sign?: Sign[];
+  signId?: string[];
 
   dateCreated: number;
   dateUpdated: number;
@@ -64,8 +63,8 @@ export class TripEntity implements Trip {
   public notifyDate?: string;
   public reason?: string;
 
-  @relatedAttributeMany()
-  public sign?: Sign[];
+  @relatedAttributeMany('sign')
+  public signId?: string[];
 
   public dateCreated: number;
   public dateUpdated: number;
@@ -91,7 +90,7 @@ export class TripEntity implements Trip {
     this.expiredDate = input.expiredDate;
     this.notifyDate = input.notifyDate;
     this.reason = input.reason;
-    this.sign = input.sign?.map((v) => new SignEntity(v));
+    this.signId = input.signId;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
   }

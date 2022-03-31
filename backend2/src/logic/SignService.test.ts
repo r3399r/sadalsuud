@@ -18,6 +18,7 @@ describe('SignService', () => {
       phone: 'test-phone',
       yearOfBirth: 'test-year',
       isSelf: true,
+      status: 'pending',
       dateCreated: 1,
       dateUpdated: 2,
     };

@@ -37,6 +37,7 @@ describe('trips', () => {
     mockTripService.deleteTripById = jest.fn();
     mockTripService.verifyTrip = jest.fn();
     mockTripService.getSigns = jest.fn(() => [dummyTrip]);
+    mockTripService.reviseMember = jest.fn();
   });
 
   describe('/api/trips', () => {
@@ -121,6 +122,65 @@ describe('trips', () => {
         httpMethod: 'XXX',
         headers: null,
         body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new InternalServerError('unknown http method'))
+      );
+    });
+  });
+
+  describe('/api/trips/{id}/member', () => {
+    it('PUT should work', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'PUT',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        successOutput(undefined)
+      );
+      expect(mockTripService.reviseMember).toBeCalledTimes(1);
+    });
+
+    it('PUT should fail if null body', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'PUT',
+        headers: null,
+        body: null,
+        pathParameters: { id: 'id' },
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('body should not be empty'))
+      );
+    });
+
+    it('should fail if null pathParameters', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'PUT',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
+        pathParameters: null,
+        queryStringParameters: null,
+      };
+      await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
+        errorOutput(new BadRequestError('pathParameters should not be empty'))
+      );
+    });
+
+    it('unknown http method should fail', async () => {
+      event = {
+        resource: '/api/trips/{id}/member',
+        httpMethod: 'XXX',
+        headers: null,
+        body: JSON.stringify({ a: '1' }),
         pathParameters: { id: 'id' },
         queryStringParameters: null,
       };

@@ -11,6 +11,7 @@ import {
   GetTripsIdSign,
   GetTripsResponse,
   PostTripsRequest,
+  PutTripsIdMember,
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
@@ -105,6 +106,7 @@ export class TripService {
       isSelf: body.forWho === 'self',
       accompany:
         body.accompany === undefined ? undefined : body.accompany === 'yes',
+      status: 'pending',
       dateCreated: Date.now(),
       dateUpdated: Date.now(),
     });
@@ -177,6 +179,21 @@ export class TripService {
 
     return await Promise.all(
       trip.signId.map((id) => this.dbService.getItem<Sign>('sign', id))
+    );
+  }
+
+  public async reviseMember(id: string, body: PutTripsIdMember) {
+    const trip = await this.dbService.getItem<Trip>('trip', id);
+    await Promise.all(
+      (trip.signId ?? []).map(async (v) => {
+        const sign = await this.dbService.getItem<Sign>('sign', v);
+        await this.dbService.putItem<Sign>(
+          new SignEntity({
+            ...sign,
+            status: body.signId.includes(v) ? 'bingo' : 'sorry',
+          })
+        );
+      })
     );
   }
 }

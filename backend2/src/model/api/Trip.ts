@@ -80,3 +80,7 @@ export type PutTripsIdVerifyRequest =
     };
 
 export type GetTripsIdSign = Sign[];
+
+export type PutTripsIdMember = {
+  signId: string[];
+};

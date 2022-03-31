@@ -41,7 +41,7 @@ describe('TripService', () => {
     };
     dummyTripWithSign = {
       ...dummyTrip,
-      signId: ['sign-id'],
+      signId: ['sign-id', 'sign-id2'],
     };
   });
 
@@ -198,7 +198,7 @@ describe('TripService', () => {
           ownerLine: 'test-owner-line',
           code: '123456',
           status: 'pending',
-          signs: 1,
+          signs: 2,
           dateCreated: 2,
           dateUpdated: 3,
         },
@@ -217,7 +217,7 @@ describe('TripService', () => {
       mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
       await tripService.deleteTripById('id');
       expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.deleteItem).toBeCalledTimes(2);
+      expect(mockDbService.deleteItem).toBeCalledTimes(3);
     });
 
     it('should fail', async () => {
@@ -255,7 +255,7 @@ describe('TripService', () => {
     it('should work with sign', async () => {
       mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
       await tripService.getSigns('id', '123456');
-      expect(mockDbService.getItem).toBeCalledTimes(2);
+      expect(mockDbService.getItem).toBeCalledTimes(3);
     });
 
     it('should fail', async () => {
@@ -264,5 +264,25 @@ describe('TripService', () => {
       );
       expect(mockDbService.getItem).toBeCalledTimes(1);
     });
+  });
+
+  describe('reviseMember', () => {
+    it('should work', async () => {
+      await tripService.reviseMember('id', { signId: ['123456'] });
+      expect(mockDbService.getItem).toBeCalledTimes(1);
+    });
+
+    it('should work with sign', async () => {
+      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      await tripService.reviseMember('id', { signId: ['sign-id'] });
+      expect(mockDbService.getItem).toBeCalledTimes(3);
+    });
+
+    // it('should fail', async () => {
+    //   await expect(() => tripService.getSigns('id', 'xxxxx')).rejects.toThrow(
+    //     UnauthorizedError
+    //   );
+    //   expect(mockDbService.getItem).toBeCalledTimes(1);
+    // });
   });
 });

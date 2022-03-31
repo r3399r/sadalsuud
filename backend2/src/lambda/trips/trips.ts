@@ -15,6 +15,7 @@ import {
   GetTripsIdSign,
   GetTripsResponse,
   PostTripsRequest,
+  PutTripsIdMember,
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
@@ -42,6 +43,9 @@ export async function trips(
         break;
       case '/api/trips/{id}':
         res = await apiTripsId(event, service);
+        break;
+      case '/api/trips/{id}/member':
+        res = await apiTripsIdMember(event, service);
         break;
       case '/api/trips/{id}/sign':
         res = await apiTripsIdSign(event, service);
@@ -94,6 +98,23 @@ async function apiTripsId(event: LambdaEvent, service: TripService) {
       await service.deleteTripById(event.pathParameters.id);
 
       return;
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdMember(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.reviseMember(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsIdMember
+      );
     default:
       throw new InternalServerError('unknown http method');
   }

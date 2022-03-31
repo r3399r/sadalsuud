@@ -9,6 +9,7 @@ export type Sign = {
   isSelf: boolean;
   accompany?: boolean;
 
+  status: 'bingo' | 'sorry' | 'pending';
   comment?: string;
 
   dateCreated: number;
@@ -29,6 +30,7 @@ export class SignEntity implements Sign {
   public isSelf: boolean;
   public accompany?: boolean;
 
+  public status: 'bingo' | 'sorry' | 'pending';
   public comment?: string;
 
   public dateCreated: number;
@@ -42,6 +44,7 @@ export class SignEntity implements Sign {
     this.yearOfBirth = input.yearOfBirth;
     this.isSelf = input.isSelf;
     this.accompany = input.accompany;
+    this.status = input.status;
     this.comment = input.comment;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;

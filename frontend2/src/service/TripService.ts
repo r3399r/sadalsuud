@@ -5,6 +5,7 @@ import {
   GetTripsResponse,
   PostTripsRequest,
   PutSignIdRequest,
+  PutTripsIdMember,
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from '@y-celestial/sadalsuud-service';
@@ -62,4 +63,8 @@ export const getSign = async (id: string, code: string) => {
 
 export const editSignComment = async (id: string, comment: string) => {
   await http.put<void, PutSignIdRequest>(`sign/${id}`, { comment });
+};
+
+export const setTripMember = async (id: string, signId: string[]) => {
+  await http.authPut<void, PutTripsIdMember>(`trips/${id}/member`, { signId });
 };

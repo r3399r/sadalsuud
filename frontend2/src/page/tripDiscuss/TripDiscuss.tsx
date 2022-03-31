@@ -1,4 +1,8 @@
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
+  Button,
   Paper,
   Table,
   TableBody,
@@ -13,9 +17,10 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { openSnackbar } from 'src/redux/uiSlice';
-import { getSign } from 'src/service/TripService';
+import { getSign, setTripMember } from 'src/service/TripService';
 import CodeForm from './component/CodeForm';
 import CommentInput from './component/CommentInput';
+import style from './TripDiscuss.module.scss';
 
 const TripDiscuss = () => {
   const dispatch = useDispatch();
@@ -25,12 +30,7 @@ const TripDiscuss = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (code !== undefined)
-      getSign(id ?? 'zzz', code)
-        .then((res) => setSigns(res))
-        .catch(() => {
-          dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
-        });
+    loadSignList();
   }, [id, code]);
 
   const handleClick = (_e: MouseEvent<unknown>, id: string) => {
@@ -38,49 +38,83 @@ const TripDiscuss = () => {
     else setSelected((prev) => new Set(prev.add(id)));
   };
 
+  const onButtonClick = () => {
+    setTripMember(id ?? 'zzz', [...selected])
+      .then(() => {
+        loadSignList();
+        dispatch(openSnackbar({ severity: 'success', message: '設定成功' }));
+      })
+      .catch((e: Error) => {
+        let message: string;
+        if (e.message === 'Unauthorized') message = '設定失敗，權限不足';
+        else message = '設定失敗，請重試';
+        dispatch(openSnackbar({ severity: 'error', message }));
+      });
+  };
+
+  const loadSignList = () => {
+    if (code !== undefined)
+      getSign(id ?? 'zzz', code)
+        .then((res) => setSigns(res))
+        .catch(() => {
+          dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
+        });
+  };
+
   if (signs === undefined) return <CodeForm setCode={(v: string) => setCode(v)} />;
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>名字</TableCell>
-            <TableCell>聯絡方式</TableCell>
-            <TableCell>出生年(歲)</TableCell>
-            <TableCell>志工/星兒</TableCell>
-            <TableCell>家長是否同行</TableCell>
-            <TableCell>報名時間</TableCell>
-            <TableCell>備註</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {signs.map((v) => (
-            <TableRow
-              key={v.id}
-              hover
-              onClick={(e) => handleClick(e, v.id)}
-              selected={selected.has(v.id)}
-            >
-              <TableCell>{v.name}</TableCell>
-              <TableCell>
-                {v.phone} {v.line}
-              </TableCell>
-              <TableCell>
-                {v.yearOfBirth} ({differenceInYears(Date.now(), new Date(`${v.yearOfBirth}/1/1`))}
-                歲)
-              </TableCell>
-              <TableCell>{v.isSelf ? '志工' : '星兒'}</TableCell>
-              <TableCell>{v.isSelf ? '-' : v.accompany ? '是' : '否'}</TableCell>
-              <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
-              <TableCell>
-                <CommentInput initialValue={v.comment} id={v.id} />
-              </TableCell>
+    <>
+      <TableContainer component={Paper}>
+        <Table className={style.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>名字</TableCell>
+              <TableCell>聯絡方式</TableCell>
+              <TableCell>出生年(歲)</TableCell>
+              <TableCell>志工/星兒</TableCell>
+              <TableCell>家長是否同行</TableCell>
+              <TableCell>出遊</TableCell>
+              <TableCell>報名時間</TableCell>
+              <TableCell>備註</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {signs.map((v) => (
+              <TableRow
+                key={v.id}
+                hover
+                onClick={(e) => handleClick(e, v.id)}
+                selected={selected.has(v.id)}
+              >
+                <TableCell>{v.name}</TableCell>
+                <TableCell>
+                  {v.phone} {v.line}
+                </TableCell>
+                <TableCell>
+                  {v.yearOfBirth} ({differenceInYears(Date.now(), new Date(`${v.yearOfBirth}/1/1`))}
+                  歲)
+                </TableCell>
+                <TableCell>{v.isSelf ? '志工' : '星兒'}</TableCell>
+                <TableCell>{v.isSelf ? '-' : v.accompany ? '是' : '否'}</TableCell>
+                <TableCell>
+                  {v.status === 'pending' && <QuestionMarkIcon />}
+                  {v.status === 'bingo' && <CheckIcon />}
+                  {v.status === 'sorry' && <CloseIcon />}
+                </TableCell>
+                <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
+                <TableCell>
+                  <CommentInput initialValue={v.comment} id={v.id} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button type="button" variant="contained" className={style.button} onClick={onButtonClick}>
+        設定出遊名單
+      </Button>
+    </>
   );
 };
 

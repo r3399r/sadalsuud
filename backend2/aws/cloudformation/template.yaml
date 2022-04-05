@@ -768,7 +768,7 @@ Resources:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneName: !Sub '${HostName}.'
-      Name: !If [IsProd, !Sub 'aqua.${HostName}.', !Sub 'aqua-${TargetEnvr}.${HostName}.']
+      Name: !If [IsProd, !Sub 'lucky-star.${HostName}.', !Sub 'lucky-star-${TargetEnvr}.${HostName}.']
       Type: A
       AliasTarget:
         HostedZoneId: Z2FDTNDATAQYW2
@@ -780,7 +780,7 @@ Resources:
     DependsOn: [ServerlessApi, S3Bucket]
     Properties:
       DistributionConfig:
-        Aliases: [!If [IsProd, !Sub 'aqua.${HostName}', !Sub 'aqua-${TargetEnvr}.${HostName}']]
+        Aliases: [!If [IsProd, !Sub 'lucky-star.${HostName}', !Sub 'lucky-star-${TargetEnvr}.${HostName}']]
         Origins:
         - DomainName: !Sub ${Project}-${TargetEnvr}.s3.ap-northeast-1.amazonaws.com
           Id: S3-hosted-website-ID
@@ -830,7 +830,7 @@ Resources:
           MaxTTL: 0
         PriceClass: PriceClass_200
         ViewerCertificate:
-          AcmCertificateArn: arn:aws:acm:us-east-1:278497686406:certificate/37c79ed4-212a-4920-b9cf-dc9b0b04fda8
+          AcmCertificateArn: arn:aws:acm:us-east-1:278497686406:certificate/8914c993-68c7-4e06-b741-def8fc0270ba
           MinimumProtocolVersion: TLSv1
           SslSupportMethod: sni-only
   ####################################

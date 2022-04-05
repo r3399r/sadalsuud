@@ -22,7 +22,9 @@ Parameters:
   TargetEnvr:
     Type: String
     Description: The target environment for API Gateway deployment.
-  HostName:
+  SubDomain:
+    Type: String
+  Domain:
     Type: String
 Conditions: 
   IsProd: !Equals [ !Ref TargetEnvr, prod ]
@@ -767,8 +769,8 @@ Resources:
   Route53RecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneName: !Sub '${HostName}.'
-      Name: !If [IsProd, !Sub 'lucky-star.${HostName}.', !Sub 'lucky-star-${TargetEnvr}.${HostName}.']
+      HostedZoneName: !Sub '${Domain}.'
+      Name: !If [IsProd, !Sub '${SubDomain}.${Domain}.', !Sub '${SubDomain}-${TargetEnvr}.${Domain}.']
       Type: A
       AliasTarget:
         HostedZoneId: Z2FDTNDATAQYW2
@@ -780,7 +782,7 @@ Resources:
     DependsOn: [ServerlessApi, S3Bucket]
     Properties:
       DistributionConfig:
-        Aliases: [!If [IsProd, !Sub 'lucky-star.${HostName}', !Sub 'lucky-star-${TargetEnvr}.${HostName}']]
+        Aliases: [!If [IsProd, !Sub '${SubDomain}.${Domain}', !Sub '${SubDomain}-${TargetEnvr}.${Domain}']]
         Origins:
         - DomainName: !Sub ${Project}-${TargetEnvr}.s3.ap-northeast-1.amazonaws.com
           Id: S3-hosted-website-ID

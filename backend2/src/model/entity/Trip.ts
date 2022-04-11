@@ -1,10 +1,14 @@
 import {
+  DbBase,
+  DbService,
   entity,
+  ModelBase,
   primaryAttribute,
   relatedAttributeMany,
 } from '@y-celestial/service';
+import { inject, injectable } from 'inversify';
 
-export type Trip = {
+export type Trip = DbBase & {
   id: string;
   topic: string;
   ad: string;
@@ -29,16 +33,13 @@ export type Trip = {
   reason?: string;
 
   signId?: string[];
-
-  dateCreated: number;
-  dateUpdated: number;
 };
 
 /**
  * Entity class for Trip
  */
 @entity('trip')
-export class TripEntity implements Trip {
+class TripEntity implements Trip {
   @primaryAttribute()
   public id: string;
   public topic: string;
@@ -66,8 +67,9 @@ export class TripEntity implements Trip {
   @relatedAttributeMany('sign')
   public signId?: string[];
 
-  public dateCreated: number;
-  public dateUpdated: number;
+  public dateCreated?: number;
+  public dateUpdated?: number;
+  public dateDeleted?: number;
 
   constructor(input: Trip) {
     this.id = input.id;
@@ -93,5 +95,48 @@ export class TripEntity implements Trip {
     this.signId = input.signId;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
+    this.dateDeleted = input.dateDeleted;
+  }
+}
+
+@injectable()
+export class TripModel implements ModelBase {
+  @inject(DbService)
+  private readonly dbService!: DbService;
+  private alias = 'trip';
+
+  async find(id: string) {
+    return await this.dbService.getItem<Trip>(this.alias, id);
+  }
+
+  async findAll() {
+    return await this.dbService.getItems<Trip>(this.alias);
+  }
+
+  async create(data: Trip): Promise<void> {
+    await this.dbService.createItem<Trip>(
+      new TripEntity({
+        ...data,
+        dateCreated: Date.now(),
+      })
+    );
+  }
+
+  async replace(data: Trip): Promise<void> {
+    await this.dbService.putItem<Trip>(
+      new TripEntity({
+        ...data,
+        dateUpdated: Date.now(),
+      })
+    );
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const trip = await this.find(id);
+    await this.replace({ ...trip, dateDeleted: Date.now() });
+  }
+
+  async hardDelete(id: string): Promise<void> {
+    await this.dbService.deleteItem(this.alias, id);
   }
 }

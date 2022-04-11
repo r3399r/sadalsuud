@@ -1,6 +1,13 @@
-import { entity, primaryAttribute } from '@y-celestial/service';
+import {
+  DbBase,
+  DbService,
+  entity,
+  ModelBase,
+  primaryAttribute,
+} from '@y-celestial/service';
+import { inject, injectable } from 'inversify';
 
-export type Sign = {
+export type Sign = DbBase & {
   id: string;
   name: string;
   phone: string;
@@ -11,16 +18,13 @@ export type Sign = {
 
   status: 'bingo' | 'sorry' | 'pending';
   comment?: string;
-
-  dateCreated: number;
-  dateUpdated: number;
 };
 
 /**
  * Entity class for Sign
  */
 @entity('sign')
-export class SignEntity implements Sign {
+class SignEntity implements Sign {
   @primaryAttribute()
   public id: string;
   public name: string;
@@ -33,8 +37,9 @@ export class SignEntity implements Sign {
   public status: 'bingo' | 'sorry' | 'pending';
   public comment?: string;
 
-  public dateCreated: number;
-  public dateUpdated: number;
+  public dateCreated?: number;
+  public dateUpdated?: number;
+  public dateDeleted?: number;
 
   constructor(input: Sign) {
     this.id = input.id;
@@ -48,5 +53,48 @@ export class SignEntity implements Sign {
     this.comment = input.comment;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
+    this.dateDeleted = input.dateDeleted;
+  }
+}
+
+@injectable()
+export class SignModel implements ModelBase {
+  @inject(DbService)
+  private readonly dbService!: DbService;
+  private alias = 'sign';
+
+  async find(id: string) {
+    return await this.dbService.getItem<Sign>(this.alias, id);
+  }
+
+  async findAll() {
+    return await this.dbService.getItems<Sign>(this.alias);
+  }
+
+  async create(data: Sign): Promise<void> {
+    await this.dbService.createItem<Sign>(
+      new SignEntity({
+        ...data,
+        dateCreated: Date.now(),
+      })
+    );
+  }
+
+  async replace(data: Sign): Promise<void> {
+    await this.dbService.putItem<Sign>(
+      new SignEntity({
+        ...data,
+        dateUpdated: Date.now(),
+      })
+    );
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const sign = await this.find(id);
+    await this.replace({ ...sign, dateDeleted: Date.now() });
+  }
+
+  async hardDelete(id: string): Promise<void> {
+    await this.dbService.deleteItem(this.alias, id);
   }
 }

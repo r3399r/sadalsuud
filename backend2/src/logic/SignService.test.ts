@@ -1,6 +1,5 @@
-import { DbService } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { Sign } from 'src/model/entity/Sign';
+import { Sign, SignModel } from 'src/model/entity/Sign';
 import { SignService } from './SignService';
 
 /**
@@ -8,7 +7,7 @@ import { SignService } from './SignService';
  */
 describe('SignService', () => {
   let signService: SignService;
-  let mockDbService: any;
+  let mockSignModel: any;
   let dummySign: Sign;
 
   beforeAll(() => {
@@ -25,11 +24,11 @@ describe('SignService', () => {
   });
 
   beforeEach(() => {
-    mockDbService = {};
-    bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
+    mockSignModel = {};
+    bindings.rebind<SignModel>(SignModel).toConstantValue(mockSignModel);
 
-    mockDbService.putItem = jest.fn();
-    mockDbService.getItem = jest.fn(() => dummySign);
+    mockSignModel.replace = jest.fn();
+    mockSignModel.find = jest.fn(() => dummySign);
 
     signService = bindings.get<SignService>(SignService);
   });
@@ -37,8 +36,8 @@ describe('SignService', () => {
   describe('modifyComment', () => {
     it('should work', async () => {
       await signService.modifyComment('id', { comment: 'aa' });
-      expect(mockDbService.putItem).toBeCalledTimes(1);
-      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockSignModel.replace).toBeCalledTimes(1);
+      expect(mockSignModel.find).toBeCalledTimes(1);
     });
   });
 });

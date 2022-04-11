@@ -1,8 +1,4 @@
-import {
-  DbService,
-  InternalServerError,
-  UnauthorizedError,
-} from '@y-celestial/service';
+import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -15,8 +11,8 @@ import {
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
-import { Sign, SignEntity } from 'src/model/entity/Sign';
-import { Trip, TripEntity } from 'src/model/entity/Trip';
+import { Sign, SignModel } from 'src/model/entity/Sign';
+import { Trip, TripModel } from 'src/model/entity/Trip';
 import { gen6DigitCode } from 'src/util/codeGenerator';
 import { compareKey } from 'src/util/compare';
 
@@ -25,24 +21,23 @@ import { compareKey } from 'src/util/compare';
  */
 @injectable()
 export class TripService {
-  @inject(DbService)
-  private readonly dbService!: DbService;
+  @inject(TripModel)
+  private readonly tripModel!: TripModel;
+
+  @inject(SignModel)
+  private readonly signModel!: SignModel;
 
   public async registerTrip(body: PostTripsRequest) {
-    const trip = new TripEntity({
+    await this.tripModel.create({
       ...body,
       id: uuidv4(),
       code: gen6DigitCode(),
       status: 'pending',
-      dateCreated: Date.now(),
-      dateUpdated: Date.now(),
     });
-
-    await this.dbService.createItem(trip);
   }
 
   public async getSimplifiedTrips(): Promise<GetTripsResponse> {
-    const trips = await this.dbService.getItems<Trip>('trip');
+    const trips = await this.tripModel.findAll();
 
     return trips
       .map((v) => ({
@@ -61,7 +56,7 @@ export class TripService {
   }
 
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
-    const trips = await this.dbService.getItems<Trip>('trip');
+    const trips = await this.tripModel.findAll();
 
     return trips
       .map((v) => ({
@@ -97,7 +92,7 @@ export class TripService {
   }
 
   public async signTrip(id: string, body: PutTripsSignRequest) {
-    const newSign = new SignEntity({
+    const newSign: Sign = {
       id: uuidv4(),
       name: body.name,
       phone: body.phone,
@@ -107,22 +102,17 @@ export class TripService {
       accompany:
         body.accompany === undefined ? undefined : body.accompany === 'yes',
       status: 'pending',
-      dateCreated: Date.now(),
-      dateUpdated: Date.now(),
+    };
+    const trip = await this.tripModel.find(id);
+    await this.signModel.create(newSign);
+    await this.tripModel.replace({
+      ...trip,
+      signId: [...(trip.signId ?? []), newSign.id],
     });
-    const trip = await this.dbService.getItem<Trip>('trip', id);
-    await this.dbService.createItem<Sign>(newSign);
-    await this.dbService.putItem<Trip>(
-      new TripEntity({
-        ...trip,
-        signId: [...(trip.signId ?? []), newSign.id],
-        dateUpdated: Date.now(),
-      })
-    );
   }
 
   public async getTripForAttendee(id: string): Promise<GetTripsIdResponse> {
-    const trip = await this.dbService.getItem<Trip>('trip', id);
+    const trip = await this.tripModel.find(id);
 
     return {
       id: trip.id,
@@ -142,10 +132,10 @@ export class TripService {
 
   public async deleteTripById(id: string) {
     try {
-      const trip = await this.dbService.getItem<Trip>('trip', id);
-      await this.dbService.deleteItem('trip', trip.id);
+      const trip = await this.tripModel.find(id);
+      await this.tripModel.hardDelete(id);
       await Promise.all(
-        (trip.signId ?? []).map((id) => this.dbService.deleteItem('sign', id))
+        (trip.signId ?? []).map((signId) => this.signModel.hardDelete(signId))
       );
     } catch {
       throw new InternalServerError(`delete trip ${id} fail`);
@@ -153,7 +143,7 @@ export class TripService {
   }
 
   public async verifyTrip(id: string, body: PutTripsIdVerifyRequest) {
-    const trip = await this.dbService.getItem<Trip>('trip', id);
+    const trip = await this.tripModel.find(id);
 
     let updatedTrip: Trip;
     if (body.pass === 'yes')
@@ -169,30 +159,28 @@ export class TripService {
         status: 'reject',
         reason: body.reason,
       };
-    await this.dbService.putItem<Trip>(new TripEntity(updatedTrip));
+    await this.tripModel.replace(updatedTrip);
   }
 
   public async getSigns(id: string, code: string): Promise<GetTripsIdSign> {
-    const trip = await this.dbService.getItem<Trip>('trip', id);
+    const trip = await this.tripModel.find(id);
     if (code !== trip.code) throw new UnauthorizedError('wrong code');
     if (trip.signId === undefined) return [];
 
     return await Promise.all(
-      trip.signId.map((id) => this.dbService.getItem<Sign>('sign', id))
+      trip.signId.map((signId) => this.signModel.find(signId))
     );
   }
 
   public async reviseMember(id: string, body: PutTripsIdMember) {
-    const trip = await this.dbService.getItem<Trip>('trip', id);
+    const trip = await this.tripModel.find(id);
     await Promise.all(
-      (trip.signId ?? []).map(async (v) => {
-        const sign = await this.dbService.getItem<Sign>('sign', v);
-        await this.dbService.putItem<Sign>(
-          new SignEntity({
-            ...sign,
-            status: body.signId.includes(v) ? 'bingo' : 'sorry',
-          })
-        );
+      (trip.signId ?? []).map(async (signId) => {
+        const sign = await this.signModel.find(signId);
+        await this.signModel.replace({
+          ...sign,
+          status: body.signId.includes(signId) ? 'bingo' : 'sorry',
+        });
       })
     );
   }

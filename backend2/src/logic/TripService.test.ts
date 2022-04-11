@@ -1,11 +1,8 @@
-import {
-  DbService,
-  InternalServerError,
-  UnauthorizedError,
-} from '@y-celestial/service';
+import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { PostTripsRequest } from 'src/model/api/Trip';
-import { Trip } from 'src/model/entity/Trip';
+import { Sign, SignModel } from 'src/model/entity/Sign';
+import { Trip, TripModel } from 'src/model/entity/Trip';
 import { TripService } from './TripService';
 
 /**
@@ -13,9 +10,11 @@ import { TripService } from './TripService';
  */
 describe('TripService', () => {
   let tripService: TripService;
-  let mockDbService: any;
+  let mockTripModel: any;
+  let mockSignModel: any;
   let dummyTrip: Trip;
   let dummyTripWithSign: Trip;
+  let dummySign: Sign;
 
   beforeAll(() => {
     dummyTrip = {
@@ -43,17 +42,33 @@ describe('TripService', () => {
       ...dummyTrip,
       signId: ['sign-id', 'sign-id2'],
     };
+    dummySign = {
+      id: 'sign-id',
+      name: 'test-name',
+      phone: 'test-phone',
+      yearOfBirth: 'test-year',
+      isSelf: true,
+      status: 'pending',
+      dateCreated: 1,
+      dateUpdated: 2,
+    };
   });
 
   beforeEach(() => {
-    mockDbService = {};
-    bindings.rebind<DbService>(DbService).toConstantValue(mockDbService);
+    mockTripModel = {};
+    mockSignModel = {};
+    bindings.rebind<TripModel>(TripModel).toConstantValue(mockTripModel);
+    bindings.rebind<SignModel>(SignModel).toConstantValue(mockSignModel);
 
-    mockDbService.createItem = jest.fn();
-    mockDbService.putItem = jest.fn();
-    mockDbService.getItem = jest.fn(() => dummyTrip);
-    mockDbService.getItems = jest.fn(() => [dummyTrip, dummyTripWithSign]);
-    mockDbService.deleteItem = jest.fn();
+    mockTripModel.create = jest.fn();
+    mockTripModel.replace = jest.fn();
+    mockTripModel.find = jest.fn(() => dummyTrip);
+    mockTripModel.findAll = jest.fn(() => [dummyTrip, dummyTripWithSign]);
+    mockTripModel.hardDelete = jest.fn();
+    mockSignModel.create = jest.fn();
+    mockSignModel.find = jest.fn(() => dummySign);
+    mockSignModel.replace = jest.fn();
+    mockSignModel.hardDelete = jest.fn();
 
     tripService = bindings.get<TripService>(TripService);
   });
@@ -61,7 +76,7 @@ describe('TripService', () => {
   describe('registerTrip', () => {
     it('should work', async () => {
       await tripService.registerTrip({} as PostTripsRequest);
-      expect(mockDbService.createItem).toBeCalledTimes(1);
+      expect(mockTripModel.create).toBeCalledTimes(1);
     });
   });
 
@@ -79,33 +94,33 @@ describe('TripService', () => {
         dateCreated: 2,
         dateUpdated: 3,
       };
-      mockDbService.getItems = jest.fn(() => [dummyTrip]);
+      mockTripModel.findAll = jest.fn(() => [dummyTrip]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([result]);
-      mockDbService.getItems = jest.fn(() => [
+      mockTripModel.findAll = jest.fn(() => [
         { ...dummyTrip, dismissTime: '11:00' },
       ]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([
         { ...result, period: 'morning' },
       ]);
-      mockDbService.getItems = jest.fn(() => [
+      mockTripModel.findAll = jest.fn(() => [
         { ...dummyTrip, dismissTime: '20:00' },
       ]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([
         { ...result, period: 'allday' },
       ]);
-      mockDbService.getItems = jest.fn(() => [
+      mockTripModel.findAll = jest.fn(() => [
         { ...dummyTrip, meetTime: '13:00', dismissTime: '14:00' },
       ]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([
         { ...result, period: 'afternoon' },
       ]);
-      mockDbService.getItems = jest.fn(() => [
+      mockTripModel.findAll = jest.fn(() => [
         { ...dummyTrip, meetTime: '13:00', dismissTime: '20:00' },
       ]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([
         { ...result, period: 'pm' },
       ]);
-      mockDbService.getItems = jest.fn(() => [
+      mockTripModel.findAll = jest.fn(() => [
         { ...dummyTrip, meetTime: '19:00', dismissTime: '20:00' },
       ]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([
@@ -124,8 +139,9 @@ describe('TripService', () => {
         forWho: 'kid',
         accompany: 'yes',
       });
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.putItem).toBeCalledTimes(1);
+      expect(mockSignModel.create).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
 
     it('should work for participant', async () => {
@@ -136,12 +152,13 @@ describe('TripService', () => {
         yearOfBirth: 'd',
         forWho: 'self',
       });
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.putItem).toBeCalledTimes(1);
+      expect(mockSignModel.create).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
 
     it('should work for second sign', async () => {
-      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
       await tripService.signTrip('id', {
         name: 'a',
         phone: 'b',
@@ -149,8 +166,9 @@ describe('TripService', () => {
         yearOfBirth: 'd',
         forWho: 'self',
       });
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.putItem).toBeCalledTimes(1);
+      expect(mockSignModel.create).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
   });
 
@@ -209,19 +227,21 @@ describe('TripService', () => {
   describe('deleteTripById', () => {
     it('should work without sign', async () => {
       await tripService.deleteTripById('id');
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.deleteItem).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.hardDelete).toBeCalledTimes(1);
+      expect(mockSignModel.hardDelete).toBeCalledTimes(0);
     });
 
     it('should work with sign', async () => {
-      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
       await tripService.deleteTripById('id');
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.deleteItem).toBeCalledTimes(3);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.hardDelete).toBeCalledTimes(1);
+      expect(mockSignModel.hardDelete).toBeCalledTimes(2);
     });
 
     it('should fail', async () => {
-      mockDbService.deleteItem = jest.fn().mockRejectedValue('');
+      mockTripModel.hardDelete = jest.fn().mockRejectedValue('');
       await expect(() => tripService.deleteTripById('id')).rejects.toThrow(
         InternalServerError
       );
@@ -235,54 +255,51 @@ describe('TripService', () => {
         expiredDate: '1234',
         notifyDate: '2345',
       });
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.putItem).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
 
     it('should work for reject', async () => {
       await tripService.verifyTrip('id', { pass: 'no', reason: 'abc' });
-      expect(mockDbService.getItem).toBeCalledTimes(1);
-      expect(mockDbService.putItem).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
   });
 
   describe('getSigns', () => {
     it('should work with empty sign', async () => {
       expect(await tripService.getSigns('id', '123456')).toStrictEqual([]);
-      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockSignModel.find).toBeCalledTimes(0);
     });
 
     it('should work with sign', async () => {
-      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
       await tripService.getSigns('id', '123456');
-      expect(mockDbService.getItem).toBeCalledTimes(3);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockSignModel.find).toBeCalledTimes(2);
     });
 
     it('should fail', async () => {
       await expect(() => tripService.getSigns('id', 'xxxxx')).rejects.toThrow(
         UnauthorizedError
       );
-      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
     });
   });
 
   describe('reviseMember', () => {
     it('should work', async () => {
       await tripService.reviseMember('id', { signId: ['123456'] });
-      expect(mockDbService.getItem).toBeCalledTimes(1);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockSignModel.find).toBeCalledTimes(0);
     });
 
     it('should work with sign', async () => {
-      mockDbService.getItem = jest.fn().mockResolvedValue(dummyTripWithSign);
+      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
       await tripService.reviseMember('id', { signId: ['sign-id'] });
-      expect(mockDbService.getItem).toBeCalledTimes(3);
+      expect(mockTripModel.find).toBeCalledTimes(1);
+      expect(mockSignModel.find).toBeCalledTimes(2);
     });
-
-    // it('should fail', async () => {
-    //   await expect(() => tripService.getSigns('id', 'xxxxx')).rejects.toThrow(
-    //     UnauthorizedError
-    //   );
-    //   expect(mockDbService.getItem).toBeCalledTimes(1);
-    // });
   });
 });

@@ -26,8 +26,8 @@ export type GetTripsResponse = {
   region: string;
   fee: number;
   other?: string;
-  dateCreated: number;
-  dateUpdated: number;
+  dateCreated?: number;
+  dateUpdated?: number;
 }[];
 
 export type GetTripsDetailResponse = {
@@ -40,8 +40,8 @@ export type GetTripsDetailResponse = {
   code: string;
   status: 'pending' | 'pass' | 'reject';
   signs: number;
-  dateCreated: number;
-  dateUpdated: number;
+  dateCreated?: number;
+  dateUpdated?: number;
 }[];
 
 export type PutTripsSignRequest = {
@@ -64,8 +64,8 @@ export type GetTripsIdResponse = {
   dismissPlace: string;
   fee: number;
   other?: string;
-  dateCreated: number;
-  dateUpdated: number;
+  dateCreated?: number;
+  dateUpdated?: number;
 };
 
 export type PutTripsIdVerifyRequest =

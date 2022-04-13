@@ -7,7 +7,7 @@ const defaultConfig: AxiosRequestConfig = {
   timeout: 5000,
 };
 
-export const get = async <T, K>(url: string, params?: K) =>
+export const get = async <T, K = unknown>(url: string, params?: K) =>
   axios.request<T>({
     ...defaultConfig,
     url,
@@ -51,7 +51,7 @@ const authRequest = async <T>(config: AxiosRequestConfig) => {
   }
 };
 
-export const authGet = async <T, K>(url: string, params?: K) =>
+export const authGet = async <T, K = unknown>(url: string, params?: K) =>
   await authRequest<T>({ url, params, method: 'get' });
 
 export const authPut = async <T, D>(url: string, data: D) =>

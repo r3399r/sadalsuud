@@ -102,7 +102,7 @@ const TripDiscuss = () => {
                   {v.status === 'bingo' && <CheckIcon />}
                   {v.status === 'sorry' && <CloseIcon />}
                 </TableCell>
-                <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
+                <TableCell>{format(v.dateCreated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                 <TableCell>
                   <CommentInput initialValue={v.comment} id={v.id} />
                 </TableCell>

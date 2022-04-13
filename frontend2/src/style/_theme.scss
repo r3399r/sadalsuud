@@ -9,9 +9,11 @@ html[data-theme='light'] {
 
   --navbar-background: #{$pale-yellow};
 
-  --trips-card: #{$pale-orange};
-  --trips-card-ad: #{$grey};
-  --trips-card-ad-background: #{$white};
+  --trips-card-pass: #{$pale-green};
+  --trips-card-pass-ad: #{$grey};
+  --trips-card-pass-ad-background: #{$light-grey};
+  --trips-card-reject: #{$pale-orange};
+  --trips-card-pending: #{$pale-grey};
 
   --modal-background: #{$white};
 }

@@ -7,6 +7,7 @@ import {
   relatedAttributeMany,
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
+import { Status } from 'src/constant/Trip';
 
 export type Trip = DbBase & {
   id: string;
@@ -27,7 +28,7 @@ export type Trip = DbBase & {
   ownerLine?: string;
 
   code: string;
-  status: 'pending' | 'pass' | 'reject';
+  status: Status;
   expiredDate?: string;
   notifyDate?: string;
   reason?: string;
@@ -59,7 +60,7 @@ class TripEntity implements Trip {
   public ownerLine?: string;
 
   public code: string;
-  public status: 'pending' | 'pass' | 'reject';
+  public status: Status;
   public expiredDate?: string;
   public notifyDate?: string;
   public reason?: string;

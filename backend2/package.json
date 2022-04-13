@@ -1,6 +1,6 @@
 {
   "name": "@y-celestial/sadalsuud-service",
-  "version": "2.0.13",
+  "version": "2.0.14",
   "author": "Yue Chang",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

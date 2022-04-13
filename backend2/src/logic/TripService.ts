@@ -1,6 +1,7 @@
 import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
+import { Period, Status } from 'src/constant/Trip';
 import {
   GetTripsDetailResponse,
   GetTripsIdResponse,
@@ -32,7 +33,7 @@ export class TripService {
       ...body,
       id: uuidv4(),
       code: gen6DigitCode(),
-      status: 'pending',
+      status: Status.Pending,
     });
   }
 
@@ -40,18 +41,39 @@ export class TripService {
     const trips = await this.tripModel.findAll();
 
     return trips
-      .map((v) => ({
-        id: v.id,
-        topic: v.topic,
-        ad: v.ad,
-        date: v.date,
-        period: this.getPeriod(v.meetTime, v.dismissTime),
-        region: v.region,
-        fee: v.fee,
-        other: v.other,
-        dateCreated: v.dateCreated,
-        dateUpdated: v.dateUpdated,
-      }))
+      .map((v) => {
+        const common = {
+          id: v.id,
+          topic: v.topic,
+          date: v.date,
+          ownerName: v.ownerName,
+          dateCreated: v.dateCreated,
+          dateUpdated: v.dateUpdated,
+        };
+        if (v.status === Status.Pass)
+          return {
+            ...common,
+            status: v.status,
+            ad: v.ad,
+            period: this.getPeriod(v.meetTime, v.dismissTime),
+            region: v.region,
+            fee: v.fee,
+            other: v.other,
+            expiredDate: v.expiredDate,
+            notifyDate: v.notifyDate,
+          };
+        if (v.status === Status.Reject)
+          return {
+            ...common,
+            status: v.status,
+            reason: v.reason,
+          };
+
+        return {
+          ...common,
+          status: v.status,
+        };
+      })
       .sort(compareKey('dateCreated', true));
   }
 
@@ -72,23 +94,20 @@ export class TripService {
         dateCreated: v.dateCreated,
         dateUpdated: v.dateUpdated,
       }))
-      .sort(compareKey('dateCreated', true));
+      .sort(compareKey<GetTripsDetailResponse[0]>('dateCreated', true));
   }
 
-  private getPeriod(
-    meetTime: string,
-    dismissTime: string
-  ): GetTripsResponse[0]['period'] {
+  private getPeriod(meetTime: string, dismissTime: string): Period {
     const start = Number(meetTime.split(':')[0]);
     const end = Number(dismissTime.split(':')[0]);
 
-    if (start < 12 && end < 12) return 'morning';
-    if (start < 12 && end >= 18) return 'allday';
-    if (start >= 12 && end < 18) return 'afternoon';
-    if (start >= 18 && end >= 18) return 'evening';
-    if (start >= 12 && end >= 18) return 'pm';
+    if (start < 12 && end < 12) return Period.Morning;
+    if (start < 12 && end >= 18) return Period.Allday;
+    if (start >= 12 && end < 18) return Period.Afternoon;
+    if (start >= 18 && end >= 18) return Period.Evening;
+    if (start >= 12 && end >= 18) return Period.Pm;
 
-    return 'daytime';
+    return Period.Daytime;
   }
 
   public async signTrip(id: string, body: PutTripsSignRequest) {
@@ -113,20 +132,36 @@ export class TripService {
 
   public async getTripForAttendee(id: string): Promise<GetTripsIdResponse> {
     const trip = await this.tripModel.find(id);
-
-    return {
+    const common = {
       id: trip.id,
       topic: trip.topic,
-      content: trip.content,
       date: trip.date,
-      meetTime: trip.meetTime,
-      meetPlace: trip.meetPlace,
-      dismissTime: trip.dismissTime,
-      dismissPlace: trip.dismissPlace,
-      fee: trip.fee,
-      other: trip.other,
+      ownerName: trip.ownerName,
       dateCreated: trip.dateCreated,
       dateUpdated: trip.dateUpdated,
+    };
+    if (trip.status === Status.Pass)
+      return {
+        ...common,
+        status: trip.status,
+        content: trip.content,
+        meetTime: trip.meetTime,
+        meetPlace: trip.meetPlace,
+        dismissTime: trip.dismissTime,
+        dismissPlace: trip.dismissPlace,
+        fee: trip.fee,
+        other: trip.other,
+      };
+    if (trip.status === Status.Reject)
+      return {
+        ...common,
+        status: trip.status,
+        reason: trip.reason,
+      };
+
+    return {
+      ...common,
+      status: trip.status,
     };
   }
 
@@ -149,14 +184,14 @@ export class TripService {
     if (body.pass === 'yes')
       updatedTrip = {
         ...trip,
-        status: 'pass',
+        status: Status.Pass,
         expiredDate: body.expiredDate,
         notifyDate: body.notifyDate,
       };
     else
       updatedTrip = {
         ...trip,
-        status: 'reject',
+        status: Status.Reject,
         reason: body.reason,
       };
     await this.tripModel.replace(updatedTrip);

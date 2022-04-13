@@ -3,6 +3,7 @@ import {
   GetTripsIdResponse,
   GetTripsIdSign,
   GetTripsResponse,
+  Period,
   PostTripsRequest,
   PutSignIdRequest,
   PutTripsIdMember,
@@ -27,14 +28,14 @@ export const getDetailedTrips = async () => {
   return res.data;
 };
 
-export const getPeriodZh = (period: GetTripsResponse[0]['period']) => {
-  if (period === 'afternoon') return '下午';
-  if (period === 'allday') return '整天';
-  if (period === 'daytime') return '白天';
-  if (period === 'evening') return '晚上';
-  if (period === 'morning') return '早上';
+export const getPeriodZh = (period: Period) => {
+  if (period === Period.Afternoon) return '下午';
+  if (period === Period.Allday) return '整天';
+  if (period === Period.Daytime) return '白天';
+  if (period === Period.Evening) return '晚上';
+  if (period === Period.Morning) return '早上';
 
-  return '下半天';
+  return Period.Pm;
 };
 
 export const signTrip = async (id: string, data: PutTripsSignRequest) => {

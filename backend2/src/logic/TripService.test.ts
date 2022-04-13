@@ -1,5 +1,6 @@
 import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
+import { Status } from 'src/constant/Trip';
 import { PostTripsRequest } from 'src/model/api/Trip';
 import { Sign, SignModel } from 'src/model/entity/Sign';
 import { Trip, TripModel } from 'src/model/entity/Trip';
@@ -34,7 +35,7 @@ describe('TripService', () => {
       ownerPhone: 'test-owner-phone',
       ownerLine: 'test-owner-line',
       code: '123456',
-      status: 'pending',
+      status: Status.Pass,
       dateCreated: 2,
       dateUpdated: 3,
     };
@@ -91,6 +92,10 @@ describe('TripService', () => {
         region: 'test-region',
         fee: 1,
         other: 'test-other',
+        status: Status.Pass,
+        ownerName: 'test-owner-name',
+        notifyDate: undefined,
+        expiredDate: undefined,
         dateCreated: 2,
         dateUpdated: 3,
       };
@@ -126,6 +131,39 @@ describe('TripService', () => {
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([
         { ...result, period: 'evening' },
       ]);
+    });
+
+    it('should work if status is pending', async () => {
+      const result = {
+        id: 'test-id',
+        topic: 'test-topic',
+        date: 'test-date',
+        status: Status.Pending,
+        ownerName: 'test-owner-name',
+        dateCreated: 2,
+        dateUpdated: 3,
+      };
+      mockTripModel.findAll = jest.fn(() => [
+        { ...dummyTrip, status: Status.Pending },
+      ]);
+      expect(await tripService.getSimplifiedTrips()).toStrictEqual([result]);
+    });
+
+    it('should work if status is reject', async () => {
+      const result = {
+        id: 'test-id',
+        topic: 'test-topic',
+        date: 'test-date',
+        status: Status.Reject,
+        ownerName: 'test-owner-name',
+        reason: undefined,
+        dateCreated: 2,
+        dateUpdated: 3,
+      };
+      mockTripModel.findAll = jest.fn(() => [
+        { ...dummyTrip, status: Status.Reject },
+      ]);
+      expect(await tripService.getSimplifiedTrips()).toStrictEqual([result]);
     });
   });
 
@@ -185,6 +223,41 @@ describe('TripService', () => {
         dismissPlace: 'test-dismiss-place',
         fee: 1,
         other: 'test-other',
+        ownerName: 'test-owner-name',
+        status: Status.Pass,
+        dateCreated: 2,
+        dateUpdated: 3,
+      });
+    });
+
+    it('should work if status is pending', async () => {
+      mockTripModel.find = jest.fn(() => ({
+        ...dummyTrip,
+        status: Status.Pending,
+      }));
+      expect(await tripService.getTripForAttendee('id')).toStrictEqual({
+        id: 'test-id',
+        topic: 'test-topic',
+        date: 'test-date',
+        ownerName: 'test-owner-name',
+        status: Status.Pending,
+        dateCreated: 2,
+        dateUpdated: 3,
+      });
+    });
+
+    it('should work if status is reject', async () => {
+      mockTripModel.find = jest.fn(() => ({
+        ...dummyTrip,
+        status: Status.Reject,
+      }));
+      expect(await tripService.getTripForAttendee('id')).toStrictEqual({
+        id: 'test-id',
+        topic: 'test-topic',
+        date: 'test-date',
+        ownerName: 'test-owner-name',
+        status: Status.Reject,
+        reason: undefined,
         dateCreated: 2,
         dateUpdated: 3,
       });
@@ -202,7 +275,7 @@ describe('TripService', () => {
           ownerPhone: 'test-owner-phone',
           ownerLine: 'test-owner-line',
           code: '123456',
-          status: 'pending',
+          status: Status.Pass,
           signs: 0,
           dateCreated: 2,
           dateUpdated: 3,
@@ -215,7 +288,7 @@ describe('TripService', () => {
           ownerPhone: 'test-owner-phone',
           ownerLine: 'test-owner-line',
           code: '123456',
-          status: 'pending',
+          status: Status.Pass,
           signs: 2,
           dateCreated: 2,
           dateUpdated: 3,

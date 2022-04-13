@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import FormInput from 'src/component/FormInput';
 import style from './CodeForm.module.scss';
 

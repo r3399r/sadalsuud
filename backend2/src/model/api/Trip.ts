@@ -1,3 +1,4 @@
+import { Period, Status } from 'src/constant/Trip';
 import { Sign } from 'src/model/entity/Sign';
 
 export type PostTripsRequest = {
@@ -17,18 +18,38 @@ export type PostTripsRequest = {
   other?: string;
 };
 
-export type GetTripsResponse = {
-  id: string;
-  topic: string;
+type GetTripsPassResponse = {
+  status: Status.Pass;
   ad: string;
-  date: string;
-  period: 'morning' | 'afternoon' | 'daytime' | 'evening' | 'allday' | 'pm';
+  period: Period;
   region: string;
   fee: number;
   other?: string;
+  expiredDate?: string;
+  notifyDate?: string;
+};
+
+type GetTripsPendingResponse = {
+  status: Status.Pending;
+};
+
+type GetTripsRejectResponse = {
+  status: Status.Reject;
+  reason?: string;
+};
+
+export type GetTripsResponse = ((
+  | GetTripsPassResponse
+  | GetTripsPendingResponse
+  | GetTripsRejectResponse
+) & {
+  id: string;
+  topic: string;
+  date: string;
+  ownerName: string;
   dateCreated?: number;
   dateUpdated?: number;
-}[];
+})[];
 
 export type GetTripsDetailResponse = {
   id: string;
@@ -53,17 +74,35 @@ export type PutTripsSignRequest = {
   accompany?: 'yes' | 'no';
 };
 
-export type GetTripsIdResponse = {
-  id: string;
-  topic: string;
+type GetTripsIdPassResponse = {
+  status: Status.Pass;
   content: string;
-  date: string;
   meetTime: string;
   meetPlace: string;
   dismissTime: string;
   dismissPlace: string;
   fee: number;
   other?: string;
+};
+
+type GetTripsIdPendingResponse = {
+  status: Status.Pending;
+};
+
+type GetTripsIdRejectResponse = {
+  status: Status.Reject;
+  reason?: string;
+};
+
+export type GetTripsIdResponse = (
+  | GetTripsIdPassResponse
+  | GetTripsIdPendingResponse
+  | GetTripsIdRejectResponse
+) & {
+  id: string;
+  topic: string;
+  date: string;
+  ownerName: string;
   dateCreated?: number;
   dateUpdated?: number;
 };

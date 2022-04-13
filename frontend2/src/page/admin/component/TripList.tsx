@@ -33,6 +33,7 @@ import VerifyForm from './VerifyForm';
 
 const TripList = () => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [trips, setTrips] = useState<GetTripsDetailResponse>();
   const [deletedId, setDeletedId] = useState<string>();
   const [verifiedId, setVerifiedId] = useState<string>();
@@ -55,17 +56,21 @@ const TripList = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     getDetailedTrips()
       .then((res) => setTrips(res))
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [deletedId, verifiedId]);
 
   return (
     <>
       <h1>出遊清單</h1>
-      {trips === undefined && <Loader />}
+      {isLoading && <Loader />}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -113,8 +118,8 @@ const TripList = () => {
                         />
                       )}
                     </TableCell>
-                    <TableCell>{format(v.dateCreated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
-                    <TableCell>{format(v.dateUpdated, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
+                    <TableCell>{format(v.dateCreated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
+                    <TableCell>{format(v.dateUpdated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>
                       <Link to={`/trips/${v.id}`} target="_blank">
                         <FlightIcon />

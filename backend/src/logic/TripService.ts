@@ -1,293 +1,222 @@
-import {
-  ConflictError,
-  DbService,
-  UnauthorizedError,
-} from '@y-celestial/service';
+import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
-import { ROLE } from 'src/constant/user';
-import { Group } from 'src/model/Group';
-import { Sign, SignEntity, SignResult } from 'src/model/Sign';
-import { Star } from 'src/model/Star';
+import { Period, Status } from 'src/constant/Trip';
 import {
-  GetTripResponse,
+  GetTripsDetailResponse,
+  GetTripsIdResponse,
+  GetTripsIdSign,
   GetTripsResponse,
-  PostTripRequest,
-  ReviseTripRequest,
-  SetTripMemberRequest,
-  SignTripRequest,
-  Trip,
-  TripEntity,
-  VerifyTripRequest,
-} from 'src/model/Trip';
-import { User } from 'src/model/User';
-import { GroupService } from './GroupService';
-import { UserService } from './UserService';
+  PostTripsRequest,
+  PutTripsIdMember,
+  PutTripsIdVerifyRequest,
+  PutTripsSignRequest,
+} from 'src/model/api/Trip';
+import { Sign, SignModel } from 'src/model/entity/Sign';
+import { Trip, TripModel } from 'src/model/entity/Trip';
+import { gen6DigitCode } from 'src/util/codeGenerator';
+import { compareKey } from 'src/util/compare';
 
 /**
  * Service class for Trips
  */
 @injectable()
 export class TripService {
-  @inject(DbService)
-  private readonly dbService!: DbService;
+  @inject(TripModel)
+  private readonly tripModel!: TripModel;
 
-  @inject(UserService)
-  private readonly userService!: UserService;
+  @inject(SignModel)
+  private readonly signModel!: SignModel;
 
-  public async validateRole(token: string, specificRole: ROLE[]) {
-    return await this.userService.validateRole(token, specificRole);
-  }
-
-  public async registerTrip(body: PostTripRequest, token: string) {
-    const user = await this.validateRole(token, [
-      ROLE.ADMIN,
-      ROLE.SOFT_PLANNER,
-      ROLE.GOOD_PLANNER,
-    ]);
-    const trip = new TripEntity({
+  public async registerTrip(body: PostTripsRequest) {
+    await this.tripModel.create({
       ...body,
       id: uuidv4(),
-      verified: false,
-      expiredDatetime: null,
-      owner: user,
-      dateCreated: Date.now(),
-      dateUpdated: Date.now(),
+      code: gen6DigitCode(),
+      status: Status.Pending,
     });
-
-    await this.dbService.createItem(trip);
-
-    return trip;
   }
 
-  public async getTrip(
-    token: string,
-    tripId: string
-  ): Promise<GetTripResponse> {
-    const user = await this.userService.getUserByToken(token);
-    const trip = await this.dbService.getItem<Trip>('trip', tripId);
-    const { joinedGroup, ...restTrip } = trip;
+  public async getSimplifiedTrips(): Promise<GetTripsResponse> {
+    const trips = await this.tripModel.findAll();
 
-    if (user.role === ROLE.ADMIN)
-      return {
-        ...restTrip,
-        ...GroupService.convertGroup(joinedGroup ?? []),
-      };
-    else if (
-      [
-        ROLE.GOOD_PARTNER,
-        ROLE.GOOD_PLANNER,
-        ROLE.ROOKIE,
-        ROLE.SOFT_PARTNER,
-        ROLE.SOFT_PLANNER,
-      ].includes(user.role)
-    ) {
-      const { volunteer, star } = GroupService.convertGroup(joinedGroup ?? []);
+    return trips
+      .map((v) => {
+        const common = {
+          id: v.id,
+          topic: v.topic,
+          date: v.date,
+          ownerName: v.ownerName,
+          dateCreated: v.dateCreated,
+          dateUpdated: v.dateUpdated,
+        };
+        if (v.status === Status.Pass)
+          return {
+            ...common,
+            status: v.status,
+            ad: v.ad,
+            period: this.getPeriod(v.meetTime, v.dismissTime),
+            region: v.region,
+            fee: v.fee,
+            other: v.other,
+            expiredDate: v.expiredDate,
+            notifyDate: v.notifyDate,
+          };
+        if (v.status === Status.Reject)
+          return {
+            ...common,
+            status: v.status,
+            reason: v.reason,
+          };
 
-      return {
-        ...restTrip,
-        owner: { id: trip.owner.id, name: trip.owner.name },
-        volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
-        star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
-      };
-    } else {
-      const { volunteer, star } = GroupService.convertGroup(joinedGroup ?? []);
+        return {
+          ...common,
+          status: v.status,
+        };
+      })
+      .sort(compareKey('dateCreated', true));
+  }
 
+  public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
+    const trips = await this.tripModel.findAll();
+
+    return trips
+      .map((v) => ({
+        id: v.id,
+        topic: v.topic,
+        date: v.date,
+        ownerName: v.ownerName,
+        ownerPhone: v.ownerPhone,
+        ownerLine: v.ownerLine,
+        code: v.code,
+        status: v.status,
+        signs: v.signId ? v.signId.length : 0,
+        dateCreated: v.dateCreated,
+        dateUpdated: v.dateUpdated,
+      }))
+      .sort(compareKey<GetTripsDetailResponse[0]>('dateCreated', true));
+  }
+
+  private getPeriod(meetTime: string, dismissTime: string): Period {
+    const start = Number(meetTime.split(':')[0]);
+    const end = Number(dismissTime.split(':')[0]);
+
+    if (start < 12 && end < 12) return Period.Morning;
+    if (start < 12 && end >= 18) return Period.Allday;
+    if (start >= 12 && end < 18) return Period.Afternoon;
+    if (start >= 18 && end >= 18) return Period.Evening;
+    if (start >= 12 && end >= 18) return Period.Pm;
+
+    return Period.Daytime;
+  }
+
+  public async signTrip(id: string, body: PutTripsSignRequest) {
+    const newSign: Sign = {
+      id: uuidv4(),
+      name: body.name,
+      phone: body.phone,
+      line: body.line,
+      yearOfBirth: body.yearOfBirth,
+      isSelf: body.forWho === 'self',
+      accompany:
+        body.accompany === undefined ? undefined : body.accompany === 'yes',
+      status: 'pending',
+    };
+    const trip = await this.tripModel.find(id);
+    await this.signModel.create(newSign);
+    await this.tripModel.replace({
+      ...trip,
+      signId: [...(trip.signId ?? []), newSign.id],
+    });
+  }
+
+  public async getTripForAttendee(id: string): Promise<GetTripsIdResponse> {
+    const trip = await this.tripModel.find(id);
+    const common = {
+      id: trip.id,
+      topic: trip.topic,
+      date: trip.date,
+      ownerName: trip.ownerName,
+      dateCreated: trip.dateCreated,
+      dateUpdated: trip.dateUpdated,
+    };
+    if (trip.status === Status.Pass)
       return {
-        ...restTrip,
-        startDatetime: moment(trip.startDatetime).startOf('day').valueOf(),
-        endDatetime: moment(trip.endDatetime).endOf('day').valueOf(),
-        meetPlace: '********',
-        dismissPlace: '********',
-        detailDesc: '********',
-        owner: { id: trip.owner.id, name: trip.owner.name },
-        volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
-        star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
+        ...common,
+        status: trip.status,
+        content: trip.content,
+        meetTime: trip.meetTime,
+        meetPlace: trip.meetPlace,
+        dismissTime: trip.dismissTime,
+        dismissPlace: trip.dismissPlace,
+        fee: trip.fee,
+        other: trip.other,
       };
+    if (trip.status === Status.Reject)
+      return {
+        ...common,
+        status: trip.status,
+        reason: trip.reason,
+      };
+
+    return {
+      ...common,
+      status: trip.status,
+    };
+  }
+
+  public async deleteTripById(id: string) {
+    try {
+      const trip = await this.tripModel.find(id);
+      await this.tripModel.hardDelete(id);
+      await Promise.all(
+        (trip.signId ?? []).map((signId) => this.signModel.hardDelete(signId))
+      );
+    } catch {
+      throw new InternalServerError(`delete trip ${id} fail`);
     }
   }
 
-  public async getTrips(token: string): Promise<GetTripsResponse> {
-    const user = await this.userService.getUserByToken(token);
-    const trips = await this.dbService.getItems<Trip>('trip');
+  public async verifyTrip(id: string, body: PutTripsIdVerifyRequest) {
+    const trip = await this.tripModel.find(id);
 
-    if (user.role === ROLE.ADMIN)
-      return trips.map((v: Trip) => ({
-        ...v,
-        ...GroupService.convertGroup(v.joinedGroup ?? []),
-      }));
-    else if (
-      [
-        ROLE.GOOD_PARTNER,
-        ROLE.GOOD_PLANNER,
-        ROLE.SOFT_PARTNER,
-        ROLE.SOFT_PLANNER,
-      ].includes(user.role)
-    )
-      return trips
-        .filter((v: Trip) => v.verified === true)
-        .map((v: Trip) => {
-          const { volunteer, star } = GroupService.convertGroup(
-            v.joinedGroup ?? []
-          );
-
-          return {
-            ...v,
-            owner: { id: v.owner.id, name: v.owner.name },
-            volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
-            star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
-          };
-        });
+    let updatedTrip: Trip;
+    if (body.pass === 'yes')
+      updatedTrip = {
+        ...trip,
+        status: Status.Pass,
+        expiredDate: body.expiredDate,
+        notifyDate: body.notifyDate,
+      };
     else
-      return trips
-        .filter((v: Trip) => v.verified === true)
-        .map((v: Trip) => {
-          const { volunteer, star } = GroupService.convertGroup(
-            v.joinedGroup ?? []
-          );
+      updatedTrip = {
+        ...trip,
+        status: Status.Reject,
+        reason: body.reason,
+      };
+    await this.tripModel.replace(updatedTrip);
+  }
 
-          return {
-            ...v,
-            startDatetime: moment(v.startDatetime).startOf('day').valueOf(),
-            endDatetime: moment(v.endDatetime).endOf('day').valueOf(),
-            meetPlace: '********',
-            dismissPlace: '********',
-            detailDesc: '********',
-            owner: { id: v.owner.id, name: v.owner.name },
-            volunteer: volunteer.map((o: User) => ({ id: o.id, name: o.name })),
-            star: star.map((s: Star) => ({ id: s.id, nickname: s.nickname })),
-          };
+  public async getSigns(id: string, code: string): Promise<GetTripsIdSign> {
+    const trip = await this.tripModel.find(id);
+    if (code !== trip.code) throw new UnauthorizedError('wrong code');
+    if (trip.signId === undefined) return [];
+
+    return await Promise.all(
+      trip.signId.map((signId) => this.signModel.find(signId))
+    );
+  }
+
+  public async reviseMember(id: string, body: PutTripsIdMember) {
+    const trip = await this.tripModel.find(id);
+    await Promise.all(
+      (trip.signId ?? []).map(async (signId) => {
+        const sign = await this.signModel.find(signId);
+        await this.signModel.replace({
+          ...sign,
+          status: body.signId.includes(signId) ? 'bingo' : 'sorry',
         });
-  }
-
-  public async verifyTrip(tripId: string, body: VerifyTripRequest) {
-    const oldTrip = await this.dbService.getItem<Trip>('trip', tripId);
-    const newTrip = new TripEntity({
-      ...oldTrip,
-      verified: true,
-      expiredDatetime: body.expiredDatetime,
-    });
-    await this.dbService.putItem(newTrip);
-
-    return newTrip;
-  }
-
-  public async reviseTrip(
-    tripId: string,
-    body: ReviseTripRequest,
-    token: string
-  ) {
-    const getOldTrip = this.dbService.getItem<Trip>('trip', tripId);
-    const getUser = this.userService.getUserByToken(token);
-    const [oldTrip, user] = await Promise.all([getOldTrip, getUser]);
-
-    if (oldTrip.owner.id !== user.id && user.role !== ROLE.ADMIN)
-      throw new UnauthorizedError('permission denied');
-
-    const revisedTrip = new TripEntity({
-      ...oldTrip,
-      ...body,
-      dateUpdated: Date.now(),
-    });
-
-    await this.dbService.putItem(revisedTrip);
-
-    return revisedTrip;
-  }
-
-  public async setTripMember(tripId: string, body: SetTripMemberRequest) {
-    const getTrip = this.dbService.getItem<Trip>('trip', tripId);
-    const getGroup = Promise.all(
-      body.groupId.map((id: string) =>
-        this.dbService.getItem<Group>('group', id)
-      )
+      })
     );
-    const getSign = this.dbService.getItemsByIndex<Sign>(
-      'sign',
-      'trip',
-      tripId
-    );
-    const [trip, group, sign] = await Promise.all([getTrip, getGroup, getSign]);
-
-    // check input group have all signed this trip
-    if (
-      !body.groupId.every((v: string) =>
-        sign.map((o: Sign) => o.group.id).includes(v)
-      )
-    )
-      throw new ConflictError('some of input groups did not sign this trip');
-
-    const newTrip = new TripEntity({
-      ...trip,
-      joinedGroup: group,
-    });
-    const passedSign = sign
-      .filter((s: Sign) => body.groupId.includes(s.group.id))
-      .map((v: Sign) => new SignEntity({ ...v, result: SignResult.YES }));
-    const unpassedSign = sign
-      .filter((s: Sign) => !body.groupId.includes(s.group.id))
-      .map((v: Sign) => new SignEntity({ ...v, result: SignResult.NO }));
-
-    await Promise.all([
-      this.dbService.putItem(newTrip),
-      ...[...passedSign, ...unpassedSign].map((v: Sign) =>
-        this.dbService.putItem(v)
-      ),
-    ]);
-
-    return newTrip;
-  }
-
-  private async getSignByTrip(tripId: string) {
-    return await this.dbService.getItemsByIndex<Sign>('sign', 'trip', tripId);
-  }
-
-  public async getSignedList(tripId: string, token: string) {
-    const [user, trip] = await Promise.all([
-      this.userService.getUserByToken(token),
-      this.dbService.getItem<Trip>('trip', tripId),
-    ]);
-    if (user.role !== ROLE.ADMIN && trip.owner.id !== user.id)
-      throw new UnauthorizedError('permission denied');
-
-    return await this.getSignByTrip(trip.id);
-  }
-
-  public async signTrip(tripId: string, body: SignTripRequest, token: string) {
-    const validateUser = this.validateRole(token, [
-      ROLE.ADMIN,
-      ROLE.GOOD_PARTNER,
-      ROLE.SOFT_PARTNER,
-      ROLE.GOOD_PLANNER,
-      ROLE.SOFT_PLANNER,
-    ]);
-    const getTrip = this.dbService.getItem<Trip>('trip', tripId);
-    const [user, trip] = await Promise.all([validateUser, getTrip]);
-    if (user.id === trip.owner.id)
-      throw new ConflictError(
-        'You cannot sign a trip whose owner is yourself.'
-      );
-
-    const getGroup = this.dbService.getItem<Group>('group', body.groupId);
-    const [group, currentSigns] = await Promise.all([
-      getGroup,
-      this.getSignByTrip(trip.id),
-    ]);
-    if (currentSigns.map((v: Sign) => v.group.id).includes(group.id))
-      throw new ConflictError('You have already signed this trip before.');
-
-    const sign = new SignEntity({
-      id: uuidv4(),
-      trip,
-      group,
-      result: SignResult.PENDING,
-      dateCreated: Date.now(),
-      dateUpdated: Date.now(),
-    });
-
-    await this.dbService.createItem(sign);
-
-    return sign;
   }
 }

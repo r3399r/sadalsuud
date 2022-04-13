@@ -8,122 +8,17 @@ import {
   successOutput,
 } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { ROLE } from 'src/constant/user';
 import { TripService } from 'src/logic/TripService';
 import {
-  GetSignResponse,
-  GetTripResponse,
+  GetTripsDetailResponse,
+  GetTripsIdResponse,
+  GetTripsIdSign,
   GetTripsResponse,
-  PostTripRequest,
-  PostTripResponse,
-  ReviseTripRequest,
-  ReviseTripResponse,
-  SetTripMemberRequest,
-  SetTripMemberResponse,
-  SignTripRequest,
-  SignTripResponse,
-  VerifyTripRequest,
-  VerifyTripResponse,
-} from 'src/model/Trip';
-
-async function apiTrips(event: LambdaEvent, service: TripService) {
-  switch (event.httpMethod) {
-    case 'GET':
-      return await service.getTrips(event.headers['x-api-token']);
-    case 'POST':
-      if (event.body === null)
-        throw new BadRequestError('body should not be empty');
-
-      return await service.registerTrip(
-        JSON.parse(event.body) as PostTripRequest,
-        event.headers['x-api-token']
-      );
-    default:
-      throw new InternalServerError('unknown http method');
-  }
-}
-
-async function apiTripsId(event: LambdaEvent, service: TripService) {
-  if (event.pathParameters === null)
-    throw new BadRequestError('trip id is missing');
-  switch (event.httpMethod) {
-    case 'GET':
-      return await service.getTrip(
-        event.headers['x-api-token'],
-        event.pathParameters.id
-      );
-    case 'PUT':
-      if (event.body === null)
-        throw new BadRequestError('body should not be empty');
-
-      return await service.reviseTrip(
-        event.pathParameters.id,
-        JSON.parse(event.body) as ReviseTripRequest,
-        event.headers['x-api-token']
-      );
-    default:
-      throw new InternalServerError('unknown http method');
-  }
-}
-
-async function apiTripsIdMember(event: LambdaEvent, service: TripService) {
-  if (event.pathParameters === null)
-    throw new BadRequestError('trip id is missing');
-  switch (event.httpMethod) {
-    case 'PUT':
-      if (event.body === null)
-        throw new BadRequestError('body should not be empty');
-      await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
-
-      return await service.setTripMember(
-        event.pathParameters.id,
-        JSON.parse(event.body) as SetTripMemberRequest
-      );
-    default:
-      throw new InternalServerError('unknown http method');
-  }
-}
-
-async function apiTripsIdSign(event: LambdaEvent, service: TripService) {
-  if (event.pathParameters === null)
-    throw new BadRequestError('trip id is missing');
-  switch (event.httpMethod) {
-    case 'GET':
-      return await service.getSignedList(
-        event.pathParameters.id,
-        event.headers['x-api-token']
-      );
-    case 'POST':
-      if (event.body === null)
-        throw new BadRequestError('body should not be empty');
-
-      return await service.signTrip(
-        event.pathParameters.id,
-        JSON.parse(event.body) as SignTripRequest,
-        event.headers['x-api-token']
-      );
-    default:
-      throw new InternalServerError('unknown http method');
-  }
-}
-
-async function apiTripsIdVerify(event: LambdaEvent, service: TripService) {
-  if (event.pathParameters === null)
-    throw new BadRequestError('trip id is missing');
-  switch (event.httpMethod) {
-    case 'PUT':
-      if (event.body === null)
-        throw new BadRequestError('body should not be empty');
-      await service.validateRole(event.headers['x-api-token'], [ROLE.ADMIN]);
-
-      return await service.verifyTrip(
-        event.pathParameters.id,
-        JSON.parse(event.body) as VerifyTripRequest
-      );
-    default:
-      throw new InternalServerError('unknown http method');
-  }
-}
+  PostTripsRequest,
+  PutTripsIdMember,
+  PutTripsIdVerifyRequest,
+  PutTripsSignRequest,
+} from 'src/model/api/Trip';
 
 export async function trips(
   event: LambdaEvent,
@@ -133,18 +28,18 @@ export async function trips(
     const service: TripService = bindings.get<TripService>(TripService);
 
     let res:
-      | PostTripResponse
+      | void
       | GetTripsResponse
-      | GetTripResponse
-      | VerifyTripResponse
-      | ReviseTripResponse
-      | SetTripMemberResponse
-      | SignTripResponse
-      | GetSignResponse;
+      | GetTripsIdResponse
+      | GetTripsDetailResponse
+      | GetTripsIdSign;
 
     switch (event.resource) {
       case '/api/trips':
         res = await apiTrips(event, service);
+        break;
+      case '/api/trips/detail':
+        res = await apiTripsDetail(event, service);
         break;
       case '/api/trips/{id}':
         res = await apiTripsId(event, service);
@@ -165,5 +60,108 @@ export async function trips(
     return successOutput(res);
   } catch (e) {
     return errorOutput(e);
+  }
+}
+
+async function apiTrips(event: LambdaEvent, service: TripService) {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getSimplifiedTrips();
+    case 'POST':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      await service.registerTrip(JSON.parse(event.body) as PostTripsRequest);
+
+      return;
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsDetail(event: LambdaEvent, service: TripService) {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getDetailedTrips();
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsId(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getTripForAttendee(event.pathParameters.id);
+    case 'DELETE':
+      await service.deleteTripById(event.pathParameters.id);
+
+      return;
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdMember(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.reviseMember(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsIdMember
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdSign(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'GET':
+      if (event.queryStringParameters === null)
+        throw new BadRequestError('queryStringParameters should not be empty');
+
+      return await service.getSigns(
+        event.pathParameters.id,
+        event.queryStringParameters.code
+      );
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      await service.signTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsSignRequest
+      );
+
+      return;
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiTripsIdVerify(event: LambdaEvent, service: TripService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      await service.verifyTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsIdVerifyRequest
+      );
+
+      return;
+    default:
+      throw new InternalServerError('unknown http method');
   }
 }

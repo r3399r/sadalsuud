@@ -10,10 +10,10 @@ export async function auth(
   const authService: AuthService = bindings.get<AuthService>(AuthService);
 
   try {
-    await authService.validate(event.authorizationToken);
+    authService.validate(event.authorizationToken);
 
     return authService.authResponse(true, String(process.env.sourceArn));
   } catch {
-    return authService.authResponse(false, String(process.env.sourceArn));
+    throw 'Unauthorized';
   }
 }

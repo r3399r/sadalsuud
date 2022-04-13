@@ -1,27 +1,20 @@
 import { bindings as celestialBindings } from '@y-celestial/service';
 import { Container, interfaces } from 'inversify';
 import 'reflect-metadata';
-import { AuthService } from 'src/logic/AuthService';
-import { VariablesService } from 'src/logic/VariablesService';
-import { GroupService } from './logic/GroupService';
-import { LineService } from './logic/LineService';
-import { MeService } from './logic/MeService';
-import { RecordService } from './logic/RecordService';
-import { StarService } from './logic/StarService';
+import { AuthService } from './logic/AuthService';
+import { SignService } from './logic/SignService';
 import { TripService } from './logic/TripService';
-import { UserService } from './logic/UserService';
+import { SignModel } from './model/entity/Sign';
+import { TripModel } from './model/entity/Trip';
 
 const container: Container = new Container();
 
+container.bind<SignModel>(SignModel).toSelf();
+container.bind<TripModel>(TripModel).toSelf();
+
 container.bind<AuthService>(AuthService).toSelf();
-container.bind<GroupService>(GroupService).toSelf();
-container.bind<UserService>(UserService).toSelf();
-container.bind<StarService>(StarService).toSelf();
-container.bind<VariablesService>(VariablesService).toSelf();
-container.bind<LineService>(LineService).toSelf();
+container.bind<SignService>(SignService).toSelf();
 container.bind<TripService>(TripService).toSelf();
-container.bind<MeService>(MeService).toSelf();
-container.bind<RecordService>(RecordService).toSelf();
 
 const mergedContainer: interfaces.Container = Container.merge(
   container,

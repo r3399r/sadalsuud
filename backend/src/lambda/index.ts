@@ -1,8 +1,5 @@
 // tslint:disable: export-name
 export { auth } from 'src/lambda/auth/auth';
-export { me } from 'src/lambda/me/me';
-export { stars } from 'src/lambda/stars/stars';
-export { users } from 'src/lambda/users/users';
-export { variables } from 'src/lambda/variables/variables';
-export { groups } from 'src/lambda/groups/groups';
+export { login } from 'src/lambda/login/login';
+export { sign } from 'src/lambda/sign/sign';
 export { trips } from 'src/lambda/trips/trips';

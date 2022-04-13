@@ -5,42 +5,50 @@ import { auth } from './auth';
 import { AuthEvent } from './AuthEvent';
 
 /**
- * Tests of the auth lambda function.
+ * Tests of auth lambda function
  */
-describe('variables', () => {
+describe('auth', () => {
   let event: AuthEvent;
   let lambdaContext: LambdaContext | undefined;
   let mockAuthService: any;
+  let dummyResult: any;
 
   beforeAll(() => {
-    event = {
-      type: 'TOKEN',
-      methodArn: 'test-arn',
-      authorizationToken: 'test-token',
-    };
-    process.env.sourceArn = 'test-source';
+    dummyResult = { a: '1' };
   });
 
   beforeEach(() => {
     lambdaContext = { awsRequestId: '456' };
 
-    // prepare mock mockUserService
     mockAuthService = {};
     bindings.rebind<AuthService>(AuthService).toConstantValue(mockAuthService);
-    mockAuthService.authResponse = jest.fn();
+
+    mockAuthService.validate = jest.fn(() => true);
+    mockAuthService.authResponse = jest.fn(() => dummyResult);
   });
 
-  it('auth should work', async () => {
-    mockAuthService.validate = jest.fn();
-    await auth(event, lambdaContext);
+  it('should work', async () => {
+    event = {
+      type: 'TOKEN',
+      methodArn: 'methodArn',
+      authorizationToken: 'abcd',
+    };
+    await expect(auth(event, lambdaContext)).resolves.toStrictEqual(
+      dummyResult
+    );
     expect(mockAuthService.validate).toBeCalledTimes(1);
-    expect(mockAuthService.authResponse).toBeCalledWith(true, 'test-source');
+    expect(mockAuthService.authResponse).toBeCalledTimes(1);
   });
 
-  it('auth should fail', async () => {
-    mockAuthService.validate = jest.fn(() => Promise.reject('error'));
-    await auth(event, lambdaContext);
-    expect(mockAuthService.validate).toBeCalledTimes(1);
-    expect(mockAuthService.authResponse).toBeCalledWith(false, 'test-source');
+  it('should fail', async () => {
+    mockAuthService.validate = jest.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    event = {
+      type: 'TOKEN',
+      methodArn: 'methodArn',
+      authorizationToken: 'abcd',
+    };
+    await expect(auth(event, lambdaContext)).rejects.toBe('Unauthorized');
   });
 });

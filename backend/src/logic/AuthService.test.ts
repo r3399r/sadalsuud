@@ -1,55 +1,52 @@
+import { UnauthorizedError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
-import { AuthService } from 'src/logic/AuthService';
-import { LineService } from './LineService';
+import { AuthService } from './AuthService';
 
 /**
  * Tests of the AuthService class.
  */
 describe('AuthService', () => {
   let authService: AuthService;
-  let mockLineService: any;
+
+  beforeAll(() => {
+    process.env.adminAccount = 'aaa';
+    process.env.adminPassword = 'bbb';
+  });
 
   beforeEach(() => {
-    // prepare mockLineService
-    mockLineService = {};
-    bindings.rebind<LineService>(LineService).toConstantValue(mockLineService);
-
-    mockLineService.verifyToken = jest.fn();
-
     authService = bindings.get<AuthService>(AuthService);
   });
 
-  it('validate should work', async () => {
-    await authService.validate('test-token');
-    expect(mockLineService.verifyToken).toBeCalledTimes(1);
+  describe('login', () => {
+    it('should work', async () => {
+      expect(
+        authService.login({ account: 'aaa', password: 'bbb' })
+      ).toHaveProperty('secret');
+    });
+
+    it('should fail', async () => {
+      expect(() =>
+        authService.login({ account: 'xxx', password: 'xxx' })
+      ).toThrow(UnauthorizedError);
+    });
   });
 
-  it('authResponse should work', async () => {
-    expect(authService.authResponse(true, 'test-arn')).toStrictEqual({
-      principalId: 'celestial-sadalsuud-auth-principal',
-      policyDocument: {
-        Version: '2012-10-17',
-        Statement: [
-          {
-            Action: 'execute-api:Invoke',
-            Effect: 'Allow',
-            Resource: 'test-arn',
-          },
-        ],
-      },
+  describe('validate', () => {
+    it('should work', () => {
+      expect(() => authService.validate('jwOZs+PMI+liPxB6gz4amQ==')).toThrow(
+        UnauthorizedError
+      );
     });
-    expect(authService.authResponse(false, 'test-arn')).toStrictEqual({
-      principalId: 'celestial-sadalsuud-auth-principal',
-      policyDocument: {
-        Version: '2012-10-17',
-        Statement: [
-          {
-            Action: 'execute-api:Invoke',
-            Effect: 'Deny',
-            Resource: 'test-arn',
-          },
-        ],
-      },
+  });
+
+  describe('authResponse', () => {
+    it('should work', () => {
+      expect(authService.authResponse(true, 'resource')).toHaveProperty(
+        'principalId'
+      );
+      expect(authService.authResponse(false, 'resource')).toHaveProperty(
+        'principalId'
+      );
     });
   });
 });

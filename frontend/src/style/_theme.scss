@@ -1,0 +1,19 @@
+@import './color';
+
+html[data-theme='light'] {
+  --scrollbar: #{$grey-40};
+
+  --landing-card-goal: #{$pale-green};
+  --landing-card-method: #{$pale-blue};
+  --landing-card-more: #{$pale-orange};
+
+  --navbar-background: #{$pale-yellow};
+
+  --trips-card-pass: #{$pale-green};
+  --trips-card-pass-ad: #{$grey};
+  --trips-card-pass-ad-background: #{$light-grey};
+  --trips-card-reject: #{$pale-orange};
+  --trips-card-pending: #{$pale-grey};
+
+  --modal-background: #{$white};
+}

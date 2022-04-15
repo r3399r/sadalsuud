@@ -1,0 +1,49 @@
+.self {
+  height: 44px;
+  background-color: var(--navbar-background);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+.drawerBtn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.title {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  .logo {
+    height: 90%;
+  }
+}
+.drawer {
+  width: 250px;
+  height: 100vh;
+  font-size: 24px;
+}
+.list {
+  padding: 40px 20px 20px 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  > div {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    outline: transparent;
+  }
+}
+.ver {
+  font-size: 16px;
+  padding-left: 20px;
+}

@@ -1,0 +1,36 @@
+.btn {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.card {
+  border-radius: 5px;
+  margin: 8px 0;
+  padding: 8px;
+  white-space: pre-line;
+  .ad {
+    border: 1px solid var(--trips-card-pass-ad);
+    padding: 8px;
+    margin: 4px 0;
+    border-radius: 5px;
+    background-color: var(--trips-card-pass-ad-background);
+  }
+  .item {
+    display: flex;
+    gap: 6px;
+  }
+}
+.signButn {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.pass {
+  background-color: var(--trips-card-pass);
+}
+.reject {
+  background-color: var(--trips-card-reject);
+}
+.pending {
+  background-color: var(--trips-card-pending);
+}

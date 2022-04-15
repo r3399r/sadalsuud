@@ -1,0 +1,18 @@
+@import 'src/style/mixins';
+
+.self {
+  @include modal;
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    > * {
+      flex: 1;
+    }
+  }
+}

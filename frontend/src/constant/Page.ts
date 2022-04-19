@@ -1,6 +1,5 @@
 export enum Page {
-  LANDING = '/',
-  TRIPS = '/trips',
-  FAQ = '/faq',
-  ADMIN = '/admin',
+  Landing = '/',
+  Trips = '/trips',
+  Admin = '/admin',
 }

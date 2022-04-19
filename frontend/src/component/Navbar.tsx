@@ -31,20 +31,30 @@ const Navbar = () => {
       <Drawer anchor="left" open={open} onClose={toggleDrawer}>
         <div className={style.drawer}>
           <div className={style.list}>
-            <div onClick={onClick(Page.LANDING)}>
+            <div>
               <HomeIcon />
-              首頁
+              <div className={style.clickable} onClick={onClick(Page.Landing)}>
+                首頁
+              </div>
             </div>
-            <div onClick={onClick(Page.TRIPS)}>
+            <div>
               <EventIcon />
-              出遊清單
+              <div className={style.clickable} onClick={onClick(Page.Trips)}>
+                出遊清單
+              </div>
             </div>
-            <div onClick={onClick(Page.FAQ)}>
+            <div>
               <ContactSupportIcon />
-              常見問題
+              <a
+                href="https://www.celestialstudio.net/2022/04/lucky-star-faq.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                常見問題
+              </a>
             </div>
           </div>
-          <div className={style.ver} onDoubleClick={onClick(Page.ADMIN)}>
+          <div className={style.ver} onDoubleClick={onClick(Page.Admin)}>
             當前版本: {packageJson.version}
           </div>
         </div>

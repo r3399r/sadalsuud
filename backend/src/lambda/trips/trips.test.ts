@@ -32,7 +32,7 @@ describe('trips', () => {
     mockTripService.registerTrip = jest.fn();
     mockTripService.signTrip = jest.fn();
     mockTripService.getSimplifiedTrips = jest.fn(() => [dummyTrip]);
-    mockTripService.getTripForAttendee = jest.fn(() => dummyTrip);
+    mockTripService.getDetailedTrip = jest.fn(() => dummyTrip);
     mockTripService.getDetailedTrips = jest.fn(() => [dummyTrip]);
     mockTripService.deleteTripById = jest.fn();
     mockTripService.verifyTrip = jest.fn();
@@ -293,7 +293,7 @@ describe('trips', () => {
       await expect(trips(event, lambdaContext)).resolves.toStrictEqual(
         successOutput(dummyTrip)
       );
-      expect(mockTripService.getTripForAttendee).toBeCalledTimes(1);
+      expect(mockTripService.getDetailedTrip).toBeCalledTimes(1);
     });
 
     it('GET should fail if null pathParameters', async () => {

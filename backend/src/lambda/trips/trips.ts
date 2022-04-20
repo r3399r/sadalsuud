@@ -93,7 +93,7 @@ async function apiTripsId(event: LambdaEvent, service: TripService) {
     throw new BadRequestError('pathParameters should not be empty');
   switch (event.httpMethod) {
     case 'GET':
-      return await service.getTripForAttendee(event.pathParameters.id);
+      return await service.getDetailedTrip(event.pathParameters.id);
     case 'DELETE':
       await service.deleteTripById(event.pathParameters.id);
 

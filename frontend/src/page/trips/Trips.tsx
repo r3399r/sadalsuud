@@ -1,11 +1,12 @@
 import { Button, FormControlLabel, Modal, Switch } from '@mui/material';
 import { GetTripsResponse, Status } from '@y-celestial/sadalsuud-service';
 import classNames from 'classnames';
+import { format } from 'date-fns';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
-import { getPeriodZh, getSimplifiedTrips } from 'src/service/TripService';
+import { getSimplifiedTrips } from 'src/service/TripService';
 import SignForm from './component/SignForm';
 import TripsForm from './component/TripsForm';
 import style from './Trips.module.scss';
@@ -59,15 +60,15 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>日期</b>
-                  {v.date}
+                  {format(new Date(v.date), 'yyyy/MM/dd')}
                 </div>
                 <div className={style.item}>
                   <b>時段</b>
-                  {getPeriodZh(v.period)}
+                  {v.meetTime}~{v.dismissTime}
                 </div>
                 <div className={style.item}>
                   <b>地點</b>
-                  {v.region}
+                  {v.region} (確切集合、解散地點將於確定出遊後通知)
                 </div>
                 <div className={style.ad}>{v.ad}</div>
                 <div className={style.item}>
@@ -83,24 +84,26 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>報名截止日</b>
-                  {v.expiredDate}
+                  {v.expiredDate ? format(new Date(v.expiredDate), 'yyyy/MM/dd') : ''}
                 </div>
                 <div className={style.item}>
                   <b>出遊通知日</b>
-                  {v.notifyDate}
+                  {v.notifyDate ? format(new Date(v.notifyDate), 'yyyy/MM/dd') : ''}
                 </div>
-                <div className={style.signButn}>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => {
-                      setOpenSign(true);
-                      setSignedTripId(v.id);
-                    }}
-                  >
-                    報名
-                  </Button>
-                </div>
+                {new Date(v.expiredDate ?? 0) > new Date() && (
+                  <div className={style.signButn}>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => {
+                        setOpenSign(true);
+                        setSignedTripId(v.id);
+                      }}
+                    >
+                      報名
+                    </Button>
+                  </div>
+                )}
               </div>
             );
 

@@ -119,6 +119,7 @@ export class TripModel implements ModelBase {
       new TripEntity({
         ...data,
         dateCreated: Date.now(),
+        dateUpdated: Date.now(),
       })
     );
   }

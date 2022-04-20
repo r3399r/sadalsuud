@@ -1,7 +1,7 @@
 import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
-import { Period, Status } from 'src/constant/Trip';
+import { Status } from 'src/constant/Trip';
 import {
   GetTripsDetailResponse,
   GetTripsIdResponse,
@@ -55,7 +55,8 @@ export class TripService {
             ...common,
             status: v.status,
             ad: v.ad,
-            period: this.getPeriod(v.meetTime, v.dismissTime),
+            meetTime: v.meetTime,
+            dismissTime: v.dismissTime,
             region: v.region,
             fee: v.fee,
             other: v.other,
@@ -97,19 +98,6 @@ export class TripService {
       .sort(compareKey<GetTripsDetailResponse[0]>('dateCreated', true));
   }
 
-  private getPeriod(meetTime: string, dismissTime: string): Period {
-    const start = Number(meetTime.split(':')[0]);
-    const end = Number(dismissTime.split(':')[0]);
-
-    if (start < 12 && end < 12) return Period.Morning;
-    if (start < 12 && end >= 18) return Period.Allday;
-    if (start >= 12 && end < 18) return Period.Afternoon;
-    if (start >= 18 && end >= 18) return Period.Evening;
-    if (start >= 12 && end >= 18) return Period.Pm;
-
-    return Period.Daytime;
-  }
-
   public async signTrip(id: string, body: PutTripsSignRequest) {
     const newSign: Sign = {
       id: uuidv4(),
@@ -130,38 +118,26 @@ export class TripService {
     });
   }
 
-  public async getTripForAttendee(id: string): Promise<GetTripsIdResponse> {
+  public async getDetailedTrip(id: string): Promise<GetTripsIdResponse> {
     const trip = await this.tripModel.find(id);
-    const common = {
-      id: trip.id,
-      topic: trip.topic,
-      date: trip.date,
-      ownerName: trip.ownerName,
-      dateCreated: trip.dateCreated,
-      dateUpdated: trip.dateUpdated,
-    };
-    if (trip.status === Status.Pass)
-      return {
-        ...common,
-        status: trip.status,
-        content: trip.content,
-        meetTime: trip.meetTime,
-        meetPlace: trip.meetPlace,
-        dismissTime: trip.dismissTime,
-        dismissPlace: trip.dismissPlace,
-        fee: trip.fee,
-        other: trip.other,
-      };
-    if (trip.status === Status.Reject)
-      return {
-        ...common,
-        status: trip.status,
-        reason: trip.reason,
-      };
 
     return {
-      ...common,
+      id: trip.id,
+      topic: trip.topic,
+      ad: trip.ad,
+      content: trip.content,
+      date: trip.date,
+      region: trip.region,
+      meetTime: trip.meetTime,
+      meetPlace: trip.meetPlace,
+      dismissPlace: trip.dismissPlace,
+      dismissTime: trip.dismissTime,
+      fee: trip.fee,
+      other: trip.other,
+      ownerName: trip.ownerName,
       status: trip.status,
+      dateCreated: trip.dateCreated,
+      dateUpdated: trip.dateUpdated,
     };
   }
 

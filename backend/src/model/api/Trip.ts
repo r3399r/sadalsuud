@@ -1,4 +1,4 @@
-import { Period, Status } from 'src/constant/Trip';
+import { Status } from 'src/constant/Trip';
 import { Sign } from 'src/model/entity/Sign';
 
 export type PostTripsRequest = {
@@ -21,7 +21,8 @@ export type PostTripsRequest = {
 type GetTripsPassResponse = {
   status: Status.Pass;
   ad: string;
-  period: Period;
+  meetTime: string;
+  dismissTime: string;
   region: string;
   fee: number;
   other?: string;
@@ -74,35 +75,21 @@ export type PutTripsSignRequest = {
   accompany?: 'yes' | 'no';
 };
 
-type GetTripsIdPassResponse = {
-  status: Status.Pass;
+export type GetTripsIdResponse = {
+  id: string;
+  topic: string;
+  ad: string;
   content: string;
+  date: string;
+  region: string;
   meetTime: string;
   meetPlace: string;
   dismissTime: string;
   dismissPlace: string;
   fee: number;
   other?: string;
-};
-
-type GetTripsIdPendingResponse = {
-  status: Status.Pending;
-};
-
-type GetTripsIdRejectResponse = {
-  status: Status.Reject;
-  reason?: string;
-};
-
-export type GetTripsIdResponse = (
-  | GetTripsIdPassResponse
-  | GetTripsIdPendingResponse
-  | GetTripsIdRejectResponse
-) & {
-  id: string;
-  topic: string;
-  date: string;
   ownerName: string;
+  status: 'pass' | 'pending' | 'reject';
   dateCreated?: number;
   dateUpdated?: number;
 };

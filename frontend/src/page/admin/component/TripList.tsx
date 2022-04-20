@@ -91,7 +91,7 @@ const TripList = () => {
               ? []
               : trips.map((v) => (
                   <TableRow key={v.id}>
-                    <TableCell>{v.date}</TableCell>
+                    <TableCell>{format(new Date(v.date), 'yyyy/MM/dd')}</TableCell>
                     <TableCell>{v.topic}</TableCell>
                     <TableCell>{v.signs}</TableCell>
                     <TableCell>{v.code}</TableCell>

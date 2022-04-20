@@ -88,7 +88,8 @@ describe('TripService', () => {
         topic: 'test-topic',
         ad: 'test-ad',
         date: 'test-date',
-        period: 'daytime',
+        meetTime: '10:00',
+        dismissTime: '12:00',
         region: 'test-region',
         fee: 1,
         other: 'test-other',
@@ -101,36 +102,6 @@ describe('TripService', () => {
       };
       mockTripModel.findAll = jest.fn(() => [dummyTrip]);
       expect(await tripService.getSimplifiedTrips()).toStrictEqual([result]);
-      mockTripModel.findAll = jest.fn(() => [
-        { ...dummyTrip, dismissTime: '11:00' },
-      ]);
-      expect(await tripService.getSimplifiedTrips()).toStrictEqual([
-        { ...result, period: 'morning' },
-      ]);
-      mockTripModel.findAll = jest.fn(() => [
-        { ...dummyTrip, dismissTime: '20:00' },
-      ]);
-      expect(await tripService.getSimplifiedTrips()).toStrictEqual([
-        { ...result, period: 'allday' },
-      ]);
-      mockTripModel.findAll = jest.fn(() => [
-        { ...dummyTrip, meetTime: '13:00', dismissTime: '14:00' },
-      ]);
-      expect(await tripService.getSimplifiedTrips()).toStrictEqual([
-        { ...result, period: 'afternoon' },
-      ]);
-      mockTripModel.findAll = jest.fn(() => [
-        { ...dummyTrip, meetTime: '13:00', dismissTime: '20:00' },
-      ]);
-      expect(await tripService.getSimplifiedTrips()).toStrictEqual([
-        { ...result, period: 'pm' },
-      ]);
-      mockTripModel.findAll = jest.fn(() => [
-        { ...dummyTrip, meetTime: '19:00', dismissTime: '20:00' },
-      ]);
-      expect(await tripService.getSimplifiedTrips()).toStrictEqual([
-        { ...result, period: 'evening' },
-      ]);
     });
 
     it('should work if status is pending', async () => {
@@ -210,13 +181,15 @@ describe('TripService', () => {
     });
   });
 
-  describe('getTripForAttendee', () => {
+  describe('getDetailedTrip', () => {
     it('should work', async () => {
-      expect(await tripService.getTripForAttendee('id')).toStrictEqual({
+      expect(await tripService.getDetailedTrip('id')).toStrictEqual({
         id: 'test-id',
         topic: 'test-topic',
+        ad: 'test-ad',
         content: 'test-content',
         date: 'test-date',
+        region: 'test-region',
         meetTime: '10:00',
         meetPlace: 'test-meet-place',
         dismissTime: '12:00',
@@ -225,39 +198,6 @@ describe('TripService', () => {
         other: 'test-other',
         ownerName: 'test-owner-name',
         status: Status.Pass,
-        dateCreated: 2,
-        dateUpdated: 3,
-      });
-    });
-
-    it('should work if status is pending', async () => {
-      mockTripModel.find = jest.fn(() => ({
-        ...dummyTrip,
-        status: Status.Pending,
-      }));
-      expect(await tripService.getTripForAttendee('id')).toStrictEqual({
-        id: 'test-id',
-        topic: 'test-topic',
-        date: 'test-date',
-        ownerName: 'test-owner-name',
-        status: Status.Pending,
-        dateCreated: 2,
-        dateUpdated: 3,
-      });
-    });
-
-    it('should work if status is reject', async () => {
-      mockTripModel.find = jest.fn(() => ({
-        ...dummyTrip,
-        status: Status.Reject,
-      }));
-      expect(await tripService.getTripForAttendee('id')).toStrictEqual({
-        id: 'test-id',
-        topic: 'test-topic',
-        date: 'test-date',
-        ownerName: 'test-owner-name',
-        status: Status.Reject,
-        reason: undefined,
         dateCreated: 2,
         dateUpdated: 3,
       });

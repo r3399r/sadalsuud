@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { format } from 'date-fns';
+import { endOfDay } from 'date-fns';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import FormInput from 'src/component/FormInput';
@@ -32,8 +32,8 @@ const VerifyForm = ({ id = 'zzz', onClose }: VerifyFormProps) => {
       data.pass === 'yes'
         ? {
             pass: 'yes',
-            expiredDate: format(new Date(data.expiredDate), 'yyyy/MM/dd'),
-            notifyDate: format(new Date(data.notifyDate), 'yyyy/MM/dd'),
+            expiredDate: endOfDay(new Date(data.expiredDate)).toISOString(),
+            notifyDate: endOfDay(new Date(data.notifyDate)).toISOString(),
           }
         : { pass: 'no', reason: data.reason },
     )

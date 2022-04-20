@@ -1,4 +1,4 @@
-import { GetTripsIdResponse, Status } from '@y-celestial/sadalsuud-service';
+import { GetTripsIdResponse } from '@y-celestial/sadalsuud-service';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -24,15 +24,7 @@ const TripDetail = () => {
   return (
     <>
       {trip === undefined && <Loader />}
-      {trip && trip.status === Status.Pending && (
-        <div>此出遊申請正在審核中，申請人: {trip.ownerName}。</div>
-      )}
-      {trip && trip.status === Status.Reject && (
-        <div>
-          此出遊申請已被拒絕，申請人: {trip.ownerName}，拒絕原因: {trip.reason}。
-        </div>
-      )}
-      {trip && trip.status === Status.Pass && (
+      {trip && (
         <div className={style.self}>
           <div>
             <b>主題</b>
@@ -47,16 +39,12 @@ const TripDetail = () => {
             {trip.date}
           </div>
           <div>
-            <b>集合時間</b>
-            {trip.meetTime}
+            <b>時間</b>
+            {trip.meetTime}~{trip.dismissTime}
           </div>
           <div>
             <b>集合地點</b>
             {trip.meetPlace}
-          </div>
-          <div>
-            <b>解散時間</b>
-            {trip.dismissTime}
           </div>
           <div>
             <b>解散地點</b>

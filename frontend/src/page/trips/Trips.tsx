@@ -52,7 +52,9 @@ const Trips = () => {
       {trips
         ?.filter((v) => (switched ? true : v.status === Status.Pass))
         .map((v) => {
-          if (v.status === Status.Pass)
+          if (v.status === Status.Pass) {
+            const isExpired = new Date(v.expiredDate ?? 0) < new Date();
+
             return (
               <div key={v.id} className={classNames(style.card, style.pass)}>
                 <div className={style.item}>
@@ -95,23 +97,22 @@ const Trips = () => {
                     ? format(new Date(v.notifyDate), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })
                     : ''}
                 </div>
-                {new Date(v.expiredDate ?? 0) > new Date() && (
-                  <div className={style.signButn}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => {
-                        setOpenSign(true);
-                        setSignedTripId(v.id);
-                      }}
-                    >
-                      報名
-                    </Button>
-                  </div>
-                )}
+                <div className={style.signButn}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => {
+                      setOpenSign(true);
+                      setSignedTripId(v.id);
+                    }}
+                    disabled={isExpired}
+                  >
+                    {isExpired ? '已截止' : '報名'}
+                  </Button>
+                </div>
               </div>
             );
-
+          }
           if (v.status === Status.Reject)
             return (
               <div key={v.id} className={classNames(style.card, style.reject)}>

@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { GetTripsDetailResponse } from '@y-celestial/sadalsuud-service';
 import { format } from 'date-fns';
+import { zhTW } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -91,7 +92,9 @@ const TripList = () => {
               ? []
               : trips.map((v) => (
                   <TableRow key={v.id}>
-                    <TableCell>{format(new Date(v.date), 'yyyy/MM/dd')}</TableCell>
+                    <TableCell>
+                      {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
+                    </TableCell>
                     <TableCell>{v.topic}</TableCell>
                     <TableCell>{v.signs}</TableCell>
                     <TableCell>{v.code}</TableCell>

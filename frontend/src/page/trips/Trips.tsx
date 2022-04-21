@@ -2,6 +2,7 @@ import { Button, FormControlLabel, Modal, Switch } from '@mui/material';
 import { GetTripsResponse, Status } from '@y-celestial/sadalsuud-service';
 import classNames from 'classnames';
 import { format } from 'date-fns';
+import { zhTW } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Loader from 'src/component/Loader';
@@ -51,7 +52,9 @@ const Trips = () => {
       {trips
         ?.filter((v) => (switched ? true : v.status === Status.Pass))
         .map((v) => {
-          if (v.status === Status.Pass)
+          if (v.status === Status.Pass) {
+            const isExpired = new Date(v.expiredDate ?? 0) < new Date();
+
             return (
               <div key={v.id} className={classNames(style.card, style.pass)}>
                 <div className={style.item}>
@@ -60,7 +63,7 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>日期</b>
-                  {format(new Date(v.date), 'yyyy/MM/dd')}
+                  {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
                 </div>
                 <div className={style.item}>
                   <b>時段</b>
@@ -84,29 +87,32 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>報名截止日</b>
-                  {v.expiredDate ? format(new Date(v.expiredDate), 'yyyy/MM/dd') : ''}
+                  {v.expiredDate
+                    ? format(new Date(v.expiredDate), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })
+                    : ''}
                 </div>
                 <div className={style.item}>
                   <b>出遊通知日</b>
-                  {v.notifyDate ? format(new Date(v.notifyDate), 'yyyy/MM/dd') : ''}
+                  {v.notifyDate
+                    ? format(new Date(v.notifyDate), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })
+                    : ''}
                 </div>
-                {new Date(v.expiredDate ?? 0) > new Date() && (
-                  <div className={style.signButn}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => {
-                        setOpenSign(true);
-                        setSignedTripId(v.id);
-                      }}
-                    >
-                      報名
-                    </Button>
-                  </div>
-                )}
+                <div className={style.signButn}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => {
+                      setOpenSign(true);
+                      setSignedTripId(v.id);
+                    }}
+                    disabled={isExpired}
+                  >
+                    {isExpired ? '已截止' : '報名'}
+                  </Button>
+                </div>
               </div>
             );
-
+          }
           if (v.status === Status.Reject)
             return (
               <div key={v.id} className={classNames(style.card, style.reject)}>

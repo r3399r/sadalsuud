@@ -1,7 +1,7 @@
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { TextField, TextFieldProps } from '@mui/material';
-import zhLocale from 'date-fns/locale/zh-TW';
+import { zhTW } from 'date-fns/locale';
 import { useCallback } from 'react';
 import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 
@@ -25,7 +25,7 @@ const FormInput = <T extends FieldValues>({
     ({ field: { onChange, value } }) => {
       if (formType === 'timePicker')
         return (
-          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhLocale}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhTW}>
             <TimePicker
               value={value}
               onChange={onChange}
@@ -36,7 +36,7 @@ const FormInput = <T extends FieldValues>({
         );
       else if (formType === 'datePicker')
         return (
-          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhLocale}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhTW}>
             <DatePicker
               value={value}
               onChange={onChange}
@@ -49,7 +49,7 @@ const FormInput = <T extends FieldValues>({
         );
       else if (formType === 'yearPicker')
         return (
-          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhLocale}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhTW}>
             <DatePicker
               value={value}
               onChange={onChange}

@@ -1,4 +1,6 @@
 import { GetTripsIdResponse } from '@y-celestial/sadalsuud-service';
+import { format } from 'date-fns';
+import { zhTW } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -36,7 +38,7 @@ const TripDetail = () => {
           </div>
           <div>
             <b>日期</b>
-            {trip.date}
+            {format(new Date(trip.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
           </div>
           <div>
             <b>時間</b>

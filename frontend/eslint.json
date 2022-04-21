@@ -19,6 +19,7 @@
         "error",
         "multi"
       ],
+      "import/no-duplicates": "off",
       "import/order": [
         "error",
         {

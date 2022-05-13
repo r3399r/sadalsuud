@@ -153,7 +153,7 @@ const Trips = () => {
               </div>
               <div className={style.item}>
                 <b>日期</b>
-                {v.date}
+                {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
               </div>
               <div className={style.item}>
                 <b>負責人</b>

@@ -1,12 +1,19 @@
 .self {
   > div {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 
     white-space: pre-wrap;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    padding: 10px;
     > b {
       min-width: 40px;
     }
+  }
+  .last {
+    border-bottom: 1px solid black;
   }
 }

@@ -59,7 +59,7 @@ const TripDetail = () => {
             <b>其他注意事項</b>
             {trip.other}
           </div>
-          <div>
+          <div className={style.last}>
             <b>負責人</b>
             {trip.ownerName}
           </div>

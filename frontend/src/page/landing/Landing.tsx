@@ -36,14 +36,16 @@ const Landing = () => (
     <div className={classNames(style.more, style.orange)}>
       <div className={style.header}>瞭解更多</div>
       <p>
+        星遊社群: 我們會在星遊社群中即時分享新的出遊資訊、抽籤結果等等 →
         <a href="https://line.me/ti/g2/khrNOdt3pqlSu7_GafcgrA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">
-          星遊社群
+          點我
         </a>
-        : 我們會在星遊社群中即時分享新的出遊資訊、抽籤結果等等
+        ←
       </p>
       <hr />
       <p>
-        <a href="https://lin.ee/gk8ydMG">星遊客服</a>: 若您有任何問題，歡迎透過 LINE 官方帳號詢問。
+        星遊官方帳號: 若您有任何問題，歡迎透過 LINE 官方帳號詢問。 →
+        <a href="https://lin.ee/gk8ydMG">點我</a>←
       </p>
     </div>
   </div>

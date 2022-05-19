@@ -16,6 +16,8 @@ import {
   GetTripsResponse,
   PostTripsRequest,
   PutTripsIdMember,
+  PutTripsIdRequest,
+  PutTripsIdResponse,
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
@@ -32,7 +34,8 @@ export async function trips(
       | GetTripsResponse
       | GetTripsIdResponse
       | GetTripsDetailResponse
-      | GetTripsIdSign;
+      | GetTripsIdSign
+      | PutTripsIdResponse;
 
     switch (event.resource) {
       case '/api/trips':
@@ -94,6 +97,14 @@ async function apiTripsId(event: LambdaEvent, service: TripService) {
   switch (event.httpMethod) {
     case 'GET':
       return await service.getDetailedTrip(event.pathParameters.id);
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.modifyTrip(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutTripsIdRequest
+      );
     case 'DELETE':
       await service.deleteTripById(event.pathParameters.id);
 

@@ -9,6 +9,8 @@ import {
   GetTripsResponse,
   PostTripsRequest,
   PutTripsIdMember,
+  PutTripsIdRequest,
+  PutTripsIdResponse,
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from 'src/model/api/Trip';
@@ -139,6 +141,17 @@ export class TripService {
       dateCreated: trip.dateCreated,
       dateUpdated: trip.dateUpdated,
     };
+  }
+
+  public async modifyTrip(
+    id: string,
+    body: PutTripsIdRequest
+  ): Promise<PutTripsIdResponse> {
+    const trip = await this.tripModel.find(id);
+    const newTrip: Trip = { ...trip, ...body };
+    await this.tripModel.replace(newTrip);
+
+    return newTrip;
   }
 
   public async deleteTripById(id: string) {

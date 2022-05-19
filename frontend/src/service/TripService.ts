@@ -6,6 +6,8 @@ import {
   PostTripsRequest,
   PutSignIdRequest,
   PutTripsIdMember,
+  PutTripsIdRequest,
+  PutTripsIdResponse,
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from '@y-celestial/sadalsuud-service';
@@ -33,6 +35,12 @@ export const signTrip = async (id: string, data: PutTripsSignRequest) => {
 
 export const getTripById = async (id: string) => {
   const res = await http.get<GetTripsIdResponse>(`trips/${id}`);
+
+  return res.data;
+};
+
+export const modifyTripById = async (id: string, data: PutTripsIdRequest) => {
+  const res = await http.authPut<PutTripsIdResponse, PutTripsIdRequest>(`trips/${id}`, data);
 
   return res.data;
 };

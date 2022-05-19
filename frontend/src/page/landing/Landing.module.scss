@@ -38,6 +38,9 @@
 }
 .more {
   @include card;
+  a {
+    color: var(--link);
+  }
 }
 .icon {
   margin: 10px 0;

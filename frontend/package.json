@@ -1,6 +1,6 @@
 {
   "name": "sadalsuud-frontend",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "scripts": {
     "start": "cross-env BROWSER=none PORT=3000 react-scripts start",
     "build": "cross-env BUILD_PATH='./dist' react-scripts build",
@@ -45,7 +45,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
-    "@y-celestial/sadalsuud-service": "^2.0.16",
+    "@y-celestial/sadalsuud-service": "^2.0.17",
     "cross-env": "^7.0.3",
     "del-cli": "^4.0.1",
     "eslint": "^8.11.0",

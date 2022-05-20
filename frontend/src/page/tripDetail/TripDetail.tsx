@@ -189,26 +189,18 @@ const TripDetail = () => {
           </div>
         </form>
       )}
-      {isLogin && isEdit ? (
+      {isLogin && (
         <Button
           className={style.button}
           variant="contained"
-          color="success"
+          color={isEdit ? 'success' : 'error'}
           onClick={() => {
-            onSave();
-            setIsEdit(false);
+            if (isEdit) onSave();
+            setIsEdit(!isEdit);
           }}
+          disabled={isLoading}
         >
-          儲存
-        </Button>
-      ) : (
-        <Button
-          className={style.button}
-          variant="contained"
-          color="error"
-          onClick={() => setIsEdit(true)}
-        >
-          編輯
+          {isEdit ? '儲存' : '編輯'}
         </Button>
       )}
     </>

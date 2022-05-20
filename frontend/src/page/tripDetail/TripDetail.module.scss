@@ -17,8 +17,10 @@
     border-bottom: 1px solid black;
   }
 }
-.button {
-  margin-top: 10px !important;
+.buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
 }
 .align {
   display: flex;

@@ -176,6 +176,7 @@ const TripDetail = () => {
                 name="other"
                 size="small"
                 fullWidth
+                multiline
                 minRows={2}
                 maxRows={5}
               />

@@ -56,7 +56,10 @@ const Trips = () => {
             const isExpired = new Date(v.expiredDate ?? 0) < new Date();
 
             return (
-              <div key={v.id} className={classNames(style.card, style.pass)}>
+              <div
+                key={v.id}
+                className={classNames(style.card, style.pass, { [style.expired]: isExpired })}
+              >
                 <div className={style.item}>
                   <b>主題</b>
                   {v.topic}

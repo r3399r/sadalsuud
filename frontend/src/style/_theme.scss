@@ -10,6 +10,7 @@ html[data-theme='light'] {
   --navbar-background: #{$pale-yellow};
 
   --trips-card-pass: #{$pale-green};
+  --trips-card-pass-expired: #{$pale-green-40};
   --trips-card-pass-ad: #{$grey};
   --trips-card-pass-ad-background: #{$light-grey};
   --trips-card-reject: #{$pale-orange};

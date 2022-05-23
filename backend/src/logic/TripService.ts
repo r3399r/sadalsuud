@@ -77,7 +77,7 @@ export class TripService {
           status: v.status,
         };
       })
-      .sort(compareKey('dateCreated', true));
+      .sort(compareKey('date', true));
   }
 
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {

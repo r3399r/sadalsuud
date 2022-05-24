@@ -14,7 +14,12 @@ const Snackbar = () => {
   const handleClose = () => dispatch(closeSnackbar());
 
   return (
-    <MuiSnackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+    <MuiSnackbar
+      open={open}
+      autoHideDuration={4000}
+      onClose={handleClose}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
       <Alert severity={severity}>{message}</Alert>
     </MuiSnackbar>
   );

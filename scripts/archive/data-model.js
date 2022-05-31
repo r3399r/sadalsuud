@@ -21,14 +21,14 @@ var main = async () => {
         for (const sign of r.Items) {
             if (sign.attribute !== undefined && sign.attribute.S === 'signId#many') {
                 await dynamoDb.deleteItem({
-                    TableName: "celestial-db-test",
+                    TableName: table,
                     Key: {
                         "pk": { S: sign.pk.S },
                         "sk": { S: sign.sk.S }
                     }
                 }).promise()
                 await dynamoDb.updateItem({
-                    TableName: "celestial-db-test",
+                    TableName: table,
                     ExpressionAttributeNames: {
                         "#att": "attribute"
                     },

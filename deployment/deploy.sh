@@ -23,7 +23,10 @@ echo ===========================================================================
 echo running db scripts...
 cd ..
 npm ci
-node scripts/data-model.js $env
+if [[ -f scripts/data-model.js ]]
+then
+    node scripts/data-model.js $env
+fi
 echo ====================================================================================
 
 echo deploy frontend to S3...

@@ -1,4 +1,5 @@
 import { Button } from '@mui/material';
+import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import FormInput from 'src/component/FormInput';
 import style from './CodeForm.module.scss';
@@ -14,7 +15,12 @@ const CodeForm = ({ setCode }: CodeFormProps) => {
     handleSubmit,
     control,
     formState: { errors },
+    setFocus,
   } = useForm<Form>();
+
+  useEffect(() => {
+    setFocus('code');
+  }, [setFocus]);
 
   const onSubmit: SubmitHandler<Form> = (data) => {
     setCode(data.code);

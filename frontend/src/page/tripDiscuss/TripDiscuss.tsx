@@ -1,8 +1,14 @@
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Paper,
   Table,
   TableBody,
@@ -17,7 +23,7 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { openSnackbar } from 'src/redux/uiSlice';
-import { getSign, setTripMember } from 'src/service/TripService';
+import { deleteSignById, getSign, setTripMember } from 'src/service/TripService';
 import CodeForm from './component/CodeForm';
 import CommentInput from './component/CommentInput';
 import style from './TripDiscuss.module.scss';
@@ -28,6 +34,7 @@ const TripDiscuss = () => {
   const [code, setCode] = useState<string>();
   const [signs, setSigns] = useState<GetTripsIdSign>();
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deletedId, setDeletedId] = useState<string>();
 
   useEffect(() => {
     loadSignList();
@@ -36,6 +43,22 @@ const TripDiscuss = () => {
   const handleClick = (_e: MouseEvent<unknown>, id: string) => {
     if (selected.has(id)) setSelected((prev) => new Set([...prev].filter((v) => v !== id)));
     else setSelected((prev) => new Set(prev.add(id)));
+  };
+
+  const handleClickOpen = (id: string) => () => setDeletedId(id);
+
+  const handleClose = () => setDeletedId(undefined);
+
+  const onDelete = () => {
+    setDeletedId(undefined);
+    deleteSignById(deletedId ?? 'xxx')
+      .then(() => {
+        loadSignList();
+        dispatch(openSnackbar({ severity: 'success', message: '刪除成功' }));
+      })
+      .catch(() => {
+        dispatch(openSnackbar({ severity: 'error', message: '刪除失敗，請重試' }));
+      });
   };
 
   const onButtonClick = () => {
@@ -77,6 +100,7 @@ const TripDiscuss = () => {
               <TableCell>出遊</TableCell>
               <TableCell>報名時間</TableCell>
               <TableCell>備註</TableCell>
+              <TableCell>刪除</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,6 +130,9 @@ const TripDiscuss = () => {
                 <TableCell>
                   <CommentInput initialValue={v.comment} id={v.id} />
                 </TableCell>
+                <TableCell>
+                  <DeleteForeverIcon className={style.clickable} onClick={handleClickOpen(v.id)} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -114,6 +141,18 @@ const TripDiscuss = () => {
       <Button type="button" variant="contained" className={style.button} onClick={onButtonClick}>
         設定出遊名單
       </Button>
+      <Dialog open={deletedId !== undefined} onClose={handleClose}>
+        <DialogTitle>刪除出遊</DialogTitle>
+        <DialogContent>
+          <DialogContentText>確定刪除此報名? 此動作不可回復。</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>取消</Button>
+          <Button variant="contained" color="error" onClick={onDelete}>
+            確定
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

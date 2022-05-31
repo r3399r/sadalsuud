@@ -22,7 +22,7 @@ const FormInput = <T extends FieldValues>({
   ...props
 }: FormInputProps<T>) => {
   const render = useCallback(
-    ({ field: { onChange, value } }) => {
+    ({ field: { onChange, value, ref } }) => {
       if (formType === 'timePicker')
         return (
           <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhTW}>
@@ -31,6 +31,7 @@ const FormInput = <T extends FieldValues>({
               onChange={onChange}
               ampm={false}
               renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+              inputRef={ref}
             />
           </LocalizationProvider>
         );
@@ -44,6 +45,7 @@ const FormInput = <T extends FieldValues>({
               mask="____/__/__"
               minDate={minDate}
               renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+              inputRef={ref}
             />
           </LocalizationProvider>
         );
@@ -55,10 +57,20 @@ const FormInput = <T extends FieldValues>({
               onChange={onChange}
               views={['year']}
               renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+              inputRef={ref}
             />
           </LocalizationProvider>
         );
-      else return <TextField onChange={onChange} value={value} autoComplete="off" {...props} />;
+      else
+        return (
+          <TextField
+            onChange={onChange}
+            value={value}
+            autoComplete="off"
+            inputRef={ref}
+            {...props}
+          />
+        );
     },
     [props.error, props.label],
   );

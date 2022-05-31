@@ -1,4 +1,4 @@
-import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
+import { UnauthorizedError } from '@y-celestial/service';
 import { bindings } from 'src/bindings';
 import { Status } from 'src/constant/Trip';
 import { PostTripsRequest } from 'src/model/api/Trip';
@@ -14,7 +14,6 @@ describe('TripService', () => {
   let mockTripModel: any;
   let mockSignModel: any;
   let dummyTrip: Trip;
-  let dummyTripWithSign: Trip;
   let dummySign: Sign;
 
   beforeAll(() => {
@@ -39,10 +38,6 @@ describe('TripService', () => {
       dateCreated: 2,
       dateUpdated: 3,
     };
-    dummyTripWithSign = {
-      ...dummyTrip,
-      signId: ['sign-id', 'sign-id2'],
-    };
     dummySign = {
       id: 'sign-id',
       name: 'test-name',
@@ -50,6 +45,7 @@ describe('TripService', () => {
       yearOfBirth: 'test-year',
       isSelf: true,
       status: 'pending',
+      tripId: 'trip-id',
       dateCreated: 1,
       dateUpdated: 2,
     };
@@ -64,10 +60,10 @@ describe('TripService', () => {
     mockTripModel.create = jest.fn();
     mockTripModel.replace = jest.fn();
     mockTripModel.find = jest.fn(() => dummyTrip);
-    mockTripModel.findAll = jest.fn(() => [dummyTrip, dummyTripWithSign]);
+    mockTripModel.findAll = jest.fn(() => [dummyTrip]);
     mockTripModel.hardDelete = jest.fn();
     mockSignModel.create = jest.fn();
-    mockSignModel.find = jest.fn(() => dummySign);
+    mockSignModel.findByTripId = jest.fn(() => [dummySign]);
     mockSignModel.replace = jest.fn();
     mockSignModel.hardDelete = jest.fn();
 
@@ -149,8 +145,6 @@ describe('TripService', () => {
         accompany: 'yes',
       });
       expect(mockSignModel.create).toBeCalledTimes(1);
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
 
     it('should work for participant', async () => {
@@ -162,22 +156,6 @@ describe('TripService', () => {
         forWho: 'self',
       });
       expect(mockSignModel.create).toBeCalledTimes(1);
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockTripModel.replace).toBeCalledTimes(1);
-    });
-
-    it('should work for second sign', async () => {
-      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
-      await tripService.signTrip('id', {
-        name: 'a',
-        phone: 'b',
-        line: 'c',
-        yearOfBirth: 'd',
-        forWho: 'self',
-      });
-      expect(mockSignModel.create).toBeCalledTimes(1);
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockTripModel.replace).toBeCalledTimes(1);
     });
   });
 
@@ -216,20 +194,7 @@ describe('TripService', () => {
           ownerLine: 'test-owner-line',
           code: '123456',
           status: Status.Pass,
-          signs: 0,
-          dateCreated: 2,
-          dateUpdated: 3,
-        },
-        {
-          id: 'test-id',
-          topic: 'test-topic',
-          date: '2022-01-01',
-          ownerName: 'test-owner-name',
-          ownerPhone: 'test-owner-phone',
-          ownerLine: 'test-owner-line',
-          code: '123456',
-          status: Status.Pass,
-          signs: 2,
+          signs: 1,
           dateCreated: 2,
           dateUpdated: 3,
         },
@@ -238,26 +203,9 @@ describe('TripService', () => {
   });
 
   describe('deleteTripById', () => {
-    it('should work without sign', async () => {
+    it('should work', async () => {
       await tripService.deleteTripById('id');
-      expect(mockTripModel.find).toBeCalledTimes(1);
       expect(mockTripModel.hardDelete).toBeCalledTimes(1);
-      expect(mockSignModel.hardDelete).toBeCalledTimes(0);
-    });
-
-    it('should work with sign', async () => {
-      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
-      await tripService.deleteTripById('id');
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockTripModel.hardDelete).toBeCalledTimes(1);
-      expect(mockSignModel.hardDelete).toBeCalledTimes(2);
-    });
-
-    it('should fail', async () => {
-      mockTripModel.hardDelete = jest.fn().mockRejectedValue('');
-      await expect(() => tripService.deleteTripById('id')).rejects.toThrow(
-        InternalServerError
-      );
     });
   });
 
@@ -280,17 +228,12 @@ describe('TripService', () => {
   });
 
   describe('getSigns', () => {
-    it('should work with empty sign', async () => {
-      expect(await tripService.getSigns('id', '123456')).toStrictEqual([]);
+    it('should work', async () => {
+      expect(await tripService.getSigns('id', '123456')).toStrictEqual([
+        dummySign,
+      ]);
       expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockSignModel.find).toBeCalledTimes(0);
-    });
-
-    it('should work with sign', async () => {
-      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
-      await tripService.getSigns('id', '123456');
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockSignModel.find).toBeCalledTimes(2);
+      expect(mockSignModel.findByTripId).toBeCalledTimes(1);
     });
 
     it('should fail', async () => {
@@ -304,15 +247,8 @@ describe('TripService', () => {
   describe('reviseMember', () => {
     it('should work', async () => {
       await tripService.reviseMember('id', { signId: ['123456'] });
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockSignModel.find).toBeCalledTimes(0);
-    });
-
-    it('should work with sign', async () => {
-      mockTripModel.find = jest.fn().mockResolvedValue(dummyTripWithSign);
-      await tripService.reviseMember('id', { signId: ['sign-id'] });
-      expect(mockTripModel.find).toBeCalledTimes(1);
-      expect(mockSignModel.find).toBeCalledTimes(2);
+      expect(mockSignModel.findByTripId).toBeCalledTimes(1);
+      expect(mockSignModel.replace).toBeCalledTimes(1);
     });
   });
 });

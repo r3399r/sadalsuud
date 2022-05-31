@@ -18,6 +18,7 @@ describe('SignService', () => {
       yearOfBirth: 'test-year',
       isSelf: true,
       status: 'pending',
+      tripId: 'trip-id',
       dateCreated: 1,
       dateUpdated: 2,
     };

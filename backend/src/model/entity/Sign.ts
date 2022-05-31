@@ -4,6 +4,7 @@ import {
   entity,
   ModelBase,
   primaryAttribute,
+  relatedAttributeOne,
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 
@@ -18,6 +19,7 @@ export type Sign = DbBase & {
 
   status: 'bingo' | 'sorry' | 'pending';
   comment?: string;
+  tripId: string;
 };
 
 /**
@@ -36,6 +38,8 @@ class SignEntity implements Sign {
 
   public status: 'bingo' | 'sorry' | 'pending';
   public comment?: string;
+  @relatedAttributeOne('trip')
+  public tripId: string;
 
   public dateCreated?: number;
   public dateUpdated?: number;
@@ -51,6 +55,7 @@ class SignEntity implements Sign {
     this.accompany = input.accompany;
     this.status = input.status;
     this.comment = input.comment;
+    this.tripId = input.tripId;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
     this.dateDeleted = input.dateDeleted;
@@ -69,6 +74,10 @@ export class SignModel implements ModelBase {
 
   async findAll() {
     return await this.dbService.getItems<Sign>(this.alias);
+  }
+
+  async findByTripId(id: string) {
+    return await this.dbService.getItemsByIndex<Sign>(this.alias, 'trip', id);
   }
 
   async create(data: Sign): Promise<void> {

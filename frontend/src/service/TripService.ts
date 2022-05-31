@@ -11,6 +11,7 @@ import {
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from '@y-celestial/sadalsuud-service';
+import { dispatch } from 'src/redux/store';
 import * as http from 'src/util/http';
 
 export const registerTrip = async (data: PostTripsRequest) => {
@@ -65,4 +66,8 @@ export const editSignComment = async (id: string, comment: string) => {
 
 export const setTripMember = async (id: string, signId: string[]) => {
   await http.authPut<void, PutTripsIdMember>(`trips/${id}/member`, { signId });
+};
+
+export const deleteSignById = async (id: string) => {
+  await http.authDelete(`sign/${id}`);
 };

@@ -4,7 +4,6 @@ import {
   entity,
   ModelBase,
   primaryAttribute,
-  relatedAttributeMany,
 } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { Status } from 'src/constant/Trip';
@@ -32,8 +31,6 @@ export type Trip = DbBase & {
   expiredDate?: string;
   notifyDate?: string;
   reason?: string;
-
-  signId?: string[];
 };
 
 /**
@@ -65,9 +62,6 @@ class TripEntity implements Trip {
   public notifyDate?: string;
   public reason?: string;
 
-  @relatedAttributeMany('sign')
-  public signId?: string[];
-
   public dateCreated?: number;
   public dateUpdated?: number;
   public dateDeleted?: number;
@@ -93,7 +87,6 @@ class TripEntity implements Trip {
     this.expiredDate = input.expiredDate;
     this.notifyDate = input.notifyDate;
     this.reason = input.reason;
-    this.signId = input.signId;
     this.dateCreated = input.dateCreated;
     this.dateUpdated = input.dateUpdated;
     this.dateDeleted = input.dateDeleted;

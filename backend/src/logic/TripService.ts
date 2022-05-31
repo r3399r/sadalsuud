@@ -1,4 +1,4 @@
-import { InternalServerError, UnauthorizedError } from '@y-celestial/service';
+import { UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import { Status } from 'src/constant/Trip';
@@ -83,21 +83,29 @@ export class TripService {
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
     const trips = await this.tripModel.findAll();
 
-    return trips
-      .map((v) => ({
-        id: v.id,
-        topic: v.topic,
-        date: v.date,
-        ownerName: v.ownerName,
-        ownerPhone: v.ownerPhone,
-        ownerLine: v.ownerLine,
-        code: v.code,
-        status: v.status,
-        signs: v.signId ? v.signId.length : 0,
-        dateCreated: v.dateCreated,
-        dateUpdated: v.dateUpdated,
-      }))
-      .sort(compareKey<GetTripsDetailResponse[0]>('dateCreated', true));
+    const detailedTrips = await Promise.all(
+      trips.map(async (v) => {
+        const sign = await this.signModel.findByTripId(v.id);
+
+        return {
+          id: v.id,
+          topic: v.topic,
+          date: v.date,
+          ownerName: v.ownerName,
+          ownerPhone: v.ownerPhone,
+          ownerLine: v.ownerLine,
+          code: v.code,
+          status: v.status,
+          signs: sign.length,
+          dateCreated: v.dateCreated,
+          dateUpdated: v.dateUpdated,
+        };
+      })
+    );
+
+    return detailedTrips.sort(
+      compareKey<GetTripsDetailResponse[0]>('dateCreated', true)
+    );
   }
 
   public async signTrip(id: string, body: PutTripsSignRequest) {
@@ -111,13 +119,9 @@ export class TripService {
       accompany:
         body.accompany === undefined ? undefined : body.accompany === 'yes',
       status: 'pending',
+      tripId: id,
     };
-    const trip = await this.tripModel.find(id);
     await this.signModel.create(newSign);
-    await this.tripModel.replace({
-      ...trip,
-      signId: [...(trip.signId ?? []), newSign.id],
-    });
   }
 
   public async getDetailedTrip(id: string): Promise<GetTripsIdResponse> {
@@ -155,15 +159,7 @@ export class TripService {
   }
 
   public async deleteTripById(id: string) {
-    try {
-      const trip = await this.tripModel.find(id);
-      await this.tripModel.hardDelete(id);
-      await Promise.all(
-        (trip.signId ?? []).map((signId) => this.signModel.hardDelete(signId))
-      );
-    } catch {
-      throw new InternalServerError(`delete trip ${id} fail`);
-    }
+    await this.tripModel.hardDelete(id);
   }
 
   public async verifyTrip(id: string, body: PutTripsIdVerifyRequest) {
@@ -189,23 +185,19 @@ export class TripService {
   public async getSigns(id: string, code: string): Promise<GetTripsIdSign> {
     const trip = await this.tripModel.find(id);
     if (code !== trip.code) throw new UnauthorizedError('wrong code');
-    if (trip.signId === undefined) return [];
 
-    return await Promise.all(
-      trip.signId.map((signId) => this.signModel.find(signId))
-    );
+    return this.signModel.findByTripId(id);
   }
 
   public async reviseMember(id: string, body: PutTripsIdMember) {
-    const trip = await this.tripModel.find(id);
+    const signs = await this.signModel.findByTripId(id);
     await Promise.all(
-      (trip.signId ?? []).map(async (signId) => {
-        const sign = await this.signModel.find(signId);
-        await this.signModel.replace({
-          ...sign,
-          status: body.signId.includes(signId) ? 'bingo' : 'sorry',
-        });
-      })
+      signs.map((v) =>
+        this.signModel.replace({
+          ...v,
+          status: body.signId.includes(v.id) ? 'bingo' : 'sorry',
+        })
+      )
     );
   }
 }

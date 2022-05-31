@@ -14,4 +14,8 @@ export class SignService {
     const sign = await this.signModel.find(id);
     await this.signModel.replace({ ...sign, comment: body.comment });
   }
+
+  public async deleteSign(id: string) {
+    await this.signModel.hardDelete(id);
+  }
 }

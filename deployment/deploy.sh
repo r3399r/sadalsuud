@@ -20,11 +20,10 @@ aws cloudformation package --template-file aws/cloudformation/template.yaml --ou
 aws cloudformation deploy --template-file packaged.yaml --stack-name $project-$env-stack --parameter-overrides TargetEnvr=$env Project=$project SubDomain=$subDomain Domain=$domain --no-fail-on-empty-changeset --s3-bucket y-cf-midway
 echo ====================================================================================
 
-echo running db scroipts...
+echo running db scripts...
 cd ..
 npm ci
-cd deployment
-node data-model.js $env
+node scripts/data-model.js $env
 echo ====================================================================================
 
 echo deploy frontend to S3...

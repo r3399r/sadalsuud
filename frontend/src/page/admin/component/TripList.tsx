@@ -24,6 +24,7 @@ import { GetTripsDetailResponse } from '@y-celestial/sadalsuud-service';
 import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Loader from 'src/component/Loader';
@@ -44,15 +45,13 @@ const TripList = () => {
   const handleClose = () => setDeletedId(undefined);
 
   const onDelete = () => {
+    setDeletedId(undefined);
     deleteTripById(deletedId ?? 'xxx')
       .then(() => {
         dispatch(openSnackbar({ severity: 'success', message: '刪除成功' }));
       })
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '刪除失敗，請重試' }));
-      })
-      .finally(() => {
-        setDeletedId(undefined);
       });
   };
 
@@ -124,11 +123,13 @@ const TripList = () => {
                     <TableCell>{format(v.dateCreated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>{format(v.dateUpdated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                     <TableCell>
-                      <Link to={`/trips/${v.id}`} target="_blank">
+                      <Link to={`/trips/${v.id}`}>
                         <FlightIcon />
                       </Link>
-                      <Link to={`/trips/${v.id}/discuss`} target="_blank">
-                        <FactCheckIcon />
+                      <Link to={`/trips/${v.id}/discuss`}>
+                        <CopyToClipboard text={v.code}>
+                          <FactCheckIcon />
+                        </CopyToClipboard>
                       </Link>
                       <DeleteForeverIcon
                         className={style.clickable}

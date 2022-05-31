@@ -46,6 +46,8 @@ async function apiSignId(event: LambdaEvent, service: SignService) {
         event.pathParameters.id,
         JSON.parse(event.body) as PutSignIdRequest
       );
+    case 'DELETE':
+      return await service.deleteSign(event.pathParameters.id);
     default:
       throw new InternalServerError('unknown http method');
   }

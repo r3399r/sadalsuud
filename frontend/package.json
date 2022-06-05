@@ -1,6 +1,6 @@
 {
   "name": "sadalsuud-frontend",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "scripts": {
     "start": "cross-env BROWSER=none PORT=3000 react-scripts start",
     "build": "cross-env BUILD_PATH='./dist' react-scripts build",
@@ -31,6 +31,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.28.1",
+    "react-linkify": "^1.0.0-alpha",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.2",
     "web-vitals": "^2.1.4"
@@ -44,10 +45,11 @@
     "@types/react": "^17.0.41",
     "@types/react-copy-to-clipboard": "^5.0.2",
     "@types/react-dom": "^17.0.14",
+    "@types/react-linkify": "^1.0.1",
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
-    "@y-celestial/sadalsuud-service": "^2.0.17",
+    "@y-celestial/sadalsuud-service": "^2.0.18",
     "cross-env": "^7.0.3",
     "del-cli": "^4.0.1",
     "eslint": "^8.11.0",

@@ -46,6 +46,7 @@ const Navbar = () => {
             <div>
               <ContactSupportIcon />
               <a
+                className={style.link}
                 href="https://www.celestialstudio.net/2022/04/lucky-star-faq.html"
                 target="_blank"
                 rel="noreferrer"

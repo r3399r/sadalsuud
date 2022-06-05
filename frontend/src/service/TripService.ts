@@ -11,7 +11,6 @@ import {
   PutTripsIdVerifyRequest,
   PutTripsSignRequest,
 } from '@y-celestial/sadalsuud-service';
-import { dispatch } from 'src/redux/store';
 import * as http from 'src/util/http';
 
 export const registerTrip = async (data: PostTripsRequest) => {

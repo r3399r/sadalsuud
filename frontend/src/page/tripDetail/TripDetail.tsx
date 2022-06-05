@@ -12,6 +12,7 @@ import Loader from 'src/component/Loader';
 import { RootState } from 'src/redux/store';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { getTripById, modifyTripById } from 'src/service/TripService';
+import { componentDecorator } from 'src/util/linkify';
 import style from './TripDetail.module.scss';
 
 type Form = PutTripsIdRequest;
@@ -71,12 +72,6 @@ const TripDetail = () => {
         setIsLoading(false);
       });
   };
-
-  const componentDecorator = (href: string, text: string, key: number) => (
-    <a href={href} key={key} target="_blank" rel="noreferrer">
-      {text}
-    </a>
-  );
 
   return (
     <>

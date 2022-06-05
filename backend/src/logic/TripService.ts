@@ -42,42 +42,57 @@ export class TripService {
   public async getSimplifiedTrips(): Promise<GetTripsResponse> {
     const trips = await this.tripModel.findAll();
 
-    return trips
-      .map((v) => {
-        const common = {
-          id: v.id,
-          topic: v.topic,
-          date: v.date,
-          ownerName: v.ownerName,
-          dateCreated: v.dateCreated,
-          dateUpdated: v.dateUpdated,
-        };
-        if (v.status === Status.Pass)
-          return {
-            ...common,
-            status: v.status,
-            ad: v.ad,
-            meetTime: v.meetTime,
-            dismissTime: v.dismissTime,
-            region: v.region,
-            fee: v.fee,
-            other: v.other,
-            expiredDate: v.expiredDate,
-            notifyDate: v.notifyDate,
-          };
-        if (v.status === Status.Reject)
-          return {
-            ...common,
-            status: v.status,
-            reason: v.reason,
-          };
-
+    const res = trips.map((v) => {
+      const common = {
+        id: v.id,
+        topic: v.topic,
+        date: v.date,
+        ownerName: v.ownerName,
+        dateCreated: v.dateCreated,
+        dateUpdated: v.dateUpdated,
+      };
+      if (v.status === Status.Pass)
         return {
           ...common,
           status: v.status,
+          ad: v.ad,
+          meetTime: v.meetTime,
+          dismissTime: v.dismissTime,
+          region: v.region,
+          fee: v.fee,
+          other: v.other,
+          expiredDate: v.expiredDate,
+          notifyDate: v.notifyDate,
         };
-      })
-      .sort(compareKey('date', true));
+      if (v.status === Status.Reject)
+        return {
+          ...common,
+          status: v.status,
+          reason: v.reason,
+        };
+
+      return {
+        ...common,
+        status: v.status,
+      };
+    });
+
+    return [
+      ...res
+        .filter(
+          (v) =>
+            v.status !== Status.Pass ||
+            new Date(v.expiredDate ?? 0) >= new Date()
+        )
+        .sort(compareKey<GetTripsResponse[0]>('date', false)),
+      ...res
+        .filter(
+          (v) =>
+            v.status === Status.Pass &&
+            new Date(v.expiredDate ?? 0) < new Date()
+        )
+        .sort(compareKey<GetTripsResponse[0]>('date', true)),
+    ];
   }
 
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
@@ -186,7 +201,9 @@ export class TripService {
     const trip = await this.tripModel.find(id);
     if (code !== trip.code) throw new UnauthorizedError('wrong code');
 
-    return this.signModel.findByTripId(id);
+    const signs = await this.signModel.findByTripId(id);
+
+    return signs.sort(compareKey<GetTripsIdSign[0]>('dateCreated', true));
   }
 
   public async reviseMember(id: string, body: PutTripsIdMember) {

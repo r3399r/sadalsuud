@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Linkify from 'react-linkify';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import FormInput from 'src/component/FormInput';
@@ -71,6 +72,12 @@ const TripDetail = () => {
       });
   };
 
+  const componentDecorator = (href: string, text: string, key: number) => (
+    <a href={href} key={key} target="_blank" rel="noreferrer">
+      {text}
+    </a>
+  );
+
   return (
     <>
       {isLoading && <Loader />}
@@ -89,7 +96,9 @@ const TripDetail = () => {
             {isEdit ? (
               <FormInput control={control} name="ad" size="small" multiline rows={2} fullWidth />
             ) : (
-              <div>{trip.ad}</div>
+              <Linkify componentDecorator={componentDecorator}>
+                <div>{trip.ad}</div>
+              </Linkify>
             )}
           </div>
           <div>
@@ -105,7 +114,9 @@ const TripDetail = () => {
                 fullWidth
               />
             ) : (
-              <div>{trip.content}</div>
+              <Linkify componentDecorator={componentDecorator}>
+                <div>{trip.content}</div>
+              </Linkify>
             )}
           </div>
           <div>
@@ -181,7 +192,9 @@ const TripDetail = () => {
                 maxRows={5}
               />
             ) : (
-              <div>{trip.other}</div>
+              <Linkify componentDecorator={componentDecorator}>
+                <div>{trip.other}</div>
+              </Linkify>
             )}
           </div>
           <div className={style.last}>

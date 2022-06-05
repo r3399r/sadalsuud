@@ -203,7 +203,7 @@ export class TripService {
 
     const signs = await this.signModel.findByTripId(id);
 
-    return signs.sort(compareKey<GetTripsIdSign[0]>('dateCreated', true));
+    return signs.sort(compareKey<GetTripsIdSign[0]>('dateCreated', false));
   }
 
   public async reviseMember(id: string, body: PutTripsIdMember) {

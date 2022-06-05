@@ -4,10 +4,12 @@ import classNames from 'classnames';
 import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
+import Linkify from 'react-linkify';
 import { useDispatch } from 'react-redux';
 import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { getSimplifiedTrips } from 'src/service/TripService';
+import { componentDecorator } from 'src/util/linkify';
 import SignForm from './component/SignForm';
 import TripsForm from './component/TripsForm';
 import style from './Trips.module.scss';
@@ -76,13 +78,15 @@ const Trips = () => {
                   <b>地點</b>
                   {v.region} (確切集合、解散地點將於確定出遊後通知)
                 </div>
-                <div className={style.ad}>{v.ad}</div>
+                <Linkify componentDecorator={componentDecorator}>
+                  <div className={style.ad}>{v.ad}</div>
+                </Linkify>
                 <div className={style.item}>
                   <b>大致費用</b>${v.fee}
                 </div>
                 <div className={style.item}>
                   <b>其他注意事項</b>
-                  {v.other}
+                  <Linkify componentDecorator={componentDecorator}>{v.other}</Linkify>
                 </div>
                 <div className={style.item}>
                   <b>負責人</b>

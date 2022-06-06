@@ -98,25 +98,23 @@ export class TripService {
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
     const trips = await this.tripModel.findAll();
 
-    const detailedTrips = await Promise.all(
-      trips.map(async (v) => {
-        const sign = await this.signModel.findByTripId(v.id);
-
-        return {
-          id: v.id,
-          topic: v.topic,
-          date: v.date,
-          ownerName: v.ownerName,
-          ownerPhone: v.ownerPhone,
-          ownerLine: v.ownerLine,
-          code: v.code,
-          status: v.status,
-          signs: sign.length,
-          dateCreated: v.dateCreated,
-          dateUpdated: v.dateUpdated,
-        };
-      })
-    );
+    const detailedTrips: GetTripsDetailResponse = [];
+    for (const trip of trips) {
+      const sign = await this.signModel.findByTripId(trip.id);
+      detailedTrips.push({
+        id: trip.id,
+        topic: trip.topic,
+        date: trip.date,
+        ownerName: trip.ownerName,
+        ownerPhone: trip.ownerPhone,
+        ownerLine: trip.ownerLine,
+        code: trip.code,
+        status: trip.status,
+        signs: sign.length,
+        dateCreated: trip.dateCreated,
+        dateUpdated: trip.dateUpdated,
+      });
+    }
 
     return detailedTrips.sort(
       compareKey<GetTripsDetailResponse[0]>('dateCreated', true)
@@ -208,13 +206,10 @@ export class TripService {
 
   public async reviseMember(id: string, body: PutTripsIdMember) {
     const signs = await this.signModel.findByTripId(id);
-    await Promise.all(
-      signs.map((v) =>
-        this.signModel.replace({
-          ...v,
-          status: body.signId.includes(v.id) ? 'bingo' : 'sorry',
-        })
-      )
-    );
+    for (const sign of signs)
+      await this.signModel.replace({
+        ...sign,
+        status: body.signId.includes(sign.id) ? 'bingo' : 'sorry',
+      });
   }
 }

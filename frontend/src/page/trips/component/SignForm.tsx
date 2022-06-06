@@ -98,16 +98,18 @@ const SignForm = ({ onClose, tripId = 'xxx' }: TripsFormProps) => {
               />
             </div>
           )}
-          <div className={style.buttons}>
-            <Button variant="outlined" color="error" type="button" onClick={onClose}>
-              取消
-            </Button>
-            <Button variant="contained" type="submit">
-              送出
-            </Button>
-          </div>
         </div>
       )}
+      <div className={style.buttons}>
+        <Button variant="outlined" color="error" type="button" onClick={onClose}>
+          取消
+        </Button>
+        {forWho && (
+          <Button variant="contained" type="submit">
+            送出
+          </Button>
+        )}
+      </div>
     </form>
   );
 };

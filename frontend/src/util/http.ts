@@ -4,7 +4,7 @@ import { dispatch } from 'src/redux/store';
 
 const defaultConfig: AxiosRequestConfig = {
   baseURL: '/api/',
-  timeout: 5000,
+  timeout: 30000,
 };
 
 export const get = async <T, K = unknown>(url: string, params?: K) =>

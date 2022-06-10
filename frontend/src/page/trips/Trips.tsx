@@ -41,14 +41,15 @@ const Trips = () => {
 
   return (
     <>
-      <div className={style.btn}>
+      <FormControlLabel
+        control={<Switch checked={switched} onChange={handleSwitch} />}
+        label="顯示審核中/未通過"
+      />
+      <div className={style.head}>
+        <h1>出遊清單</h1>
         <Button variant="contained" onClick={() => setOpenRegister(true)}>
-          我要舉辦出遊
+          舉辦出遊
         </Button>
-        <FormControlLabel
-          control={<Switch checked={switched} onChange={handleSwitch} />}
-          label="顯示審核中/未通過"
-        />
       </div>
       {isLoading && <Loader />}
       {trips
@@ -95,7 +96,7 @@ const Trips = () => {
                 <div className={style.item}>
                   <b>報名截止日</b>
                   {v.expiredDate
-                    ? format(new Date(v.expiredDate), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })
+                    ? format(new Date(v.expiredDate), 'yyyy/MM/dd (EEEEE) HH:mm', { locale: zhTW })
                     : ''}
                 </div>
                 <div className={style.item}>

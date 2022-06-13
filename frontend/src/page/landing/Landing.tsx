@@ -25,18 +25,38 @@ const Landing = () => (
     </div>
     <div className={classNames(style.how, style.blue)}>
       <div className={style.header}>活動方式</div>
-      <p>
-        到出遊清單選一個喜歡的活動報名參加，和好夥伴一同度過美好的時光。所有活動皆可自由報名，家長也可幫小孩報名。家長若不放心，可選擇一同參與，若有認識的夥伴，可以交給他並讓自己趁機放個小假。
-      </p>
-      <p>
-        所有活動皆須通過管理員審核才會刊出，聯絡方式只會讓活動負責人知道，確切的時間地點亦只有參與者知悉，費用除了交通、飲食、門票等的必要開銷之外不收額外費用。
-      </p>
-      <p>需有適當權限才能刊出活動，若您想規劃活動，請聯絡官方客服，我們會盡速與您討論。</p>
+      <h3>參加活動</h3>
+      <ol>
+        <li>點進出遊清單</li>
+        <li>選擇喜歡的活動報名參加</li>
+        <li>報名截止抽籤後收到活動通知 (集合時間地點等資訊)</li>
+      </ol>
+      <hr />
+      <h3>舉辦活動</h3>
+      <ol>
+        <li>在出遊清單頁面點選「舉辦出遊」</li>
+        <li>填寫活動資訊</li>
+        <li>管理員審核通過後開放報名</li>
+      </ol>
+      <hr />
+      <h3>其他說明</h3>
+      <ol>
+        <li>任何人都可以舉辦活動、參加活動，家長也可幫小孩報名</li>
+        <li>不收額外費用，僅須負擔自己的交通、飲食、門票等必要開銷</li>
+        <li>
+          若您想規劃活動，但沒有想法，可以聯絡
+          <a href="https://lin.ee/gk8ydMG">星遊 LINE 官方帳號</a>，我們會和您一起討論規劃
+        </li>
+        <li>
+          更多內容請點進
+          <a href="https://www.celestialstudio.net/2022/04/lucky-star-faq.html">常見問題 FAQ</a>
+        </li>
+      </ol>
     </div>
     <div className={classNames(style.more, style.orange)}>
       <div className={style.header}>瞭解更多</div>
       <p>
-        星遊社群: 我們會在星遊社群中即時分享新的出遊資訊、抽籤結果等等 →
+        <b>星遊社群</b>: 我們會在星遊社群中即時分享新的出遊資訊、抽籤結果等等 →
         <a href="https://line.me/ti/g2/khrNOdt3pqlSu7_GafcgrA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">
           點我
         </a>
@@ -44,7 +64,7 @@ const Landing = () => (
       </p>
       <hr />
       <p>
-        星遊官方帳號: 若您有任何問題，歡迎透過 LINE 官方帳號詢問。 →
+        <b>星遊官方帳號</b>: 若您有任何問題，歡迎透過 LINE 官方帳號詢問 →
         <a href="https://lin.ee/gk8ydMG">點我</a>←
       </p>
     </div>

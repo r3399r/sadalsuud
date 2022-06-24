@@ -56,7 +56,12 @@ const Landing = () => (
     <div className={classNames(style.more, style.orange)}>
       <div className={style.header}>瞭解更多</div>
       <p>
-        <b>星遊社群</b>: 我們會在星遊社群中即時分享新的出遊資訊、抽籤結果等等 →
+        <b>FB 粉專</b>: 我們會在 FB 粉專中分享新的出遊資訊、分享出遊紀錄 →
+        <a href="https://www.facebook.com/108515795231766">點我</a>←
+      </p>
+      <hr />
+      <p>
+        <b>LINE 社群</b>: 我們會在星遊社群中分享新的出遊資訊、分享出遊紀錄 →
         <a href="https://line.me/ti/g2/khrNOdt3pqlSu7_GafcgrA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">
           點我
         </a>

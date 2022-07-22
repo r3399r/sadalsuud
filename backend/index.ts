@@ -6,7 +6,7 @@ export {
   GetTripsDetailResponse,
   PutTripsIdVerifyRequest,
   GetTripsIdSign,
-  PutTripsIdMember,
+  PutTripsIdMemberRequest,
   PutTripsIdRequest,
   PutTripsIdResponse,
 } from 'src/model/api/Trip';

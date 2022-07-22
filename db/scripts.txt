@@ -1,2 +1,0 @@
-./v2.2.0/photo.sql
-./v2.2.0/user.sql

@@ -6,11 +6,10 @@ export type PostTripsRequest = {
   ownerName: string;
   ownerPhone: string;
   ownerLine?: string;
-  date: string;
   region: string;
-  meetTime: string;
+  meetDate: string;
   meetPlace: string;
-  dismissTime: string;
+  dismissDate: string;
   dismissPlace: string;
   topic: string;
   ad: string;
@@ -22,13 +21,13 @@ export type PostTripsRequest = {
 type GetTripsPassResponse = {
   status: Status.Pass;
   ad: string;
-  meetTime: string;
-  dismissTime: string;
+  meetDate: string;
+  dismissDate: string;
   region: string;
   fee: number;
-  other?: string;
-  expiredDate?: string;
-  notifyDate?: string;
+  other: string | null;
+  expiredDate: string | null;
+  notifyDate: string | null;
 };
 
 type GetTripsPendingResponse = {
@@ -37,7 +36,7 @@ type GetTripsPendingResponse = {
 
 type GetTripsRejectResponse = {
   status: Status.Reject;
-  reason?: string;
+  reason: string | null;
 };
 
 export type GetTripsResponse = ((
@@ -49,22 +48,23 @@ export type GetTripsResponse = ((
   topic: string;
   date: string;
   ownerName: string;
-  dateCreated?: number;
-  dateUpdated?: number;
+  dateCreated: string;
+  dateUpdated: string | null;
 })[];
 
 export type GetTripsDetailResponse = {
   id: string;
+  uuid: string;
   topic: string;
   date: string;
   ownerName: string;
   ownerPhone: string;
-  ownerLine?: string;
+  ownerLine: string | null;
   code: string;
-  status: 'pending' | 'pass' | 'reject';
+  status: Status;
   signs: number;
-  dateCreated?: number;
-  dateUpdated?: number;
+  dateCreated: string;
+  dateUpdated: string | null;
 }[];
 
 export type PutTripsSignRequest = {
@@ -72,36 +72,36 @@ export type PutTripsSignRequest = {
   phone: string;
   line?: string;
   name: string;
-  yearOfBirth: string;
+  birthYear: string;
   accompany?: 'yes' | 'no';
 };
 
 export type GetTripsIdResponse = {
   id: string;
+  uuid: string;
   topic: string;
   ad: string;
   content: string;
   date: string;
   region: string;
-  meetTime: string;
+  meetDate: string;
   meetPlace: string;
-  dismissTime: string;
+  dismissDate: string;
   dismissPlace: string;
   fee: number;
-  other?: string;
+  other: string | null;
   ownerName: string;
-  status: 'pass' | 'pending' | 'reject';
-  dateCreated?: number;
-  dateUpdated?: number;
+  status: Status;
+  dateCreated: string;
+  dateUpdated: string | null;
 };
 
 export type PutTripsIdRequest = {
   topic: string;
   ad: string;
   content: string;
-  date: string;
-  meetTime: string;
-  dismissTime: string;
+  meetDate: string;
+  dismissDate: string;
   region: string;
   meetPlace: string;
   dismissPlace: string;
@@ -124,6 +124,6 @@ export type PutTripsIdVerifyRequest =
 
 export type GetTripsIdSign = Sign[];
 
-export type PutTripsIdMember = {
+export type PutTripsIdMemberRequest = {
   signId: string[];
 };

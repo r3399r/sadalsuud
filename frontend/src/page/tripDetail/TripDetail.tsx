@@ -15,7 +15,7 @@ import { getTripById, modifyTripById } from 'src/service/TripService';
 import { componentDecorator } from 'src/util/linkify';
 import style from './TripDetail.module.scss';
 
-type Form = PutTripsIdRequest;
+type Form = PutTripsIdRequest & { date: string };
 
 const TripDetail = () => {
   const dispatch = useDispatch();
@@ -36,13 +36,13 @@ const TripDetail = () => {
         setValue('ad', res.ad);
         setValue('content', res.content);
         setValue('date', res.date);
-        setValue('meetTime', new Date(`1970/01/01 ${res.meetTime}`).toISOString());
-        setValue('dismissTime', new Date(`1970/01/01 ${res.dismissTime}`).toISOString());
+        setValue('meetDate', new Date(`1970/01/01 ${res.meetDate}`).toISOString());
+        setValue('dismissDate', new Date(`1970/01/01 ${res.dismissDate}`).toISOString());
         setValue('region', res.region);
         setValue('meetPlace', res.meetPlace);
         setValue('dismissPlace', res.dismissPlace);
         setValue('fee', res.fee);
-        setValue('other', res.other);
+        setValue('other', res.other ?? '');
       })
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
@@ -58,13 +58,15 @@ const TripDetail = () => {
     setIsLoading(true);
     modifyTripById(id, {
       ...data,
-      date: new Date(data.date).toISOString(),
-      meetTime: format(new Date(data.meetTime), 'HH:mm'),
-      dismissTime: format(new Date(data.dismissTime), 'HH:mm'),
+      meetDate: format(new Date(data.meetDate), 'HH:mm'),
+      dismissDate: format(new Date(data.dismissDate), 'HH:mm'),
       fee: parseInt(String(data.fee)),
       other: data.other === '' ? undefined : data.other,
     })
-      .then((res) => setTrip(res))
+      .then((res) => {
+        // const {date,...other}=res
+        // setTrip(other)
+      })
       .catch(() => {
         dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
       })
@@ -126,17 +128,17 @@ const TripDetail = () => {
             <b>時間</b>
             {isEdit ? (
               <div className={style.align}>
-                <FormInput formType="timePicker" control={control} name="meetTime" size="small" />~
+                <FormInput formType="timePicker" control={control} name="meetDate" size="small" />~
                 <FormInput
                   formType="timePicker"
                   control={control}
-                  name="dismissTime"
+                  name="dismissDate"
                   size="small"
                 />
               </div>
             ) : (
               <div>
-                {trip.meetTime}~{trip.dismissTime}
+                {trip.meetDate}~{trip.dismissDate}
               </div>
             )}
           </div>

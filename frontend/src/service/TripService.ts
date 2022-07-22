@@ -5,7 +5,7 @@ import {
   GetTripsResponse,
   PostTripsRequest,
   PutSignIdRequest,
-  PutTripsIdMember,
+  PutTripsIdMemberRequest,
   PutTripsIdRequest,
   PutTripsIdResponse,
   PutTripsIdVerifyRequest,
@@ -64,7 +64,7 @@ export const editSignComment = async (id: string, comment: string) => {
 };
 
 export const setTripMember = async (id: string, signId: string[]) => {
-  await http.authPut<void, PutTripsIdMember>(`trips/${id}/member`, { signId });
+  await http.authPut<void, PutTripsIdMemberRequest>(`trips/${id}/member`, { signId });
 };
 
 export const deleteSignById = async (id: string) => {

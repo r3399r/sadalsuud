@@ -120,8 +120,8 @@ const TripList = () => {
                         />
                       )}
                     </TableCell>
-                    <TableCell>{format(v.dateCreated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
-                    <TableCell>{format(v.dateUpdated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
+                    <TableCell>{v.dateCreated}</TableCell>
+                    <TableCell>{v.dateUpdated}</TableCell>
                     <TableCell>
                       <Link to={`/trips/${v.id}`}>
                         <FlightIcon />

@@ -30,4 +30,4 @@ jobs:
       - name: Deploy to dev environment
         run: |
           cd deployment
-          sh deploy.sh test ${{ secrets.DB_INSTANCE_TEST }} ${{ secrets.DB_USER }} ${{ secrets.DB_PASSWORD }}
+          sh deploy.sh test

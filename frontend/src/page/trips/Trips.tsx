@@ -73,7 +73,7 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>時段</b>
-                  {v.meetTime}~{v.dismissTime}
+                  {v.meetDate}~{v.dismissDate}
                 </div>
                 <div className={style.item}>
                   <b>地點</b>

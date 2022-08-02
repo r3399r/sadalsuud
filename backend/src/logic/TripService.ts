@@ -1,5 +1,4 @@
 import { NotFoundError, UnauthorizedError } from '@y-celestial/service';
-import { format } from 'date-fns';
 import { inject, injectable } from 'inversify';
 import { LessThan, MoreThanOrEqual } from 'typeorm';
 import { SignAccess } from 'src/access/SignAccess';
@@ -43,6 +42,7 @@ export class TripService {
     trip.ad = body.ad;
     trip.content = body.content;
     trip.region = body.region;
+    trip.date = new Date(body.date);
     trip.meetDate = new Date(body.meetDate);
     trip.meetPlace = body.meetPlace;
     trip.dismissDate = new Date(body.dismissDate);
@@ -60,6 +60,7 @@ export class TripService {
 
   public async getSimplifiedTrips(): Promise<GetTripsResponse> {
     const now = new Date();
+
     const [futureTrips, pastTrips] = await Promise.all([
       this.tripAccess.findMany({
         where: { meetDate: MoreThanOrEqual(now) },
@@ -77,27 +78,23 @@ export class TripService {
       const common = {
         id: v.id,
         topic: v.topic,
-        date: format(v.meetDate, 'yyyy/MM/dd'),
+        date: v.date.toISOString(),
         ownerName: v.ownerName,
-        dateCreated: format(v.dateCreated, 'yyyy/MM/dd HH:mm'),
-        dateUpdated: v.dateUpdated
-          ? format(v.dateUpdated, 'yyyy/MM/dd HH:mm')
-          : null,
+        dateCreated: v.dateCreated.toISOString(),
+        dateUpdated: v.dateUpdated ? v.dateUpdated.toISOString() : null,
       };
       if (v.status === Status.Pass)
         return {
           ...common,
           status: v.status,
           ad: v.ad,
-          meetDate: format(v.meetDate, 'yyyy/MM/dd HH:mm'),
-          dismissDate: format(v.dismissDate, 'yyyy/MM/dd HH:mm'),
+          meetDate: v.meetDate.toISOString(),
+          dismissDate: v.dismissDate.toISOString(),
           region: v.region,
           fee: v.fee,
           other: v.other,
-          expiredDate: v.expiredDate
-            ? format(v.expiredDate, 'yyyy/MM/dd HH:mm')
-            : null,
-          notifyDate: v.notifyDate ? format(v.notifyDate, 'yyyy/MM/dd') : null,
+          expiredDate: v.expiredDate ? v.expiredDate.toISOString() : null,
+          notifyDate: v.notifyDate ? v.notifyDate.toISOString() : null,
         };
       else if (v.status === Status.Reject)
         return {
@@ -120,24 +117,21 @@ export class TripService {
 
     return trips.map((v) => ({
       id: v.id,
-      uuid: v.uuid,
       topic: v.topic,
-      date: format(v.meetDate, 'yyyy/MM/dd'),
+      date: v.date.toISOString(),
       ownerName: v.ownerName,
       ownerPhone: v.ownerPhone,
       ownerLine: v.ownerLine,
       code: v.code,
       status: v.status,
       signs: Number(v.count),
-      dateCreated: format(v.dateCreated, 'yyyy/MM/dd HH:mm'),
-      dateUpdated: v.dateUpdated
-        ? format(v.dateUpdated, 'yyyy/MM/dd HH:mm')
-        : null,
+      dateCreated: v.dateCreated.toISOString(),
+      dateUpdated: v.dateUpdated ? v.dateUpdated.toISOString() : null,
     }));
   }
 
-  public async signTrip(uuid: string, body: PutTripsSignRequest) {
-    const trip = await this.tripAccess.findOne({ where: { uuid } });
+  public async signTrip(id: string, body: PutTripsSignRequest) {
+    const trip = await this.tripAccess.findById(id);
     if (trip === null) throw new NotFoundError();
 
     const sign = new SignEntity();
@@ -159,24 +153,21 @@ export class TripService {
 
     return {
       id: trip.id,
-      uuid: trip.uuid,
       topic: trip.topic,
       ad: trip.ad,
       content: trip.content,
-      date: format(trip.meetDate, 'yyyy/MM/dd'),
+      date: trip.date.toISOString(),
       region: trip.region,
-      meetDate: format(trip.meetDate, 'yyyy/MM/dd HH:mm'),
+      meetDate: trip.meetDate.toISOString(),
       meetPlace: trip.meetPlace,
       dismissPlace: trip.dismissPlace,
-      dismissDate: format(trip.dismissDate, 'yyyy/MM/dd HH:mm'),
+      dismissDate: trip.dismissDate.toISOString(),
       fee: trip.fee,
       other: trip.other,
       ownerName: trip.ownerName,
       status: trip.status,
-      dateCreated: format(trip.dateCreated, 'yyyy/MM/dd HH:mm'),
-      dateUpdated: trip.dateUpdated
-        ? format(trip.dateUpdated, 'yyyy/MM/dd HH:mm')
-        : null,
+      dateCreated: trip.dateCreated.toISOString(),
+      dateUpdated: trip.dateUpdated ? trip.dateUpdated.toISOString() : null,
     };
   }
 
@@ -201,7 +192,28 @@ export class TripService {
       other: body.other ?? null,
     };
 
-    return await this.tripAccess.save(newTrip);
+    await this.tripAccess.save(newTrip);
+
+    return {
+      id: newTrip.id,
+      topic: newTrip.topic,
+      ad: newTrip.ad,
+      content: newTrip.content,
+      date: newTrip.date.toISOString(),
+      region: newTrip.region,
+      meetDate: newTrip.meetDate.toISOString(),
+      meetPlace: newTrip.meetPlace,
+      dismissPlace: newTrip.dismissPlace,
+      dismissDate: newTrip.dismissDate.toISOString(),
+      fee: newTrip.fee,
+      other: newTrip.other,
+      ownerName: newTrip.ownerName,
+      status: newTrip.status,
+      dateCreated: newTrip.dateCreated.toISOString(),
+      dateUpdated: newTrip.dateUpdated
+        ? newTrip.dateUpdated.toISOString()
+        : null,
+    };
   }
 
   public async deleteTripById(id: string) {

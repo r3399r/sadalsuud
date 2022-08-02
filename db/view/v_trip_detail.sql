@@ -1,8 +1,8 @@
 DROP VIEW IF EXISTS v_trip_detail;
 CREATE VIEW v_trip_detail AS
 select tmp.id,
-    tmp.uuid,
     tmp.topic,
+    tmp.date,
     tmp.meet_date,
     tmp.owner_name,
     tmp.owner_phone,
@@ -14,8 +14,8 @@ select tmp.id,
     tmp.date_updated
 from (
         select trip.id,
-            trip.uuid,
             trip.topic,
+            trip.date,
             trip.meet_date,
             trip.owner_name,
             trip.owner_phone,

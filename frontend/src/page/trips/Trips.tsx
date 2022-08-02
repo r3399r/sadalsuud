@@ -1,7 +1,7 @@
 import { Button, FormControlLabel, Modal, Switch } from '@mui/material';
 import { GetTripsResponse, Status } from '@y-celestial/sadalsuud-service';
 import classNames from 'classnames';
-import { format } from 'date-fns';
+import { format } from 'date-fns-tz';
 import { zhTW } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
 import Linkify from 'react-linkify';
@@ -65,25 +65,30 @@ const Trips = () => {
               >
                 <div className={style.item}>
                   <b>主題</b>
-                  {v.topic}
+                  <div>{v.topic}</div>
                 </div>
                 <div className={style.item}>
                   <b>日期</b>
-                  {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
+                  <div>{format(new Date(v.date), 'yyyy/MM/dd', { timeZone: 'Asia/Taipei' })}</div>
                 </div>
                 <div className={style.item}>
                   <b>時段</b>
-                  {v.meetDate}~{v.dismissDate}
+                  <div>
+                    {`${format(new Date(v.meetDate), 'HH:mm', {
+                      timeZone: 'Asia/Taipei',
+                    })}~${format(new Date(v.dismissDate), 'HH:mm', { timeZone: 'Asia/Taipei' })}`}
+                  </div>
                 </div>
                 <div className={style.item}>
                   <b>地點</b>
-                  {v.region} (確切集合、解散地點將於確定出遊後通知)
+                  <div>{`${v.region} (確切集合、解散地點將於確定出遊後通知)`}</div>
                 </div>
                 <Linkify componentDecorator={componentDecorator}>
                   <div className={style.ad}>{v.ad}</div>
                 </Linkify>
                 <div className={style.item}>
-                  <b>大致費用</b>${v.fee}
+                  <b>大致費用</b>
+                  <div>${v.fee}</div>
                 </div>
                 <div className={style.item}>
                   <b>其他注意事項</b>
@@ -91,19 +96,29 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>負責人</b>
-                  {v.ownerName}
+                  <div>{v.ownerName}</div>
                 </div>
                 <div className={style.item}>
                   <b>報名截止日</b>
-                  {v.expiredDate
-                    ? format(new Date(v.expiredDate), 'yyyy/MM/dd (EEEEE) HH:mm', { locale: zhTW })
-                    : ''}
+                  <div>
+                    {v.expiredDate
+                      ? format(new Date(v.expiredDate), 'yyyy/MM/dd (EEEEE) HH:mm', {
+                          locale: zhTW,
+                          timeZone: 'Asia/Taipei',
+                        })
+                      : '無'}
+                  </div>
                 </div>
                 <div className={style.item}>
                   <b>出遊通知日</b>
-                  {v.notifyDate
-                    ? format(new Date(v.notifyDate), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })
-                    : ''}
+                  <div>
+                    {v.notifyDate
+                      ? format(new Date(v.notifyDate), 'yyyy/MM/dd (EEEEE)', {
+                          locale: zhTW,
+                          timeZone: 'Asia/Taipei',
+                        })
+                      : '無'}
+                  </div>
                 </div>
                 <div className={style.signButn}>
                   <Button
@@ -130,20 +145,25 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>未通過原因</b>
-                  {v.reason}
+                  <div>{v.reason}</div>
                 </div>
                 <hr />
                 <div className={style.item}>
                   <b>主題</b>
-                  {v.topic}
+                  <div>{v.topic}</div>
                 </div>
                 <div className={style.item}>
                   <b>日期</b>
-                  {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
+                  <div>
+                    {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', {
+                      locale: zhTW,
+                      timeZone: 'Asia/Taipei',
+                    })}
+                  </div>
                 </div>
                 <div className={style.item}>
                   <b>負責人</b>
-                  {v.ownerName}
+                  <div>{v.ownerName}</div>
                 </div>
               </div>
             );
@@ -157,15 +177,20 @@ const Trips = () => {
               <hr />
               <div className={style.item}>
                 <b>主題</b>
-                {v.topic}
+                <div>{v.topic}</div>
               </div>
               <div className={style.item}>
                 <b>日期</b>
-                {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}
+                <div>
+                  {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', {
+                    locale: zhTW,
+                    timeZone: 'Asia/Taipei',
+                  })}
+                </div>
               </div>
               <div className={style.item}>
                 <b>負責人</b>
-                {v.ownerName}
+                <div>{v.ownerName}</div>
               </div>
             </div>
           );

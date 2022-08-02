@@ -1,6 +1,6 @@
 {
   "name": "@y-celestial/sadalsuud-service",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "author": "Yue Chang",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -30,13 +30,11 @@
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.3.1",
-    "typeorm": "^0.3.7",
-    "uuid": "^8.3.2"
+    "typeorm": "^0.3.7"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "@types/pg": "^8.6.5",
-    "@types/uuid": "^8.3.3",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
     "del-cli": "^4.0.1",

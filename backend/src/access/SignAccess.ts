@@ -20,8 +20,10 @@ export class SignAccess {
 
   public async save(sign: Sign) {
     const qr = await this.database.getQueryRunner();
+    const entity = new SignEntity();
+    Object.assign(entity, sign);
 
-    return await qr.manager.save(sign);
+    return await qr.manager.save(entity);
   }
 
   public async findMany(options?: FindManyOptions<Sign>) {

@@ -32,8 +32,10 @@ export class TripAccess {
 
   public async save(trip: Trip) {
     const qr = await this.database.getQueryRunner();
+    const entity = new TripEntity();
+    Object.assign(entity, trip);
 
-    return await qr.manager.save(trip);
+    return await qr.manager.save(entity);
   }
 
   public async hardDeleteById(id: string) {

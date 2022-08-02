@@ -21,11 +21,11 @@ describe('TripService', () => {
   beforeAll(() => {
     dummyTrip = {
       id: 'test-id',
-      uuid: 'uuid',
       topic: 'test-topic',
       ad: 'test-ad',
       content: 'test-content',
       region: 'test-region',
+      date: new Date('2022/02/03'),
       meetDate: new Date('2022/01/01'),
       meetPlace: 'test-meet-place',
       dismissDate: new Date('2022/01/02'),

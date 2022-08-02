@@ -1,12 +1,12 @@
 import { Status } from 'src/constant/Trip';
 import { Sign } from 'src/model/entity/Sign';
-import { Trip } from 'src/model/entity/Trip';
 
 export type PostTripsRequest = {
   ownerName: string;
   ownerPhone: string;
   ownerLine?: string;
   region: string;
+  date: string;
   meetDate: string;
   meetPlace: string;
   dismissDate: string;
@@ -54,7 +54,6 @@ export type GetTripsResponse = ((
 
 export type GetTripsDetailResponse = {
   id: string;
-  uuid: string;
   topic: string;
   date: string;
   ownerName: string;
@@ -78,7 +77,6 @@ export type PutTripsSignRequest = {
 
 export type GetTripsIdResponse = {
   id: string;
-  uuid: string;
   topic: string;
   ad: string;
   content: string;
@@ -109,7 +107,24 @@ export type PutTripsIdRequest = {
   other?: string;
 };
 
-export type PutTripsIdResponse = Trip;
+export type PutTripsIdResponse = {
+  id: string;
+  topic: string;
+  ad: string;
+  content: string;
+  date: string;
+  region: string;
+  meetDate: string;
+  meetPlace: string;
+  dismissDate: string;
+  dismissPlace: string;
+  fee: number;
+  other: string | null;
+  ownerName: string;
+  status: Status;
+  dateCreated: string;
+  dateUpdated: string | null;
+};
 
 export type PutTripsIdVerifyRequest =
   | {

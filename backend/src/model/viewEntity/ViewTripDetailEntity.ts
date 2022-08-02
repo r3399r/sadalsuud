@@ -8,10 +8,10 @@ export class ViewTripDetailEntity implements ViewTripDetail {
   id!: string;
 
   @ViewColumn()
-  uuid!: string;
-
-  @ViewColumn()
   topic!: string;
+
+  @ViewColumn({ name: 'date' })
+  date!: Date;
 
   @ViewColumn({ name: 'meet_date' })
   meetDate!: Date;

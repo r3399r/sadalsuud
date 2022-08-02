@@ -8,10 +8,6 @@ export class TripEntity implements Trip {
   @Generated('rowid')
   id!: string;
 
-  @Column()
-  @Generated('uuid')
-  uuid!: string;
-
   @Column({ type: 'text' })
   topic!: string;
 
@@ -23,6 +19,9 @@ export class TripEntity implements Trip {
 
   @Column({ type: 'text' })
   region!: string;
+
+  @Column({ type: 'timestamp' })
+  date!: Date;
 
   @Column({ type: 'timestamp', name: 'meet_date' })
   meetDate!: Date;
@@ -57,10 +56,10 @@ export class TripEntity implements Trip {
   @Column({ type: 'text' })
   status!: Status;
 
-  @Column({ type: 'text', name: 'expired_date', default: null })
+  @Column({ type: 'timestamp', name: 'expired_date', default: null })
   expiredDate: Date | null = null;
 
-  @Column({ type: 'text', name: 'notify_date', default: null })
+  @Column({ type: 'timestamp', name: 'notify_date', default: null })
   notifyDate: Date | null = null;
 
   @Column({ type: 'text', default: null })

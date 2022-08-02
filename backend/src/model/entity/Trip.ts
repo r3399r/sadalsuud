@@ -2,11 +2,11 @@ import { Status } from 'src/constant/Trip';
 
 export type Trip = {
   id: string;
-  uuid: string;
   topic: string;
   ad: string;
   content: string;
   region: string;
+  date: Date;
   meetDate: Date;
   meetPlace: string;
   dismissDate: Date;

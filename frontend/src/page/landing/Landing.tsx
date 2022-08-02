@@ -11,15 +11,15 @@ const Landing = () => (
       <div className={style.flex}>
         <div>
           <CompareArrowsIcon fontSize="large" />
-          增加星兒更多的社會互動
+          <div>增加星兒更多的社會互動</div>
         </div>
         <div>
           <MusicNoteIcon fontSize="large" />
-          提供家人適時的喘息服務
+          <div>提供家人適時的喘息服務</div>
         </div>
         <div>
           <FaceIcon fontSize="large" />
-          提供想認識星兒的人互動機會
+          <div>提供想認識星兒的人互動機會</div>
         </div>
       </div>
     </div>

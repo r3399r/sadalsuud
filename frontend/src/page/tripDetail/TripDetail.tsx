@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { GetTripsIdResponse, PutTripsIdRequest } from '@y-celestial/sadalsuud-service';
-import { format } from 'date-fns';
+import { format } from 'date-fns-tz';
 import { zhTW } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -36,20 +36,16 @@ const TripDetail = () => {
         setValue('ad', res.ad);
         setValue('content', res.content);
         setValue('date', res.date);
-        setValue('meetDate', new Date(`1970/01/01 ${res.meetDate}`).toISOString());
-        setValue('dismissDate', new Date(`1970/01/01 ${res.dismissDate}`).toISOString());
+        setValue('meetDate', res.meetDate);
+        setValue('dismissDate', res.dismissDate);
         setValue('region', res.region);
         setValue('meetPlace', res.meetPlace);
         setValue('dismissPlace', res.dismissPlace);
         setValue('fee', res.fee);
         setValue('other', res.other ?? '');
       })
-      .catch(() => {
-        dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .catch(() => dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' })))
+      .finally(() => setIsLoading(false));
   }, [id]);
 
   const onSave = () => {
@@ -58,21 +54,14 @@ const TripDetail = () => {
     setIsLoading(true);
     modifyTripById(id, {
       ...data,
-      meetDate: format(new Date(data.meetDate), 'HH:mm'),
-      dismissDate: format(new Date(data.dismissDate), 'HH:mm'),
+      meetDate: new Date(data.meetDate).toISOString(),
+      dismissDate: new Date(data.dismissDate).toISOString(),
       fee: parseInt(String(data.fee)),
       other: data.other === '' ? undefined : data.other,
     })
-      .then((res) => {
-        // const {date,...other}=res
-        // setTrip(other)
-      })
-      .catch(() => {
-        dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' }));
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .then((res) => setTrip(res))
+      .catch(() => dispatch(openSnackbar({ severity: 'error', message: '載入失敗，請重試' })))
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -91,7 +80,15 @@ const TripDetail = () => {
           <div>
             <b>簡短活動內容</b>
             {isEdit ? (
-              <FormInput control={control} name="ad" size="small" multiline rows={2} fullWidth />
+              <FormInput
+                control={control}
+                name="ad"
+                size="small"
+                multiline
+                minRows={2}
+                maxRows={5}
+                fullWidth
+              />
             ) : (
               <Linkify componentDecorator={componentDecorator}>
                 <div>{trip.ad}</div>
@@ -121,7 +118,12 @@ const TripDetail = () => {
             {isEdit ? (
               <FormInput formType="datePicker" control={control} name="date" size="small" />
             ) : (
-              <div>{format(new Date(trip.date), 'yyyy/MM/dd (EEEEE)', { locale: zhTW })}</div>
+              <div>
+                {format(new Date(trip.date), 'yyyy/MM/dd (EEEEE)', {
+                  locale: zhTW,
+                  timeZone: 'Asia/Taipei',
+                })}
+              </div>
             )}
           </div>
           <div>
@@ -138,7 +140,11 @@ const TripDetail = () => {
               </div>
             ) : (
               <div>
-                {trip.meetDate}~{trip.dismissDate}
+                {`${format(new Date(trip.meetDate), 'HH:mm', { timeZone: 'Asia/Taipei' })}~${format(
+                  new Date(trip.dismissDate),
+                  'HH:mm',
+                  { timeZone: 'Asia/Taipei' },
+                )}`}
               </div>
             )}
           </div>
@@ -196,7 +202,7 @@ const TripDetail = () => {
           </div>
           <div className={style.last}>
             <b>負責人</b>
-            {trip.ownerName}
+            <div>{trip.ownerName}</div>
           </div>
         </form>
       )}

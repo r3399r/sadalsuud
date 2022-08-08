@@ -55,8 +55,6 @@ export class Database {
 
   public async cleanUp() {
     const qr = await this.getQueryRunner();
-    console.log(this.queryRunner);
     await qr.release();
-    console.log(this.queryRunner);
   }
 }

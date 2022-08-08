@@ -18,7 +18,7 @@ host=$(aws ssm get-parameter --name $project-$env-db-host | jq .Parameter.Value 
 user=$(aws ssm get-parameter --name $project-$env-db-user | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
 pwd=$(aws ssm get-parameter --name $project-$env-db-pwd | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
 cluster=$(aws ssm get-parameter --name $project-$env-db-cluster | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-psql postgresql://$user:$pwd@$host:26257/$cluster.$project -f deploy.sql -a
+psql postgresql://$user:$pwd@$host:26257/$cluster.$project -f deploy.sql
 echo ====================================================================================
 
 echo deploy backend AWS...

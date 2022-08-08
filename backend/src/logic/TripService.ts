@@ -1,6 +1,6 @@
 import { NotFoundError, UnauthorizedError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
-import { LessThan, MoreThanOrEqual } from 'typeorm';
+import { LessThan, MoreThanOrEqual, Not } from 'typeorm';
 import { SignAccess } from 'src/access/SignAccess';
 import { TripAccess } from 'src/access/TripAccess';
 import { ViewTripDetailAccess } from 'src/access/ViewTripDetailAccess';
@@ -63,11 +63,14 @@ export class TripService {
 
     const [futureTrips, pastTrips] = await Promise.all([
       this.tripAccess.findMany({
-        where: { meetDate: MoreThanOrEqual(now) },
+        where: [
+          { status: Not(Status.Pass) },
+          { expiredDate: MoreThanOrEqual(now) },
+        ],
         order: { meetDate: 'asc' },
       }),
       this.tripAccess.findMany({
-        where: { meetDate: LessThan(now) },
+        where: { status: Status.Pass, expiredDate: LessThan(now) },
         order: { meetDate: 'desc' },
       }),
     ]);
@@ -112,7 +115,7 @@ export class TripService {
 
   public async getDetailedTrips(): Promise<GetTripsDetailResponse> {
     const trips = await this.viewTripDetailAccess.findMany({
-      order: { dateCreated: 'desc' },
+      order: { date: 'desc' },
     });
 
     return trips.map((v) => ({

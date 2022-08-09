@@ -1,5 +1,6 @@
+import { SignAccess } from 'src/access/SignAccess';
 import { bindings } from 'src/bindings';
-import { Sign, SignModel } from 'src/model/entity/Sign';
+import { Sign } from 'src/model/entity/Sign';
 import { SignService } from './SignService';
 
 /**
@@ -7,7 +8,7 @@ import { SignService } from './SignService';
  */
 describe('SignService', () => {
   let signService: SignService;
-  let mockSignModel: any;
+  let mockSignAccess: any;
   let dummySign: Sign;
 
   beforeAll(() => {
@@ -15,21 +16,24 @@ describe('SignService', () => {
       id: 'test-id',
       name: 'test-name',
       phone: 'test-phone',
-      yearOfBirth: 'test-year',
+      line: null,
+      birthYear: 'test-year',
       isSelf: true,
-      status: 'pending',
+      accompany: null,
+      canJoin: true,
+      comment: null,
       tripId: 'trip-id',
-      dateCreated: 1,
-      dateUpdated: 2,
+      dateCreated: new Date(),
+      dateUpdated: new Date(),
     };
   });
 
   beforeEach(() => {
-    mockSignModel = {};
-    bindings.rebind<SignModel>(SignModel).toConstantValue(mockSignModel);
+    mockSignAccess = {};
+    bindings.rebind<SignAccess>(SignAccess).toConstantValue(mockSignAccess);
 
-    mockSignModel.replace = jest.fn();
-    mockSignModel.find = jest.fn(() => dummySign);
+    mockSignAccess.save = jest.fn();
+    mockSignAccess.findById = jest.fn(() => dummySign);
 
     signService = bindings.get<SignService>(SignService);
   });
@@ -37,8 +41,8 @@ describe('SignService', () => {
   describe('modifyComment', () => {
     it('should work', async () => {
       await signService.modifyComment('id', { comment: 'aa' });
-      expect(mockSignModel.replace).toBeCalledTimes(1);
-      expect(mockSignModel.find).toBeCalledTimes(1);
+      expect(mockSignAccess.findById).toBeCalledTimes(1);
+      expect(mockSignAccess.save).toBeCalledTimes(1);
     });
   });
 });

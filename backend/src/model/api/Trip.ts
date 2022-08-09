@@ -1,16 +1,15 @@
 import { Status } from 'src/constant/Trip';
 import { Sign } from 'src/model/entity/Sign';
-import { Trip } from 'src/model/entity/Trip';
 
 export type PostTripsRequest = {
   ownerName: string;
   ownerPhone: string;
   ownerLine?: string;
-  date: string;
   region: string;
-  meetTime: string;
+  date: string;
+  meetDate: string;
   meetPlace: string;
-  dismissTime: string;
+  dismissDate: string;
   dismissPlace: string;
   topic: string;
   ad: string;
@@ -22,13 +21,13 @@ export type PostTripsRequest = {
 type GetTripsPassResponse = {
   status: Status.Pass;
   ad: string;
-  meetTime: string;
-  dismissTime: string;
+  meetDate: string;
+  dismissDate: string;
   region: string;
   fee: number;
-  other?: string;
-  expiredDate?: string;
-  notifyDate?: string;
+  other: string | null;
+  expiredDate: string | null;
+  notifyDate: string | null;
 };
 
 type GetTripsPendingResponse = {
@@ -37,7 +36,7 @@ type GetTripsPendingResponse = {
 
 type GetTripsRejectResponse = {
   status: Status.Reject;
-  reason?: string;
+  reason: string | null;
 };
 
 export type GetTripsResponse = ((
@@ -49,8 +48,8 @@ export type GetTripsResponse = ((
   topic: string;
   date: string;
   ownerName: string;
-  dateCreated?: number;
-  dateUpdated?: number;
+  dateCreated: string;
+  dateUpdated: string | null;
 })[];
 
 export type GetTripsDetailResponse = {
@@ -59,12 +58,12 @@ export type GetTripsDetailResponse = {
   date: string;
   ownerName: string;
   ownerPhone: string;
-  ownerLine?: string;
+  ownerLine: string | null;
   code: string;
-  status: 'pending' | 'pass' | 'reject';
+  status: Status;
   signs: number;
-  dateCreated?: number;
-  dateUpdated?: number;
+  dateCreated: string;
+  dateUpdated: string | null;
 }[];
 
 export type PutTripsSignRequest = {
@@ -72,7 +71,7 @@ export type PutTripsSignRequest = {
   phone: string;
   line?: string;
   name: string;
-  yearOfBirth: string;
+  birthYear: string;
   accompany?: 'yes' | 'no';
 };
 
@@ -83,25 +82,24 @@ export type GetTripsIdResponse = {
   content: string;
   date: string;
   region: string;
-  meetTime: string;
+  meetDate: string;
   meetPlace: string;
-  dismissTime: string;
+  dismissDate: string;
   dismissPlace: string;
   fee: number;
-  other?: string;
+  other: string | null;
   ownerName: string;
-  status: 'pass' | 'pending' | 'reject';
-  dateCreated?: number;
-  dateUpdated?: number;
+  status: Status;
+  dateCreated: string;
+  dateUpdated: string | null;
 };
 
 export type PutTripsIdRequest = {
   topic: string;
   ad: string;
   content: string;
-  date: string;
-  meetTime: string;
-  dismissTime: string;
+  meetDate: string;
+  dismissDate: string;
   region: string;
   meetPlace: string;
   dismissPlace: string;
@@ -109,7 +107,24 @@ export type PutTripsIdRequest = {
   other?: string;
 };
 
-export type PutTripsIdResponse = Trip;
+export type PutTripsIdResponse = {
+  id: string;
+  topic: string;
+  ad: string;
+  content: string;
+  date: string;
+  region: string;
+  meetDate: string;
+  meetPlace: string;
+  dismissDate: string;
+  dismissPlace: string;
+  fee: number;
+  other: string | null;
+  ownerName: string;
+  status: Status;
+  dateCreated: string;
+  dateUpdated: string | null;
+};
 
 export type PutTripsIdVerifyRequest =
   | {
@@ -124,6 +139,6 @@ export type PutTripsIdVerifyRequest =
 
 export type GetTripsIdSign = Sign[];
 
-export type PutTripsIdMember = {
+export type PutTripsIdMemberRequest = {
   signId: string[];
 };

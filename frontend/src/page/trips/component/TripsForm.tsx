@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { PostTripsRequest } from '@y-celestial/sadalsuud-service';
-import { format } from 'date-fns';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import FormInput from 'src/component/FormInput';
@@ -8,7 +7,7 @@ import { openSnackbar } from 'src/redux/uiSlice';
 import { registerTrip } from 'src/service/TripService';
 import style from './TripsForm.module.scss';
 
-type Form = PostTripsRequest;
+type Form = PostTripsRequest & { date: string };
 
 type TripsFormProps = { onClose: () => void };
 
@@ -25,9 +24,8 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
     registerTrip({
       ...data,
       ownerLine: data.ownerLine === '' ? undefined : data.ownerLine,
-      date: new Date(data.date).toISOString(),
-      meetTime: format(new Date(data.meetTime), 'HH:mm'),
-      dismissTime: format(new Date(data.dismissTime), 'HH:mm'),
+      meetDate: new Date(data.meetDate).toISOString(),
+      dismissDate: new Date(data.dismissDate).toISOString(),
       fee: parseInt(String(data.fee)),
       other: data.other === '' ? undefined : data.other,
     })
@@ -84,20 +82,20 @@ const TripsForm = ({ onClose }: TripsFormProps) => {
           <FormInput
             formType="timePicker"
             control={control}
-            name="meetTime"
+            name="meetDate"
             rules={{ required: true }}
             label="開始時間*"
             size="small"
-            error={errors.meetTime !== undefined}
+            error={errors.meetDate !== undefined}
           />
           <FormInput
             formType="timePicker"
             control={control}
-            name="dismissTime"
+            name="dismissDate"
             rules={{ required: true }}
             label="結束時間*"
             size="small"
-            error={errors.dismissTime !== undefined}
+            error={errors.dismissDate !== undefined}
           />
         </div>
         <div className={style.head}>出遊地點</div>

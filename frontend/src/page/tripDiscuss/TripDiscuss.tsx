@@ -116,19 +116,19 @@ const TripDiscuss = () => {
                   {v.phone} {v.line}
                 </TableCell>
                 <TableCell>
-                  {v.yearOfBirth} ({differenceInYears(Date.now(), new Date(`${v.yearOfBirth}/1/1`))}
+                  {v.birthYear} ({differenceInYears(Date.now(), new Date(`${v.birthYear}/1/1`))}
                   歲)
                 </TableCell>
                 <TableCell>{v.isSelf ? '志工' : '星兒'}</TableCell>
                 <TableCell>{v.isSelf ? '-' : v.accompany ? '是' : '否'}</TableCell>
                 <TableCell>
-                  {v.status === 'pending' && <QuestionMarkIcon />}
-                  {v.status === 'bingo' && <CheckIcon />}
-                  {v.status === 'sorry' && <CloseIcon />}
+                  {v.canJoin === null && <QuestionMarkIcon />}
+                  {v.canJoin === true && <CheckIcon />}
+                  {v.canJoin === false && <CloseIcon />}
                 </TableCell>
-                <TableCell>{format(v.dateCreated ?? 0, 'yyyy/MM/dd HH:mm:ss')}</TableCell>
+                <TableCell>{format(new Date(v.dateCreated), 'yyyy/MM/dd HH:mm:ss')}</TableCell>
                 <TableCell>
-                  <CommentInput initialValue={v.comment} id={v.id} />
+                  <CommentInput initialValue={v.comment ?? ''} id={v.id} />
                 </TableCell>
                 <TableCell>
                   <DeleteForeverIcon className={style.clickable} onClick={handleClickOpen(v.id)} />

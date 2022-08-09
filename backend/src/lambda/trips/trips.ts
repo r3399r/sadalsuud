@@ -15,7 +15,7 @@ import {
   GetTripsIdSign,
   GetTripsResponse,
   PostTripsRequest,
-  PutTripsIdMember,
+  PutTripsIdMemberRequest,
   PutTripsIdRequest,
   PutTripsIdResponse,
   PutTripsIdVerifyRequest,
@@ -124,7 +124,7 @@ async function apiTripsIdMember(event: LambdaEvent, service: TripService) {
 
       return await service.reviseMember(
         event.pathParameters.id,
-        JSON.parse(event.body) as PutTripsIdMember
+        JSON.parse(event.body) as PutTripsIdMemberRequest
       );
     default:
       throw new InternalServerError('unknown http method');

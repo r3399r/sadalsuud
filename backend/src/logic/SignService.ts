@@ -1,21 +1,23 @@
+import { NotFoundError } from '@y-celestial/service';
 import { inject, injectable } from 'inversify';
+import { SignAccess } from 'src/access/SignAccess';
 import { PutSignIdRequest } from 'src/model/api/Sign';
-import { SignModel } from 'src/model/entity/Sign';
 
 /**
  * Service class for Sign
  */
 @injectable()
 export class SignService {
-  @inject(SignModel)
-  private readonly signModel!: SignModel;
+  @inject(SignAccess)
+  private readonly signAccess!: SignAccess;
 
   public async modifyComment(id: string, body: PutSignIdRequest) {
-    const sign = await this.signModel.find(id);
-    await this.signModel.replace({ ...sign, comment: body.comment });
+    const sign = await this.signAccess.findById(id);
+    if (sign === null) throw new NotFoundError();
+    await this.signAccess.save({ ...sign, comment: body.comment });
   }
 
   public async deleteSign(id: string) {
-    await this.signModel.hardDelete(id);
+    await this.signAccess.hardDeleteById(id);
   }
 }

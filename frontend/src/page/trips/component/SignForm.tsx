@@ -27,7 +27,7 @@ const SignForm = ({ onClose, tripId = 'xxx' }: TripsFormProps) => {
     signTrip(tripId, {
       ...data,
       line: data.line === '' ? undefined : data.line,
-      yearOfBirth: format(new Date(data.yearOfBirth), 'yyyy'),
+      birthYear: format(new Date(data.birthYear), 'yyyy'),
     })
       .then(() => {
         dispatch(openSnackbar({ severity: 'success', message: '已報名成功' }));
@@ -77,12 +77,12 @@ const SignForm = ({ onClose, tripId = 'xxx' }: TripsFormProps) => {
           <FormInput
             formType="yearPicker"
             control={control}
-            name="yearOfBirth"
+            name="birthYear"
             label={forWho === 'kid' ? '小孩的出生年(西元)*' : '出生年(西元)*'}
             rules={{ required: true }}
             helperText="此為遇到同名同姓時識別用"
             size="small"
-            error={errors.yearOfBirth !== undefined}
+            error={errors.birthYear !== undefined}
           />
           {forWho === 'kid' && (
             <div className={style.accompany}>

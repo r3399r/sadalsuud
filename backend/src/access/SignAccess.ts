@@ -37,4 +37,8 @@ export class SignAccess {
 
     return await qr.manager.delete(SignEntity.name, id);
   }
+
+  public async cleanup() {
+    await this.database.cleanUp();
+  }
 }

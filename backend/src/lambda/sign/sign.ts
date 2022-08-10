@@ -15,9 +15,8 @@ export async function sign(
   event: LambdaEvent,
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
+  const service: SignService = bindings.get<SignService>(SignService);
   try {
-    const service: SignService = bindings.get<SignService>(SignService);
-
     let res: void;
 
     switch (event.resource) {
@@ -31,6 +30,8 @@ export async function sign(
     return successOutput(res);
   } catch (e) {
     return errorOutput(e);
+  } finally {
+    await service.cleanup();
   }
 }
 

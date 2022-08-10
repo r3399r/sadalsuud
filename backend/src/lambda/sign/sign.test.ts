@@ -25,6 +25,7 @@ describe('sign', () => {
     bindings.rebind<SignService>(SignService).toConstantValue(mockSignService);
 
     mockSignService.modifyComment = jest.fn();
+    mockSignService.cleanup = jest.fn();
   });
 
   describe('/api/sign/{id}', () => {

@@ -43,4 +43,8 @@ export class TripAccess {
 
     return await qr.manager.delete(TripEntity.name, id);
   }
+
+  public async cleanup() {
+    await this.database.cleanUp();
+  }
 }

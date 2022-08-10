@@ -36,6 +36,10 @@ export class TripService {
   @inject(ViewTripDetailAccess)
   private readonly viewTripDetailAccess!: ViewTripDetailAccess;
 
+  public async cleanup() {
+    await this.tripAccess.cleanup();
+  }
+
   public async registerTrip(body: PostTripsRequest) {
     const trip = new TripEntity();
     trip.topic = body.topic;

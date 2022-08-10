@@ -833,10 +833,10 @@ Resources:
       Environment:
         Variables:
           PROJECT: !Sub ${Project}
-          DB_CLUSTER: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-cluster:1}}'
-          DB_HOST: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-host:1}}'
-          DB_PWD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd:1}}'
-          DB_USER: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-user:1}}'
+          DB_CLUSTER: !Sub '{{resolve:ssm:${TargetEnvr}-db-cluster:1}}'
+          DB_HOST: !Sub '{{resolve:ssm:${TargetEnvr}-db-host:1}}'
+          DB_PWD: !Sub '{{resolve:ssm:${TargetEnvr}-db-pwd:1}}'
+          DB_USER: !Sub '{{resolve:ssm:${TargetEnvr}-db-user:1}}'
   InvokePermissionSign:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaSign]
@@ -858,10 +858,10 @@ Resources:
       Environment:
         Variables:
           PROJECT: !Sub ${Project}
-          DB_CLUSTER: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-cluster:1}}'
-          DB_HOST: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-host:1}}'
-          DB_PWD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd:1}}'
-          DB_USER: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-user:1}}'
+          DB_CLUSTER: !Sub '{{resolve:ssm:${TargetEnvr}-db-cluster:1}}'
+          DB_HOST: !Sub '{{resolve:ssm:${TargetEnvr}-db-host:1}}'
+          DB_PWD: !Sub '{{resolve:ssm:${TargetEnvr}-db-pwd:1}}'
+          DB_USER: !Sub '{{resolve:ssm:${TargetEnvr}-db-user:1}}'
   InvokePermissionTrips:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaTrips]

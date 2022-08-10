@@ -14,10 +14,10 @@ echo ===========================================================================
 
 echo execute db scripts...
 cd ../db
-host=$(aws ssm get-parameter --name $project-$env-db-host | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-user=$(aws ssm get-parameter --name $project-$env-db-user | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-pwd=$(aws ssm get-parameter --name $project-$env-db-pwd | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-cluster=$(aws ssm get-parameter --name $project-$env-db-cluster | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
+host=$(aws ssm get-parameter --name $env-db-host | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
+user=$(aws ssm get-parameter --name $env-db-user | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
+pwd=$(aws ssm get-parameter --name $env-db-pwd | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
+cluster=$(aws ssm get-parameter --name $env-db-cluster | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
 psql postgresql://$user:$pwd@$host:26257/$cluster.$project -f deploy.sql
 echo ====================================================================================
 

@@ -38,6 +38,7 @@ describe('trips', () => {
     mockTripService.verifyTrip = jest.fn();
     mockTripService.getSigns = jest.fn(() => [dummyTrip]);
     mockTripService.reviseMember = jest.fn();
+    mockTripService.cleanup = jest.fn();
   });
 
   describe('/api/trips', () => {

@@ -11,6 +11,10 @@ export class SignService {
   @inject(SignAccess)
   private readonly signAccess!: SignAccess;
 
+  public async cleanup() {
+    await this.signAccess.cleanup();
+  }
+
   public async modifyComment(id: string, body: PutSignIdRequest) {
     const sign = await this.signAccess.findById(id);
     if (sign === null) throw new NotFoundError();

@@ -26,8 +26,10 @@ export async function trips(
   event: LambdaEvent,
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
-  const service: TripService = bindings.get<TripService>(TripService);
+  let service: TripService | null = null;
   try {
+    service = bindings.get(TripService);
+
     let res:
       | void
       | GetTripsResponse
@@ -63,7 +65,7 @@ export async function trips(
   } catch (e) {
     return errorOutput(e);
   } finally {
-    await service.cleanup();
+    await service?.cleanup();
   }
 }
 

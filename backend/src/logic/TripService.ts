@@ -65,19 +65,17 @@ export class TripService {
   public async getSimplifiedTrips(): Promise<GetTripsResponse> {
     const now = new Date();
 
-    const [futureTrips, pastTrips] = await Promise.all([
-      this.tripAccess.findMany({
-        where: [
-          { status: Not(Status.Pass) },
-          { expiredDate: MoreThanOrEqual(now) },
-        ],
-        order: { meetDate: 'asc' },
-      }),
-      this.tripAccess.findMany({
-        where: { status: Status.Pass, expiredDate: LessThan(now) },
-        order: { meetDate: 'desc' },
-      }),
-    ]);
+    const futureTrips = await this.tripAccess.findMany({
+      where: [
+        { status: Not(Status.Pass) },
+        { expiredDate: MoreThanOrEqual(now) },
+      ],
+      order: { meetDate: 'asc' },
+    });
+    const pastTrips = await this.tripAccess.findMany({
+      where: { status: Status.Pass, expiredDate: LessThan(now) },
+      order: { meetDate: 'desc' },
+    });
 
     const trips = [...futureTrips, ...pastTrips];
 

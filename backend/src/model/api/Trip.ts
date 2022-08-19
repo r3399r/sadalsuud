@@ -98,10 +98,11 @@ export type PutTripsIdRequest = {
   topic: string;
   ad: string;
   content: string;
-  meetDate: string;
-  dismissDate: string;
   region: string;
+  date: string;
+  meetDate: string;
   meetPlace: string;
+  dismissDate: string;
   dismissPlace: string;
   fee: number;
   other?: string;

@@ -1,6 +1,6 @@
 {
   "name": "sadalsuud-frontend",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "scripts": {
     "start": "cross-env BROWSER=none PORT=3000 react-scripts start",
     "build": "cross-env BUILD_PATH='./dist' react-scripts build",

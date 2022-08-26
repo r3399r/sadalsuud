@@ -69,7 +69,12 @@ const Trips = () => {
                 </div>
                 <div className={style.item}>
                   <b>日期</b>
-                  <div>{format(new Date(v.date), 'yyyy/MM/dd', { timeZone: 'Asia/Taipei' })}</div>
+                  <div>
+                    {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', {
+                      locale: zhTW,
+                      timeZone: 'Asia/Taipei',
+                    })}
+                  </div>
                 </div>
                 <div className={style.item}>
                   <b>時段</b>

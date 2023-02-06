@@ -1,6 +1,6 @@
 {
   "short_name": "星遊",
-  "name": "星遊網站",
+  "name": "星遊",
   "icons": [
     {
       "src": "logo192.png",
@@ -18,7 +18,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "./trips",
   "display": "standalone",
   "theme_color": "#fff2cc",
   "background_color": "#ffffff"

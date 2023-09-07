@@ -44,8 +44,8 @@ const Trips = () => {
         control={<Switch checked={switched} onChange={handleSwitch} />}
         label="顯示審核中"
       />
-      <div className="flex justify-between">
-        <h1>出遊清單</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="m-0">出遊清單</h1>
         <Button variant="contained" onClick={() => setOpenRegister(true)}>
           舉辦出遊
         </Button>

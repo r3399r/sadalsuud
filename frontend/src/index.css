@@ -1,5 +1,6 @@
-@import './theme';
-@import './typography';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   margin: 0;
@@ -7,9 +8,18 @@ body {
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #acb9c5;
+    border-radius: 3px;
+  }
 }
 
-// disable spin button of input
+/* disable spin button of input */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

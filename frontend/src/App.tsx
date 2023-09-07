@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import style from './App.module.scss';
 import Navbar from './component/Navbar';
 import Snackbar from './component/Snackbar';
 import AppRoutes from './Routes';
@@ -13,7 +12,7 @@ const App = () => {
   return (
     <>
       <Navbar />
-      <div className={style.body}>
+      <div className="box-border h-[calc(100vh-44px)] overflow-y-auto p-[10px] sm:p-[15px]">
         <AppRoutes />
       </div>
       <Snackbar />

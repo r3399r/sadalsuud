@@ -1,10 +1,10 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Page } from './constant/Page';
-import Admin from './page/admin/Admin';
-import Landing from './page/landing/Landing';
-import TripDetail from './page/tripDetail/TripDetail';
-import TripDiscuss from './page/tripDiscuss/TripDiscuss';
-import Trips from './page/trips/Trips';
+import Admin from './page/admin';
+import Landing from './page/landing';
+import TripDetail from './page/tripDetail';
+import TripDiscuss from './page/tripDiscuss';
+import Trips from './page/trips';
 
 const AppRoutes = () => (
   <Routes>

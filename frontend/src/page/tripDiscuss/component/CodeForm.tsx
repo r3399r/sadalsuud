@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import FormInput from 'src/component/FormInput';
-import style from './CodeForm.module.scss';
 
 type Form = { code: string };
 
@@ -27,7 +26,7 @@ const CodeForm = ({ setCode }: CodeFormProps) => {
   };
 
   return (
-    <form className={style.self} onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex items-center gap-[10px]" onSubmit={handleSubmit(onSubmit)}>
       <FormInput
         control={control}
         name="code"

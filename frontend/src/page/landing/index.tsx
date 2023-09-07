@@ -47,7 +47,7 @@ const Landing = () => (
         </li>
         <li>
           更多內容請點進
-          <a href="https://www.celestialstudio.net/2022/04/lucky-star-faq.html">常見問題 FAQ</a>
+          <a href="https://www.celestialstudio.net/2023/01/lucky-star-faq.html">常見問題 FAQ</a>
         </li>
       </ol>
     </div>

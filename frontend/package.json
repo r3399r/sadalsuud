@@ -2,8 +2,9 @@
   "name": "sadalsuud-frontend",
   "version": "2.2.5",
   "scripts": {
+    "postinstall": "node postinstall.js",
     "start": "cross-env BROWSER=none PORT=3000 react-scripts start",
-    "build": "cross-env BUILD_PATH='./dist' react-scripts build",
+    "build": "cross-env BUILD_PATH='./dist' CI=true react-scripts build",
     "test": "react-scripts test --coverage",
     "test:nowatch": "npm run test -- --watchAll=false",
     "eject": "react-scripts eject",

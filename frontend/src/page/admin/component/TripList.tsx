@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Modal,
   Paper,
   Table,
   TableBody,
@@ -30,8 +29,7 @@ import { Link } from 'react-router-dom';
 import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { deleteTripById, getDetailedTrips } from 'src/service/TripService';
-import style from './TripList.module.scss';
-import VerifyForm from './VerifyForm';
+import VerifyFormModal from './VerifyFormModal';
 
 const TripList = () => {
   const dispatch = useDispatch();
@@ -70,7 +68,6 @@ const TripList = () => {
   return (
     <>
       <h1>出遊清單</h1>
-      {isLoading && <Loader />}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -103,21 +100,15 @@ const TripList = () => {
                     <TableCell>
                       {v.status === 'pending' && (
                         <QuestionMarkIcon
-                          className={style.clickable}
+                          className="cursor-pointer"
                           onClick={() => setVerifiedId(v.id)}
                         />
                       )}
                       {v.status === 'pass' && (
-                        <CheckIcon
-                          className={style.clickable}
-                          onClick={() => setVerifiedId(v.id)}
-                        />
+                        <CheckIcon className="cursor-pointer" onClick={() => setVerifiedId(v.id)} />
                       )}
                       {v.status === 'reject' && (
-                        <CloseIcon
-                          className={style.clickable}
-                          onClick={() => setVerifiedId(v.id)}
-                        />
+                        <CloseIcon className="cursor-pointer" onClick={() => setVerifiedId(v.id)} />
                       )}
                     </TableCell>
                     <TableCell>{format(new Date(v.dateCreated), 'yyyy/MM/dd HH:mm')}</TableCell>
@@ -134,7 +125,7 @@ const TripList = () => {
                         </CopyToClipboard>
                       </Link>
                       <DeleteForeverIcon
-                        className={style.clickable}
+                        className="cursor-pointer"
                         onClick={handleClickOpen(v.id)}
                       />
                     </TableCell>
@@ -143,11 +134,11 @@ const TripList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Modal open={verifiedId !== undefined}>
-        <>
-          <VerifyForm id={verifiedId} onClose={() => setVerifiedId(undefined)} />
-        </>
-      </Modal>
+      <VerifyFormModal
+        id={verifiedId}
+        open={verifiedId !== undefined}
+        handleClose={() => setVerifiedId(undefined)}
+      />
       <Dialog open={deletedId !== undefined} onClose={handleClose}>
         <DialogTitle>刪除出遊</DialogTitle>
         <DialogContent>
@@ -160,6 +151,7 @@ const TripList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {isLoading && <Loader />}
     </>
   );
 };

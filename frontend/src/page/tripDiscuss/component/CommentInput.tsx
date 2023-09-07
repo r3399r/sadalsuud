@@ -5,7 +5,6 @@ import { ChangeEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { editSignComment } from 'src/service/TripService';
-import style from './CommentInput.module.scss';
 
 type CommentInputProps = {
   initialValue?: string;
@@ -32,10 +31,10 @@ const CommentInput = ({ initialValue = '', id }: CommentInputProps) => {
   };
 
   return (
-    <div className={style.flex}>
+    <div className="flex items-center gap-1">
       <TextField variant="standard" size="small" multiline value={value} onChange={onChange} />
       <EditIcon
-        className={classNames({ [style.clickable]: value !== initialValue })}
+        className={classNames({ 'cursor-pointer': value !== initialValue })}
         fontSize="small"
         color={value === initialValue ? 'disabled' : 'inherit'}
         onClick={onClick}

@@ -1,30 +1,28 @@
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import FaceIcon from '@mui/icons-material/Face';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import classNames from 'classnames';
-import style from './Landing.module.scss';
 
 const Landing = () => (
-  <div className={style.self}>
-    <div className={classNames(style.goal, style.green)}>
-      <div className={style.header}>活動目的</div>
-      <div className={style.flex}>
-        <div>
+  <div className="p-[10px] sm:p-5">
+    <div className="mb-[10px] rounded-[10px] bg-palegreen p-[10px]">
+      <div className="mb-[5px] text-center text-[22px] font-bold">活動目的</div>
+      <div className="flex flex-col items-center sm:flex-row sm:justify-around">
+        <div className="flex items-center">
           <CompareArrowsIcon fontSize="large" />
           <div>增加星兒更多的社會互動</div>
         </div>
-        <div>
+        <div className="flex items-center">
           <MusicNoteIcon fontSize="large" />
           <div>提供家人適時的喘息服務</div>
         </div>
-        <div>
+        <div className="flex items-center">
           <FaceIcon fontSize="large" />
           <div>提供想認識星兒的人互動機會</div>
         </div>
       </div>
     </div>
-    <div className={classNames(style.how, style.blue)}>
-      <div className={style.header}>活動方式</div>
+    <div className="mb-[10px] rounded-[10px] bg-paleblue p-[10px]">
+      <div className="mb-[5px] text-center text-[22px] font-bold">活動方式</div>
       <h3>參加活動</h3>
       <ol>
         <li>點進出遊清單</li>
@@ -53,16 +51,22 @@ const Landing = () => (
         </li>
       </ol>
     </div>
-    <div className={classNames(style.more, style.orange)}>
-      <div className={style.header}>瞭解更多</div>
+    <div className="mb-[10px] rounded-[10px] bg-paleorange p-[10px]">
+      <div className="mb-[5px] text-center text-[22px] font-bold">瞭解更多</div>
       <p>
         <b>FB 粉專</b>: 我們會在 FB 粉專中分享新的出遊資訊、分享出遊紀錄 →
-        <a href="https://www.facebook.com/108515795231766">點我</a>←
+        <a href="https://www.facebook.com/108515795231766" className="text-blue">
+          點我
+        </a>
+        ←
       </p>
       <hr />
       <p>
         <b>LINE 社群</b>: 我們會在星遊社群中分享新的出遊資訊、分享出遊紀錄 →
-        <a href="https://line.me/ti/g2/khrNOdt3pqlSu7_GafcgrA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">
+        <a
+          href="https://line.me/ti/g2/khrNOdt3pqlSu7_GafcgrA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+          className="text-blue"
+        >
           點我
         </a>
         ←
@@ -70,7 +74,10 @@ const Landing = () => (
       <hr />
       <p>
         <b>星遊官方帳號</b>: 若您有任何問題，歡迎透過 LINE 官方帳號詢問 →
-        <a href="https://lin.ee/gk8ydMG">點我</a>←
+        <a href="https://lin.ee/gk8ydMG" className="text-blue">
+          點我
+        </a>
+        ←
       </p>
     </div>
   </div>

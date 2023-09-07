@@ -5,7 +5,7 @@ import { zhTW } from 'date-fns/locale';
 import { useCallback } from 'react';
 import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 
-type FormInputProps<T> = TextFieldProps & {
+type FormInputProps<T extends FieldValues> = TextFieldProps & {
   name: Path<T>;
   control: Control<T>;
   rules?: RegisterOptions;
@@ -30,7 +30,9 @@ const FormInput = <T extends FieldValues>({
               value={value}
               onChange={onChange}
               ampm={false}
-              renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth autoComplete="off" {...props} />
+              )}
               inputRef={ref}
             />
           </LocalizationProvider>
@@ -44,7 +46,9 @@ const FormInput = <T extends FieldValues>({
               inputFormat="yyyy/MM/dd"
               mask="____/__/__"
               minDate={minDate}
-              renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth autoComplete="off" {...props} />
+              )}
               inputRef={ref}
             />
           </LocalizationProvider>
@@ -56,7 +60,9 @@ const FormInput = <T extends FieldValues>({
               value={value}
               onChange={onChange}
               views={['year']}
-              renderInput={(params) => <TextField {...params} autoComplete="off" {...props} />}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth autoComplete="off" {...props} />
+              )}
               inputRef={ref}
             />
           </LocalizationProvider>
@@ -64,6 +70,7 @@ const FormInput = <T extends FieldValues>({
       else
         return (
           <TextField
+            fullWidth
             onChange={onChange}
             value={value}
             autoComplete="off"

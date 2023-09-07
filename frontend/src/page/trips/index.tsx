@@ -1,4 +1,4 @@
-import { Button, FormControlLabel, Modal, Switch } from '@mui/material';
+import { Button, FormControlLabel, Switch } from '@mui/material';
 import { GetTripsResponse, Status } from '@y-celestial/sadalsuud-service';
 import classNames from 'classnames';
 import { format } from 'date-fns-tz';
@@ -10,9 +10,8 @@ import Loader from 'src/component/Loader';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { getSimplifiedTrips } from 'src/service/TripService';
 import { componentDecorator } from 'src/util/linkify';
-import SignForm from './component/SignForm';
-import TripsForm from './component/TripsForm';
-import style from './Trips.module.scss';
+import SignFormModal from './component/SignFormModal';
+import TripsFormModal from './component/TripsFormModal';
 
 const Trips = () => {
   const dispatch = useDispatch();
@@ -45,13 +44,12 @@ const Trips = () => {
         control={<Switch checked={switched} onChange={handleSwitch} />}
         label="顯示審核中"
       />
-      <div className={style.head}>
+      <div className="flex justify-between">
         <h1>出遊清單</h1>
         <Button variant="contained" onClick={() => setOpenRegister(true)}>
           舉辦出遊
         </Button>
       </div>
-      {isLoading && <Loader />}
       {trips
         ?.filter((v) => (switched ? v.status !== Status.Reject : v.status === Status.Pass))
         .map((v) => {
@@ -61,13 +59,16 @@ const Trips = () => {
             return (
               <div
                 key={v.id}
-                className={classNames(style.card, style.pass, { [style.expired]: isExpired })}
+                className={classNames('rounded-[5px] my-2 p-2 whitespace-pre-line', {
+                  'bg-palegreen/40': isExpired,
+                  'bg-palegreen': !isExpired,
+                })}
               >
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>主題</b>
                   <div>{v.topic}</div>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>日期</b>
                   <div>
                     {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', {
@@ -76,7 +77,7 @@ const Trips = () => {
                     })}
                   </div>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>時段</b>
                   <div>
                     {`${format(new Date(v.meetDate), 'HH:mm', {
@@ -84,26 +85,28 @@ const Trips = () => {
                     })}~${format(new Date(v.dismissDate), 'HH:mm', { timeZone: 'Asia/Taipei' })}`}
                   </div>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>地點</b>
                   <div>{`${v.region} (確切集合、解散地點將於確定出遊後通知)`}</div>
                 </div>
                 <Linkify componentDecorator={componentDecorator}>
-                  <div className={style.ad}>{v.ad}</div>
+                  <div className="my-1 rounded-[5px] border border-solid border-grey bg-lightgrey p-2">
+                    {v.ad}
+                  </div>
                 </Linkify>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>大致費用</b>
                   <div>${v.fee}</div>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>其他注意事項</b>
                   <Linkify componentDecorator={componentDecorator}>{v.other}</Linkify>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>負責人</b>
                   <div>{v.ownerName}</div>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>報名截止日</b>
                   <div>
                     {v.expiredDate
@@ -114,7 +117,7 @@ const Trips = () => {
                       : '無'}
                   </div>
                 </div>
-                <div className={style.item}>
+                <div className="flex items-center gap-[6px]">
                   <b>出遊通知日</b>
                   <div>
                     {v.notifyDate
@@ -125,7 +128,7 @@ const Trips = () => {
                       : '無'}
                   </div>
                 </div>
-                <div className={style.signButn}>
+                <div className="mt-[5px] text-right">
                   <Button
                     variant="contained"
                     color="success"
@@ -141,50 +144,19 @@ const Trips = () => {
               </div>
             );
           }
-          if (v.status === Status.Reject)
-            return (
-              <div key={v.id} className={classNames(style.card, style.reject)}>
-                <div className={style.item}>
-                  <b>狀態</b>
-                  <b>未通過</b>
-                </div>
-                <div className={style.item}>
-                  <b>未通過原因</b>
-                  <div>{v.reason}</div>
-                </div>
-                <hr />
-                <div className={style.item}>
-                  <b>主題</b>
-                  <div>{v.topic}</div>
-                </div>
-                <div className={style.item}>
-                  <b>日期</b>
-                  <div>
-                    {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', {
-                      locale: zhTW,
-                      timeZone: 'Asia/Taipei',
-                    })}
-                  </div>
-                </div>
-                <div className={style.item}>
-                  <b>負責人</b>
-                  <div>{v.ownerName}</div>
-                </div>
-              </div>
-            );
 
           return (
-            <div key={v.id} className={classNames(style.card, style.pending)}>
-              <div className={style.item}>
+            <div key={v.id} className="my-2 whitespace-pre-line rounded-[5px] bg-palered p-2">
+              <div className="flex items-center gap-[6px]">
                 <b>狀態</b>
                 <b>審核中</b>
               </div>
               <hr />
-              <div className={style.item}>
+              <div className="flex items-center gap-[6px]">
                 <b>主題</b>
                 <div>{v.topic}</div>
               </div>
-              <div className={style.item}>
+              <div className="flex items-center gap-[6px]">
                 <b>日期</b>
                 <div>
                   {format(new Date(v.date), 'yyyy/MM/dd (EEEEE)', {
@@ -193,23 +165,25 @@ const Trips = () => {
                   })}
                 </div>
               </div>
-              <div className={style.item}>
+              <div className="flex items-center gap-[6px]">
                 <b>負責人</b>
                 <div>{v.ownerName}</div>
               </div>
             </div>
           );
         })}
-      <Modal open={openRegister}>
-        <>
-          <TripsForm onClose={() => setOpenRegister(false)} />
-        </>
-      </Modal>
-      <Modal open={openSign}>
-        <>
-          <SignForm onClose={() => setOpenSign(false)} tripId={signedTripId} />
-        </>
-      </Modal>
+      <TripsFormModal
+        open={openRegister}
+        handleClose={() => setOpenRegister(false)}
+        setIsLoading={(loading) => setIsLoading(loading)}
+      />
+      <SignFormModal
+        open={openSign}
+        handleClose={() => setOpenSign(false)}
+        tripId={signedTripId}
+        setIsLoading={(loading) => setIsLoading(loading)}
+      />
+      {isLoading && <Loader />}
     </>
   );
 };

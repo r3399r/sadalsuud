@@ -26,7 +26,6 @@ import { openSnackbar } from 'src/redux/uiSlice';
 import { deleteSignById, getSign, setTripMember } from 'src/service/TripService';
 import CodeForm from './component/CodeForm';
 import CommentInput from './component/CommentInput';
-import style from './TripDiscuss.module.scss';
 
 const TripDiscuss = () => {
   const dispatch = useDispatch();
@@ -89,7 +88,7 @@ const TripDiscuss = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        <Table className={style.table}>
+        <Table className="min-w-[900px]">
           <TableHead>
             <TableRow>
               <TableCell>名字</TableCell>
@@ -131,14 +130,14 @@ const TripDiscuss = () => {
                   <CommentInput initialValue={v.comment ?? ''} id={v.id} />
                 </TableCell>
                 <TableCell>
-                  <DeleteForeverIcon className={style.clickable} onClick={handleClickOpen(v.id)} />
+                  <DeleteForeverIcon className="cursor-pointer" onClick={handleClickOpen(v.id)} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Button type="button" variant="contained" className={style.button} onClick={onButtonClick}>
+      <Button type="button" variant="contained" className="!mt-[10px]" onClick={onButtonClick}>
         設定出遊名單
       </Button>
       <Dialog open={deletedId !== undefined} onClose={handleClose}>

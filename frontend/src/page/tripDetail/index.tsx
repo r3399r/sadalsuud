@@ -13,7 +13,6 @@ import { RootState } from 'src/redux/store';
 import { openSnackbar } from 'src/redux/uiSlice';
 import { getTripById, modifyTripById } from 'src/service/TripService';
 import { componentDecorator } from 'src/util/linkify';
-import style from './TripDetail.module.scss';
 
 type Form = PutTripsIdRequest & { date: string };
 
@@ -68,8 +67,8 @@ const TripDetail = () => {
     <>
       {isLoading && <Loader />}
       {trip && (
-        <form className={style.self}>
-          <div>
+        <form className="{style.self}">
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>主題</b>
             {isEdit ? (
               <FormInput control={control} name="topic" size="small" fullWidth />
@@ -77,7 +76,7 @@ const TripDetail = () => {
               <div>{trip.topic}</div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>簡短活動內容</b>
             {isEdit ? (
               <FormInput
@@ -95,7 +94,7 @@ const TripDetail = () => {
               </Linkify>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>詳細活動內容</b>
             {isEdit ? (
               <FormInput
@@ -113,7 +112,7 @@ const TripDetail = () => {
               </Linkify>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>日期</b>
             {isEdit ? (
               <FormInput formType="datePicker" control={control} name="date" size="small" />
@@ -126,10 +125,10 @@ const TripDetail = () => {
               </div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>時間</b>
             {isEdit ? (
-              <div className={style.align}>
+              <div className="flex items-center">
                 <FormInput formType="timePicker" control={control} name="meetDate" size="small" />~
                 <FormInput
                   formType="timePicker"
@@ -148,7 +147,7 @@ const TripDetail = () => {
               </div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>活動區域</b>
             {isEdit ? (
               <FormInput control={control} name="region" size="small" fullWidth />
@@ -156,7 +155,7 @@ const TripDetail = () => {
               <div>{trip.region}</div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>集合地點</b>
             {isEdit ? (
               <FormInput control={control} name="meetPlace" size="small" fullWidth />
@@ -164,7 +163,7 @@ const TripDetail = () => {
               <div>{trip.meetPlace}</div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>解散地點</b>
             {isEdit ? (
               <FormInput control={control} name="dismissPlace" size="small" fullWidth />
@@ -172,17 +171,17 @@ const TripDetail = () => {
               <div>{trip.dismissPlace}</div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>大致花費</b>
             {isEdit ? (
-              <div className={style.align}>
+              <div className="flex items-center">
                 $<FormInput control={control} name="fee" size="small" type="number" />
               </div>
             ) : (
               <div>${trip.fee}</div>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border-x border-b-0 border-t border-solid border-black p-[10px]">
             <b>其他注意事項</b>
             {isEdit ? (
               <FormInput
@@ -200,14 +199,14 @@ const TripDetail = () => {
               </Linkify>
             )}
           </div>
-          <div className={style.last}>
+          <div className="flex items-center gap-3 whitespace-pre-wrap border border-solid border-black p-[10px]">
             <b>負責人</b>
             <div>{trip.ownerName}</div>
           </div>
         </form>
       )}
       {isLogin && (
-        <div className={style.buttons}>
+        <div className="mt-[10px] flex gap-[10px]">
           <Button
             variant="contained"
             color={isEdit ? 'success' : 'error'}

@@ -43,7 +43,7 @@ const Trips = () => {
     <>
       <FormControlLabel
         control={<Switch checked={switched} onChange={handleSwitch} />}
-        label="顯示審核中/未通過"
+        label="顯示審核中"
       />
       <div className={style.head}>
         <h1>出遊清單</h1>
@@ -53,7 +53,7 @@ const Trips = () => {
       </div>
       {isLoading && <Loader />}
       {trips
-        ?.filter((v) => (switched ? true : v.status === Status.Pass))
+        ?.filter((v) => (switched ? v.status !== Status.Reject : v.status === Status.Pass))
         .map((v) => {
           if (v.status === Status.Pass) {
             const isExpired = new Date(v.expiredDate ?? 0) < new Date();
